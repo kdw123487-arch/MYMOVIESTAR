@@ -47,7 +47,16 @@ def main():
     c_key, c_poster = head.index("키") + 1, head.index("포스터") + 1
     row_of = {ws.cell(r, c_key).value: r for r in range(2, ws.max_row + 1)}
     lines = ["# 포스터 매칭 결과", "", "| 영화 | 결과 | 차이 | 포스터 |", "|---|---|---|---|"]
+    done = {}
+    if REPORT.exists():                       # films matched in an earlier run are kept, not searched again
+        for ln in REPORT.read_text(encoding="utf-8").splitlines():
+            cells = [c.strip() for c in ln.strip("|").split("|")]
+            if len(cells) == 4 and cells[1] == "찾음":
+                done[cells[0]] = ln
     for key, ref in refs.items():
+        if ref["en"] in done:
+            lines.append(done[ref["en"]])
+            continue
         tid = ((films.get(key) or {}).get("tm") or {}).get("id")
         best = (999, None)
         try:
