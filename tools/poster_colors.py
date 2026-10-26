@@ -5,8 +5,8 @@ For every film with a TMDB poster (data/films.json, field tm.p):
   2. pick 제1색 (the colour that defines the poster: large area, favouring colour over plain black/white)
      and 제2색 (the strongest accent that is clearly different from 제1색),
   3. turn 제1색 into the film-page background: same hue, darkened so body text stays readable,
-  4. turn 제2색 into the point colour: same hue, lifted until it contrasts with the background
-     (WCAG 7:1, and 4.5:1 for the dimmer label tone the page mixes from it).
+  4. turn 제2색 into the point colour: same hue and as much colour as possible, lifted only
+     until it reads clearly on the background (4.8:1, above the WCAG AA level for text).
 
 Writes 포스터1색 / 포스터2색 (raw) and 배경색 / 포인트색 (usable) into data/films.xlsx,
 and a preview sheet data/poster_colors.jpg. Run tools/xlsx_to_json.py afterwards.
@@ -105,9 +105,12 @@ def pick(cl):
         L, C, _ = to_oklch(rgb)
         return C, L
     def score1(share, rgb):
+        # 제1색 = what most of the poster is: area first, a little extra for colour,
+        # a small accent (title lettering, a red dress) can't win on vividness alone
         C, L = vivid(rgb)
-        extreme = 0.35 if L < 0.18 or L > 0.95 else 1.0      # plain black / white rarely "is" the poster's colour
-        return share * (0.35 + 6 * C) * extreme
+        extreme = 0.6 if L < 0.16 or L > 0.95 else 1.0
+        small = 0.4 if share < 0.10 else 1.0
+        return share * (0.6 + 2.2 * C) * extreme * small
     first = max(cl, key=lambda x: score1(*x))[1]
     def score2(share, rgb):
         d = oklab_dist(rgb, first)
@@ -126,23 +129,29 @@ def pick(cl):
     return first, second
 
 
-def background(first):
+def background(first, second):
     L, C, H = to_oklch(first)
-    C = min(C * 0.85, 0.075)
-    for Lb in [x / 1000 for x in range(300, 150, -5)]:
+    if C < 0.03:                                    # black / grey / white poster: neutral, faintly warmed by the accent
+        _, C2, H2 = to_oklch(second)
+        C, H = (0.014, H2) if C2 >= 0.04 else (C, H)
+    else:
+        C = min(C * 0.85, 0.07)
+    for Lb in [x / 1000 for x in range(270, 150, -5)]:
         bg = from_oklch(Lb, C, H)
-        if lum(bg) <= 0.03 and contrast(IVORY, bg) >= 11 and contrast(MUTED, bg) >= 4.5:
+        if lum(bg) <= 0.022 and contrast(IVORY, bg) >= 12 and contrast(MUTED, bg) >= 5:
             return bg
     return from_oklch(0.16, C, H)
 
 
 def point(second, bg):
+    # keep the accent's own hue and as much of its colour as possible;
+    # only lift it as far as needed to read clearly on the background (4.8:1)
     L, C, H = to_oklch(second)
     if C >= 0.035:
-        C = min(max(C, 0.10), 0.17)
-    for Lp in [x / 1000 for x in range(max(680, round(L * 1000)), 951, 5)]:
+        C = min(max(C, 0.12), 0.19)
+    for Lp in [x / 1000 for x in range(max(600, round(L * 1000)), 951, 5)]:
         ac = from_oklch(Lp, C, H)
-        if contrast(ac, bg) >= 7 and contrast(mix(ac, bg, 0.7), bg) >= 4.5:
+        if contrast(ac, bg) >= 4.8:
             return ac
     return from_oklch(0.92, min(C, 0.06), H)
 
@@ -194,7 +203,7 @@ def main():
             skipped.append(f"{en} ({e})")
             continue
         first, second = pick(cl)
-        bg = background(first)
+        bg = background(first, second)
         ac = point(second, bg)
         for col, rgb in ((c_r1, first), (c_r2, second)):
             cell = ws.cell(r, col, hexc(rgb))
