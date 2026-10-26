@@ -4,20 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
-<title>넷플릭스 명작 시상식</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<title>My Movie Star</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..700&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
 <style>
-/* Layout: a gala programme — spotlit masthead, category "부문" sections, nominee cards with generated poster panels, and an envelope reveal */
+/* Layout: a gala programme — spotlit masthead, three "hall" tabs (nominees / watchlist / hall of fame), poster cards, and a modal stage for envelopes & reviews */
 :root{
-  --velvet:#150a0e;      /* stage floor */
-  --velvet-2:#22101a;    /* raised surface */
-  --curtain:#5a1222;     /* drape red */
-  --gold:#d8b46a;        /* statuette gold */
-  --gold-soft:#9c8150;   /* engraved gold */
-  --ivory:#f3ead8;       /* programme paper text */
-  --muted:#b9a99a;       /* secondary text */
+  --velvet:#150a0e;--velvet-2:#22101a;--velvet-3:#2c1622;--curtain:#5a1222;
+  --gold:#d8b46a;--gold-soft:#9c8150;--ivory:#f3ead8;--muted:#b9a99a;
   --line:rgba(216,180,106,.28);
   --f-display:"Bodoni Moda","Didot","Times New Roman",serif;
   --f-body:"Gowun Batang","Noto Serif KR","AppleMyungjo",serif;
@@ -26,101 +20,221 @@
 }
 *{box-sizing:border-box}
 body{
-  background:var(--velvet);color:var(--ivory);font-family:var(--f-body);
-  font-size:16px;line-height:1.7;min-height:100%;
+  background:var(--velvet);color:var(--ivory);font-family:var(--f-body);font-size:16px;line-height:1.7;min-height:100%;
   background-image:
     radial-gradient(ellipse 60% 520px at 50% -80px, rgba(255,226,170,.20), transparent 70%),
     linear-gradient(90deg, var(--curtain) 0, rgba(90,18,34,.0) 64px, transparent calc(100% - 64px), var(--curtain) 100%);
-  background-attachment:scroll;
 }
 .wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:56px 80px}
+button{font:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
 /* masthead */
-.mast{text-align:center;display:grid;justify-items:center;gap:14px;padding-bottom:40px;border-bottom:1px solid var(--line)}
+.mast{text-align:center;display:grid;justify-items:center;gap:14px;padding-bottom:32px}
 .eyebrow{font-family:var(--f-ui);font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold)}
 .mast h1{margin:0;font-family:var(--f-display);font-weight:500;font-size:clamp(40px,8vw,88px);line-height:1;letter-spacing:-.01em;text-wrap:balance}
 .mast h1 em{font-style:italic;color:var(--gold)}
-.mast h1 .ko{display:block;font-family:var(--f-body);font-weight:700;font-size:clamp(22px,3.6vw,34px);letter-spacing:.06em;margin-top:14px;color:var(--ivory)}
+.mast h1 .ko{display:block;font-family:var(--f-body);font-weight:700;font-size:clamp(20px,3.4vw,32px);letter-spacing:.06em;margin-top:14px;color:var(--ivory)}
 .mast p{margin:0;max-width:58ch;color:var(--muted);font-size:15px}
 .meta{display:flex;gap:10px 28px;flex-wrap:wrap;justify-content:center;font-family:var(--f-ui);font-size:13px;color:var(--gold-soft);letter-spacing:.08em}
 .meta b{color:var(--ivory);font-weight:500;font-family:var(--f-display);font-size:18px;margin-right:6px;font-variant-numeric:tabular-nums}
-.envelope-btn{margin-top:10px;font-family:var(--f-ui);font-size:15px;font-weight:600;letter-spacing:.06em;color:var(--velvet);background:linear-gradient(180deg,#ecd08f,var(--gold) 55%,#b48f4b);border:0;border-radius:2px;padding:14px 26px;cursor:pointer;box-shadow:0 8px 30px rgba(216,180,106,.25)}
-.envelope-btn:hover{filter:brightness(1.08)}
-.envelope-btn:focus-visible,.chip:focus-visible,.card:focus-visible,.close:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.mast-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.btn-gold{font-family:var(--f-ui);font-size:15px;font-weight:600;letter-spacing:.06em;color:var(--velvet);background:linear-gradient(180deg,#ecd08f,var(--gold) 55%,#b48f4b);border:0;border-radius:2px;padding:13px 24px;cursor:pointer;box-shadow:0 8px 30px rgba(216,180,106,.25)}
+.btn-gold:hover{filter:brightness(1.08)}
+.btn-line{font-family:var(--f-ui);font-size:14px;background:transparent;color:var(--ivory);border:1px solid var(--line);border-radius:2px;padding:12px 20px;cursor:pointer}
+.btn-line:hover{border-color:var(--gold-soft);color:#fff}
 
-/* filter */
-.filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:32px 0 8px}
+/* tabs — programme sections */
+.tabs{display:flex;justify-content:center;border-block:1px solid var(--line);margin-bottom:8px;position:sticky;top:0;z-index:20;background:rgba(21,10,14,.92);backdrop-filter:blur(6px)}
+.tab{flex:0 1 220px;min-width:0;background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;padding:14px 8px 12px;display:grid;gap:2px;justify-items:center}
+.tab .t-en{font-family:var(--f-display);font-style:italic;font-size:13px;color:var(--gold-soft)}
+.tab .t-ko{font-family:var(--f-ui);font-size:15px;font-weight:500;white-space:nowrap}
+.tab .t-ko small{font-family:var(--f-display);font-size:13px;color:var(--gold);margin-left:4px}
+.tab[aria-selected="true"]{color:var(--ivory);border-bottom-color:var(--gold)}
+.tab[aria-selected="true"] .t-en{color:var(--gold)}
+
+/* filter chips */
+.filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:28px 0 8px}
 .chip{font-family:var(--f-ui);font-size:13px;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
 .chip[aria-pressed="true"]{color:var(--velvet);background:var(--gold);border-color:var(--gold)}
 
 /* categories */
-.cat{margin-top:56px}
+.cat{margin-top:52px}
 .cat-head{display:grid;grid-template-columns:auto 1fr;gap:4px 18px;align-items:baseline;margin-bottom:24px}
 .cat-no{grid-row:span 2;font-family:var(--f-display);font-style:italic;font-size:44px;line-height:1;color:var(--gold)}
 .cat-head h2{margin:0;font-family:var(--f-body);font-size:24px;font-weight:700;text-wrap:balance}
 .cat-head p{margin:0;font-family:var(--f-ui);font-size:13px;color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
 
 .card{position:relative;display:grid;grid-template-rows:auto 1fr;background:var(--velvet-2);border:1px solid var(--line);min-width:0;transition:transform .25s ease,border-color .25s ease}
 .card:hover{transform:translateY(-4px);border-color:var(--gold-soft)}
+.card.is-seen{border-color:rgba(216,180,106,.55)}
 .poster{position:relative;aspect-ratio:3/4;max-width:100%;overflow:hidden;background:#000}
 .poster canvas{display:block;width:100%;height:100%}
 .poster .num{position:absolute;top:12px;left:14px;font-family:var(--f-display);font-size:13px;letter-spacing:.2em;color:rgba(255,255,255,.85);text-shadow:0 1px 4px rgba(0,0,0,.6)}
 .poster .stamp{position:absolute;top:12px;right:12px;font-family:var(--f-ui);font-size:10px;letter-spacing:.28em;color:var(--gold);border:1px solid var(--gold);padding:3px 8px;background:rgba(10,4,6,.55)}
+.poster .stamp.won{color:var(--velvet);background:var(--gold)}
 .poster .ptitle{position:absolute;left:14px;right:14px;bottom:14px;font-family:var(--f-display);font-style:italic;font-size:22px;line-height:1.15;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.7);text-wrap:balance}
-.poster.licensed .stamp{color:#ffd9a8;border-color:#ffd9a8}
+.poster.licensed .stamp:not(.won){color:#ffd9a8;border-color:#ffd9a8}
 
-.body{padding:18px 18px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.body{padding:18px 18px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .body h3{margin:0;font-size:20px;line-height:1.35;font-weight:700;text-wrap:balance}
 .sub{font-family:var(--f-ui);font-size:12px;color:var(--gold-soft);letter-spacing:.04em}
 .laurel{display:flex;align-items:center;gap:8px;font-family:var(--f-ui);font-size:12.5px;color:var(--gold);line-height:1.45}
 .laurel svg{flex:none;width:26px;height:26px}
-.plot{margin:0;font-size:14.5px;color:var(--ivory)}
+.plot{margin:0;font-size:14.5px}
 .why{margin:0;font-size:14px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
-.why b{font-family:var(--f-ui);font-size:11px;letter-spacing:.2em;color:var(--gold);display:block;margin-bottom:2px;font-weight:500}
+.why b,.mine b{font-family:var(--f-ui);font-size:11px;letter-spacing:.2em;color:var(--gold);display:block;margin-bottom:2px;font-weight:500}
+.mine{margin:0;font-size:14px;border-top:1px dashed var(--line);padding-top:10px}
+.mine q{quotes:"“" "”"}
+.acts{margin-top:auto;padding-top:6px;display:flex;gap:8px;flex-wrap:wrap}
+.act{flex:1 1 auto;font-family:var(--f-ui);font-size:13px;color:var(--ivory);background:transparent;border:1px solid var(--line);border-radius:2px;padding:9px 10px;cursor:pointer;white-space:nowrap}
+.act:hover{border-color:var(--gold-soft)}
+.act[aria-pressed="true"]{color:var(--velvet);background:var(--gold);border-color:var(--gold)}
+.act.ghost{flex:0 0 auto;color:var(--muted)}
 
-.foot{margin-top:72px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--f-ui);font-size:12.5px;color:var(--muted);text-align:center;display:grid;gap:6px}
+.stars{font-family:var(--f-ui);letter-spacing:.08em;color:var(--gold);font-size:15px;white-space:nowrap}
+.stars .off{color:rgba(216,180,106,.25)}
 
-/* envelope reveal */
+/* empty state */
+.empty{margin:56px auto;max-width:460px;text-align:center;display:grid;gap:14px;justify-items:center;color:var(--muted)}
+.empty .big{font-family:var(--f-display);font-style:italic;font-size:30px;color:var(--gold)}
+.empty p{margin:0}
+
+/* section heads for my views */
+.view-head{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:end;justify-content:space-between;margin:40px 0 24px}
+.view-head h2{margin:0;font-size:26px;font-weight:700}
+.view-head h2 span{display:block;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:15px;color:var(--gold)}
+.view-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+select.sel{font-family:var(--f-ui);font-size:13px;color:var(--ivory);background:var(--velvet-2);border:1px solid var(--line);border-radius:2px;padding:8px 10px}
+
+/* hall of fame — headline winner */
+.headline{display:grid;grid-template-columns:minmax(180px,280px) 1fr;gap:28px;align-items:center;padding:28px;background:linear-gradient(135deg,rgba(216,180,106,.10),transparent 60%),var(--velvet-2);border:1px solid var(--gold);box-shadow:0 0 90px rgba(216,180,106,.10);margin-bottom:40px}
+.headline .poster{border:1px solid var(--line)}
+.headline .hl-body{display:grid;gap:10px;min-width:0}
+.headline h3{margin:0;font-size:clamp(26px,4vw,38px);line-height:1.2;text-wrap:balance}
+.headline .en{font-family:var(--f-display);font-style:italic;color:var(--gold);font-size:18px}
+.headline blockquote{margin:6px 0 0;padding-left:16px;border-left:2px solid var(--gold);font-size:16px;line-height:1.75;white-space:pre-wrap}
+.ribbon{justify-self:start;font-family:var(--f-ui);font-size:11px;letter-spacing:.24em;color:var(--velvet);background:var(--gold);padding:4px 10px}
+.hall-stats{display:flex;gap:10px 28px;flex-wrap:wrap;font-family:var(--f-ui);font-size:13px;color:var(--gold-soft)}
+.hall-stats b{font-family:var(--f-display);font-weight:500;font-size:20px;color:var(--ivory);margin-right:4px}
+.data-tools{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;font-family:var(--f-ui);font-size:12.5px;color:var(--muted)}
+.data-tools span{flex-basis:100%;text-align:center}
+
+.foot{margin-top:56px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--f-ui);font-size:12.5px;color:var(--muted);text-align:center;display:grid;gap:6px}
+
+/* modal stage */
 .stage{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(8,3,5,.88);padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow-y:auto}
-.winner{position:relative;width:min(560px,100%);background:var(--velvet-2);border:1px solid var(--gold);padding:28px 24px;display:grid;gap:14px;text-align:center;box-shadow:0 0 120px rgba(216,180,106,.18)}
-.winner .eyebrow{letter-spacing:.24em}
-.winner .wposter{width:min(220px,60%);margin:0 auto;aspect-ratio:3/4;max-width:100%;overflow:hidden;border:1px solid var(--line)}
-.winner .wposter canvas{width:100%;height:100%;display:block}
-.winner h3{margin:0;font-size:28px;line-height:1.3}
-.winner .en{font-family:var(--f-display);font-style:italic;color:var(--gold);font-size:18px}
-.winner p{margin:0;font-size:14.5px;color:var(--muted);text-align:left}
-.wactions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.close{font-family:var(--f-ui);font-size:14px;background:transparent;color:var(--ivory);border:1px solid var(--line);padding:10px 18px;cursor:pointer}
+.panel{position:relative;width:min(560px,100%);background:var(--velvet-2);border:1px solid var(--gold);padding:28px 24px;display:grid;gap:14px;box-shadow:0 0 120px rgba(216,180,106,.18)}
+.panel.center{text-align:center}
+.panel .wposter{width:min(220px,60%);margin:0 auto;aspect-ratio:3/4;overflow:hidden;border:1px solid var(--line)}
+.panel .wposter canvas{width:100%;height:100%;display:block}
+.panel h3{margin:0;font-size:26px;line-height:1.3}
+.panel .en{font-family:var(--f-display);font-style:italic;color:var(--gold);font-size:17px}
+.panel p{margin:0;font-size:14.5px;color:var(--muted);text-align:left}
+.pactions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .reveal{animation:rise .7s cubic-bezier(.2,.8,.2,1)}
-@keyframes rise{from{opacity:.0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+
+/* review form */
+.form{display:grid;gap:14px;text-align:left}
+.form .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fld{display:grid;gap:5px;min-width:0}
+.fld>span,.fld legend{font-family:var(--f-ui);font-size:12px;letter-spacing:.12em;color:var(--gold);padding:0}
+.fld input,.fld textarea{width:100%;font-family:var(--f-ui);font-size:16px;color:var(--ivory);background:var(--velvet);border:1px solid var(--line);border-radius:2px;padding:10px 12px}
+.fld textarea{font-family:var(--f-body);min-height:120px;resize:vertical;line-height:1.65}
+.fld input:focus,.fld textarea:focus{outline:none;border-color:var(--gold)}
+fieldset.fld{border:0;margin:0;padding:0}
+.seg{display:flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.seg label{flex:1;text-align:center;font-family:var(--f-ui);font-size:14px;padding:10px;cursor:pointer;color:var(--muted)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg input:checked+span{color:var(--velvet)}
+.seg label:has(input:checked){background:var(--gold);color:var(--velvet)}
+.seg label:has(input:focus-visible){outline:2px solid var(--gold);outline-offset:-2px}
+.rate{display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:2px}
+.rate input{position:absolute;opacity:0;pointer-events:none}
+.rate label{font-size:32px;line-height:1;cursor:pointer;color:rgba(216,180,106,.25);padding:2px}
+.rate label:hover,.rate label:hover~label,.rate input:checked~label{color:var(--gold)}
+.rate input:focus-visible+label{outline:2px solid var(--gold);outline-offset:1px}
+.rate-note{font-family:var(--f-ui);font-size:12.5px;color:var(--muted);min-height:1.4em}
+.seen-only[hidden]{display:none}
+.err{font-family:var(--f-ui);font-size:13px;color:#f0a39a}
+
+.toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;font-family:var(--f-ui);font-size:14px;background:var(--gold);color:var(--velvet);padding:10px 18px;border-radius:2px;box-shadow:0 10px 30px rgba(0,0,0,.4);max-width:calc(100% - 32px)}
+
 @media (prefers-reduced-motion:reduce){.reveal{animation:none}.card{transition:none}}
-@media (max-width:520px){body{background-image:radial-gradient(ellipse 90% 420px at 50% -60px, rgba(255,226,170,.18), transparent 70%)}.wrap{padding-block:36px 56px}.cat-no{font-size:34px}}
+@media (max-width:640px){
+  body{background-image:radial-gradient(ellipse 90% 420px at 50% -60px, rgba(255,226,170,.18), transparent 70%)}
+  .wrap{padding-block:36px 56px}.cat-no{font-size:34px}
+  .headline{grid-template-columns:1fr;padding:20px}.headline .poster{width:min(240px,70%);justify-self:center}
+  .tab{padding:12px 4px 10px}.tab .t-ko{font-size:14px}
+  .form .row2{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
 <div class="wrap">
   <header class="mast">
-    <div class="eyebrow">Netflix · Foreign Masterpieces · 2026</div>
-    <h1>The <em>Nominees</em><span class="ko">넷플릭스 해외 명작 20선</span></h1>
-    <p>지금 한국 넷플릭스에서 볼 수 있는 해외 명작 스무 편을 네 개 부문으로 나눴습니다. 봉투를 열면 오늘 밤 볼 영화를 하나 골라 드려요.</p>
-    <div class="meta"><span><b>20</b>편</span><span><b>4</b>개 부문</span><span><b>13</b>개국</span></div>
-    <button class="envelope-btn" id="openEnv" type="button">✉ 봉투 열기</button>
+    <div class="eyebrow">My Movie Star · Hall of Fame</div>
+    <h1>The <em>Nominees</em><span class="ko">나만의 영화 시상식</span></h1>
+    <p>추천 후보작을 둘러보고, 볼 영화는 담아 두고, 본 영화에는 별점과 평을 남기세요. 높은 점수를 받은 작품은 명예의 전당에 오릅니다.</p>
+    <div class="meta" id="meta"></div>
+    <div class="mast-actions">
+      <button class="btn-gold" id="openEnv" type="button">✉ 봉투 열기</button>
+      <button class="btn-line" id="addOwn" type="button">＋ 영화 직접 기록</button>
+    </div>
   </header>
 
-  <div class="filters" role="group" aria-label="부문 필터" id="filters"></div>
-  <main id="cats"></main>
+  <nav class="tabs" role="tablist" aria-label="섹션">
+    <button class="tab" role="tab" id="tab-nominees" aria-controls="view-nominees" data-view="nominees"><span class="t-en">Nominees</span><span class="t-ko">추천 후보작</span></button>
+    <button class="tab" role="tab" id="tab-watch" aria-controls="view-watch" data-view="watch"><span class="t-en">Waiting List</span><span class="t-ko">볼 영화<small id="cnt-watch"></small></span></button>
+    <button class="tab" role="tab" id="tab-hall" aria-controls="view-hall" data-view="hall"><span class="t-en">Hall of Fame</span><span class="t-ko">명예의 전당<small id="cnt-hall"></small></span></button>
+  </nav>
+
+  <section id="view-nominees" role="tabpanel" aria-labelledby="tab-nominees">
+    <div class="filters" role="group" aria-label="부문 필터" id="filters"></div>
+    <div id="cats"></div>
+  </section>
+
+  <section id="view-watch" role="tabpanel" aria-labelledby="tab-watch" hidden>
+    <div class="view-head">
+      <h2><span>Waiting List</span>볼 영화 대기실</h2>
+      <div class="view-tools"><button class="btn-line" type="button" data-add="want">＋ 볼 영화 추가</button></div>
+    </div>
+    <div class="grid" id="watchGrid"></div>
+  </section>
+
+  <section id="view-hall" role="tabpanel" aria-labelledby="tab-hall" hidden>
+    <div class="view-head">
+      <h2><span>Hall of Fame</span>나의 명예의 전당</h2>
+      <div class="view-tools">
+        <label class="sr" style="font-family:var(--f-ui);font-size:12px;color:var(--muted)">정렬
+          <select class="sel" id="hallSort"><option value="rating">별점 높은 순</option><option value="recent">최근 관람 순</option><option value="title">제목 순</option></select>
+        </label>
+        <button class="btn-line" type="button" data-add="seen">＋ 본 영화 기록</button>
+      </div>
+    </div>
+    <div id="hallTop"></div>
+    <div class="grid" id="hallGrid"></div>
+    <div class="data-tools">
+      <span>기록은 이 브라우저에 저장됩니다. 기기를 옮기거나 브라우저 데이터를 지우기 전에 내보내 두세요.</span>
+      <button class="btn-line" type="button" id="exportBtn">기록 내보내기 (.json)</button>
+      <button class="btn-line" type="button" id="importBtn">기록 가져오기</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+  </section>
 
   <footer class="foot">
     <span>포스터 패널은 각 영화의 분위기를 바탕으로 새로 그린 그래픽이며, 실제 포스터나 스틸이 아닙니다.</span>
-    <span>LICENSED 표시 작품은 라이선스 작품이라 서비스가 종료될 수 있어요. 앱에서 한 번 검색해 확인해 주세요.</span>
+    <span>추천작은 한국 넷플릭스 기준이며, LICENSED 표시 작품은 서비스가 종료될 수 있어요.</span>
   </footer>
 </div>
 
-<div class="stage" id="stage" hidden role="dialog" aria-modal="true" aria-labelledby="wTitle">
-  <div class="winner reveal" id="winner"></div>
+<div class="stage" id="stage" hidden role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+  <div class="panel reveal" id="panel"></div>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script>
 const CATS=[
@@ -191,17 +305,34 @@ const FILMS=[
   p:"저주받은 청년 아시타카가 숲의 신들과 인간 마을 사이의 전쟁에 휘말립니다.",
   w:"선악 구도 없이 자연과 문명의 충돌을 그린, 지브리에서 가장 묵직한 작품이에요.",pal:["#2f5d3a","#a8c36a","#0f1d12"],m:"trees"}
 ];
-FILMS.forEach((f,i)=>f.i=i);
+FILMS.forEach((f,i)=>{f.i=i;f.key="r:"+f.en.toLowerCase().replace(/[^a-z0-9]+/g,"-")});
+const BY_KEY=Object.fromEntries(FILMS.map(f=>[f.key,f]));
 
-/* seeded random so each poster is stable */
+/* ---------- storage ---------- */
+const LS_KEY="mymoviestar.v1";
+let DB={items:{}};
+function load(){try{const raw=localStorage.getItem(LS_KEY);if(raw){const d=JSON.parse(raw);if(d&&typeof d.items==="object")DB=d}}catch(e){}}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(DB))}catch(e){toast("이 브라우저에서는 저장할 수 없어요. 내보내기로 백업해 주세요.")}}
+load();
+
+/* an entry: {key, ko, en, y, n, status:'want'|'seen', rating, review, date, added, updated} */
+function entry(key){return DB.items[key]}
+function films(){return Object.values(DB.items)}
+function displayOf(e){const f=BY_KEY[e.key];return f?{...f,...e,ko:f.ko,en:f.en,y:f.y,n:f.n}:e}
+
+/* ---------- poster painter ---------- */
 function rng(seed){let s=seed*9301+49297;return()=>((s=(s*9301+49297)%233280)/233280)}
-
+const MOTIFS=["sun","waves","bands","rings","split","peaks","arch","rays","grid","dots","trees"];
+function hash(s){let h=7;for(const ch of String(s))h=(h*31+ch.codePointAt(0))%100003;return h}
+function look(e){
+  const f=BY_KEY[e.key];if(f)return f;
+  const h=hash(e.ko+(e.en||""));const src=FILMS[h%FILMS.length];
+  return{i:h,pal:src.pal,m:MOTIFS[(h>>3)%MOTIFS.length]};
+}
 function paint(cv,f){
   const W=cv.width=480,H=cv.height=640,x=cv.getContext("2d"),r=rng(f.i+7),[a,b,c]=f.pal;
   const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,b);g.addColorStop(1,c);
-  x.fillStyle=g;x.fillRect(0,0,W,H);
-  x.fillStyle=a;x.strokeStyle=a;
-  const m=f.m;
+  x.fillStyle=g;x.fillRect(0,0,W,H);x.fillStyle=a;x.strokeStyle=a;const m=f.m;
   if(m==="sun"){x.globalAlpha=.9;x.beginPath();x.arc(W*.5,H*.42,W*.28,0,7);x.fill();
     x.globalAlpha=1;x.fillStyle=c;for(let k=0;k<6;k++){x.fillRect(0,H*.42+k*22,W,8+k*2)}}
   else if(m==="waves"){x.lineWidth=3;for(let k=0;k<16;k++){x.globalAlpha=.25+k*.04;x.beginPath();
@@ -220,67 +351,288 @@ function paint(cv,f){
     x.globalAlpha=.9;x.fillStyle=c;x.beginPath();x.moveTo(0,H);x.quadraticCurveTo(W*.5,H*.6,W,H);x.fill()}
   else if(m==="trees"){for(let k=0;k<26;k++){const tx=r()*W,th=H*(.3+r()*.5),tw=10+r()*26;x.globalAlpha=.25+r()*.6;
     x.beginPath();x.moveTo(tx,H-th);x.lineTo(tx-tw,H);x.lineTo(tx+tw,H);x.fill()}}
-  /* vignette + grain */
   x.globalAlpha=1;const v=x.createRadialGradient(W/2,H/2,H*.2,W/2,H/2,H*.75);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.55)");
   x.fillStyle=v;x.fillRect(0,0,W,H);
   for(let k=0;k<2200;k++){x.fillStyle=r()<.5?"rgba(255,255,255,.05)":"rgba(0,0,0,.08)";x.fillRect(r()*W,r()*H,1.5,1.5)}
 }
 
+/* ---------- small helpers ---------- */
 const LAUREL='<svg viewBox="0 0 26 26" aria-hidden="true" fill="currentColor">'+
   [0,1,2,3,4].map(k=>{const y=20-k*3.4;return`<ellipse cx="${6+k*.3}" cy="${y}" rx="1.4" ry="3" transform="rotate(${-35+k*12} ${6+k*.3} ${y})"/><ellipse cx="${20-k*.3}" cy="${y}" rx="1.4" ry="3" transform="rotate(${35-k*12} ${20-k*.3} ${y})"/>`}).join("")+
   '<circle cx="13" cy="13" r="2.2"/></svg>';
+function esc(s){return String(s??"").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]))}
+const AWARDS={5:"대상 · GRAND PRIX",4:"최우수작품상",3:"우수작품상",2:"특별언급",1:"황금 라즈베리"};
+const RATE_NOTE={1:"황금 라즈베리 — 다시는 안 봐요",2:"특별언급 — 아쉬움이 남아요",3:"우수작품상 — 볼 만했어요",4:"최우수작품상 — 강력 추천",5:"대상 — 인생 영화"};
+function starsHTML(n){n=n|0;return`<span class="stars" aria-label="별점 ${n}점 (5점 만점)">${"★".repeat(n)}<span class="off">${"★".repeat(5-n)}</span></span>`}
+function fmtDate(d){if(!d)return"";const [y,m,dd]=d.split("-");return`${y}.${m}.${dd}`}
+function today(){const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+let toastT;function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2400)}
 
-function esc(s){return String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]))}
-
-function card(f){
+/* ---------- nominees ---------- */
+const cardEls={};
+function nomineeCard(f){
   const el=document.createElement("article");el.className="card";el.dataset.cat=f.c;
   el.innerHTML=`<div class="poster${f.lic?" licensed":""}"><canvas aria-hidden="true"></canvas>
-    <span class="num">No.${String(f.i+1).padStart(2,"0")}</span><span class="stamp">${f.lic?"LICENSED":"NOMINEE"}</span>
+    <span class="num">No.${String(f.i+1).padStart(2,"0")}</span><span class="stamp"></span>
     <span class="ptitle">${esc(f.en)}</span></div>
     <div class="body"><h3>${esc(f.ko)}</h3><div class="sub">${f.y} · ${esc(f.n)}</div>
     <div class="laurel">${LAUREL}<span>${esc(f.aw)}</span></div>
-    <p class="plot">${esc(f.p)}</p><p class="why"><b>추천 이유</b>${esc(f.w)}</p></div>`;
-  paint(el.querySelector("canvas"),f);return el;
+    <p class="plot">${esc(f.p)}</p><p class="why"><b>추천 이유</b>${esc(f.w)}</p>
+    <div class="slot"></div><div class="acts"></div></div>`;
+  paint(el.querySelector("canvas"),f);cardEls[f.key]=el;syncNominee(f);return el;
 }
+function syncNominee(f){
+  const el=cardEls[f.key];if(!el)return;const e=entry(f.key);
+  const stamp=el.querySelector(".stamp");
+  stamp.className="stamp"+(e&&e.status==="seen"?" won":"");
+  stamp.textContent=e&&e.status==="seen"?"SEEN":(f.lic?"LICENSED":"NOMINEE");
+  el.classList.toggle("is-seen",!!(e&&e.status==="seen"));
+  el.querySelector(".slot").innerHTML=e&&e.status==="seen"?mineHTML(e):"";
+  const acts=el.querySelector(".acts");
+  if(e&&e.status==="seen"){
+    acts.innerHTML=`<button class="act" type="button" data-edit="${f.key}">✎ 평 수정</button>`;
+  }else{
+    const want=e&&e.status==="want";
+    acts.innerHTML=`<button class="act" type="button" data-toggle-want="${f.key}" aria-pressed="${want}">${want?"★ 볼 영화에 담김":"☆ 볼 영화"}</button>
+      <button class="act" type="button" data-review="${f.key}">✓ 봤어요 · 평 남기기</button>`;
+  }
+}
+function mineHTML(e){
+  return`<p class="mine"><b>나의 평 · ${esc(AWARDS[e.rating]||"")}</b>${starsHTML(e.rating)}${e.review?`<br><q>${esc(clip(e.review,90))}</q>`:""}</p>`;
+}
+function clip(s,n){s=String(s);return s.length>n?s.slice(0,n).trimEnd()+"…":s}
 
 const catsEl=document.getElementById("cats");
 CATS.forEach(c=>{
   const s=document.createElement("section");s.className="cat";s.dataset.cat=c.id;
   const list=FILMS.filter(f=>f.c===c.id);
   s.innerHTML=`<div class="cat-head"><span class="cat-no">${c.no}</span><h2>${c.name}</h2><p>${c.desc} · ${list.length}편</p></div><div class="grid"></div>`;
-  const g=s.querySelector(".grid");list.forEach(f=>g.appendChild(card(f)));catsEl.appendChild(s);
+  const g=s.querySelector(".grid");list.forEach(f=>g.appendChild(nomineeCard(f)));catsEl.appendChild(s);
 });
-
-/* filters */
 const fl=document.getElementById("filters");
 [{id:"all",name:"전체"}].concat(CATS).forEach((c,i)=>{
-  const b=document.createElement("button");b.type="button";b.className="chip";b.id="chip-"+c.id;b.textContent=c.name;
+  const b=document.createElement("button");b.type="button";b.className="chip";b.textContent=c.name;
   b.setAttribute("aria-pressed",i===0?"true":"false");
   b.onclick=()=>{fl.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");
     document.querySelectorAll(".cat").forEach(s=>s.hidden=!(c.id==="all"||s.dataset.cat===c.id))};
   fl.appendChild(b);
 });
 
-/* envelope */
-const stage=document.getElementById("stage"),win=document.getElementById("winner"),openBtn=document.getElementById("openEnv");
-let last=-1;
-function reveal(){
-  let k;do{k=Math.floor(Math.random()*FILMS.length)}while(k===last);last=k;const f=FILMS[k];
-  win.classList.remove("reveal");void win.offsetWidth;win.classList.add("reveal");
-  win.innerHTML=`<div class="eyebrow">오늘 밤의 수상작은…</div><div class="wposter"><canvas aria-hidden="true"></canvas></div>
-    <h3 id="wTitle">${esc(f.ko)}</h3><div class="en">${esc(f.en)} (${f.y})</div>
-    <div class="laurel" style="justify-content:center">${LAUREL}<span>${esc(f.aw)}</span></div>
-    <p>${esc(f.p)} ${esc(f.w)}</p>
-    <div class="wactions"><button class="envelope-btn" type="button" id="again">다른 봉투 열기</button><button class="close" type="button" id="closeEnv">닫기</button></div>`;
-  paint(win.querySelector("canvas"),f);
-  document.getElementById("again").onclick=reveal;
-  document.getElementById("closeEnv").onclick=close;
-  stage.hidden=false;document.getElementById("again").focus();
+/* ---------- my cards (watchlist + hall) ---------- */
+function myCard(e,opts={}){
+  const d=displayOf(e),f=BY_KEY[e.key];
+  const el=document.createElement("article");el.className="card"+(e.status==="seen"?" is-seen":"");
+  const stamp=e.status==="seen"?`<span class="stamp won">${opts.rank?"No."+opts.rank:"SEEN"}</span>`:`<span class="stamp">${f?"NOMINEE":"MY PICK"}</span>`;
+  const sub=[d.y,d.n].filter(Boolean).map(esc).join(" · ");
+  let body;
+  if(e.status==="seen"){
+    body=`<div class="laurel">${LAUREL}<span>${esc(AWARDS[e.rating])}</span></div>
+      <div>${starsHTML(e.rating)}${e.date?` <span class="sub">· ${fmtDate(e.date)} 관람</span>`:""}</div>
+      ${e.review?`<p class="mine"><q>${esc(clip(e.review,140))}</q></p>`:`<p class="mine" style="color:var(--muted)">아직 남긴 평이 없어요.</p>`}
+      <div class="acts"><button class="act" type="button" data-edit="${e.key}">✎ 평 수정</button><button class="act ghost" type="button" data-remove="${e.key}" aria-label="${esc(d.ko)} 기록 삭제">삭제</button></div>`;
+  }else{
+    body=`${f?`<p class="plot">${esc(f.p)}</p>`:(e.review?`<p class="plot">${esc(clip(e.review,120))}</p>`:"")}
+      <div class="acts"><button class="act" type="button" data-review="${e.key}">✓ 봤어요 · 평 남기기</button><button class="act ghost" type="button" data-remove="${e.key}" aria-label="${esc(d.ko)} 볼 영화에서 빼기">빼기</button></div>`;
+  }
+  el.innerHTML=`<div class="poster"><canvas aria-hidden="true"></canvas>${stamp}<span class="ptitle">${esc(d.en||d.ko)}</span></div>
+    <div class="body"><h3>${esc(d.ko)}</h3>${sub?`<div class="sub">${sub}</div>`:""}${body}</div>`;
+  paint(el.querySelector("canvas"),look(e));return el;
 }
-function close(){stage.hidden=true;openBtn.focus()}
-openBtn.onclick=reveal;
-stage.addEventListener("click",e=>{if(e.target===stage)close()});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!stage.hidden)close()});
+function emptyHTML(big,msg,btn){return`<div class="empty"><div class="big">${big}</div><p>${msg}</p>${btn||""}</div>`}
+
+function renderWatch(){
+  const g=document.getElementById("watchGrid");g.innerHTML="";
+  const list=films().filter(e=>e.status==="want").sort((a,b)=>(b.added||0)-(a.added||0));
+  if(!list.length){
+    g.innerHTML=emptyHTML("Empty Seats","아직 담아 둔 영화가 없어요. 추천 후보작에서 ☆를 누르거나 직접 추가해 보세요.",`<button class="btn-line" type="button" data-goto="nominees">추천 후보작 보기</button>`);
+    g.style.display="block";return}
+  g.style.display="";list.forEach(e=>g.appendChild(myCard(e)));
+}
+function sortSeen(list,mode){
+  const byRecent=(a,b)=>(b.date||"").localeCompare(a.date||"")||(b.updated||0)-(a.updated||0);
+  if(mode==="recent")return list.sort(byRecent);
+  if(mode==="title")return list.sort((a,b)=>displayOf(a).ko.localeCompare(displayOf(b).ko,"ko"));
+  return list.sort((a,b)=>b.rating-a.rating||byRecent(a,b));
+}
+function renderHall(){
+  const top=document.getElementById("hallTop"),g=document.getElementById("hallGrid");
+  top.innerHTML="";g.innerHTML="";
+  const seen=films().filter(e=>e.status==="seen");
+  if(!seen.length){
+    top.innerHTML=emptyHTML("The Hall Awaits","본 영화에 별점과 평을 남기면 이곳에 이름이 새겨집니다.",`<button class="btn-gold" type="button" data-add="seen">첫 기록 남기기</button>`);return}
+  const champ=sortSeen([...seen],"rating")[0],d=displayOf(champ);
+  const avg=(seen.reduce((s,e)=>s+e.rating,0)/seen.length).toFixed(1);
+  const grand=seen.filter(e=>e.rating===5).length;
+  top.innerHTML=`<article class="headline reveal"><div class="poster"><canvas aria-hidden="true"></canvas><span class="stamp won">WINNER</span><span class="ptitle">${esc(d.en||d.ko)}</span></div>
+    <div class="hl-body"><span class="ribbon">나의 올타임 수상작</span>
+      <h3>${esc(d.ko)}</h3>${d.en&&d.en!==d.ko?`<div class="en">${esc(d.en)}${d.y?` (${esc(d.y)})`:""}</div>`:""}
+      <div>${starsHTML(champ.rating)} <span class="sub">${esc(AWARDS[champ.rating])}${champ.date?` · ${fmtDate(champ.date)} 관람`:""}</span></div>
+      ${champ.review?`<blockquote>${esc(champ.review)}</blockquote>`:""}
+      <div class="hall-stats"><span><b>${seen.length}</b>편 헌액</span><span><b>${avg}</b>평균 별점</span><span><b>${grand}</b>편 대상</span></div>
+      <div><button class="btn-line" type="button" data-edit="${champ.key}">✎ 평 수정</button></div></div></article>`;
+  paint(top.querySelector("canvas"),look(champ));
+  const mode=document.getElementById("hallSort").value;
+  sortSeen(seen,mode).forEach((e,i)=>g.appendChild(myCard(e,{rank:mode==="rating"?i+1:0})));
+}
+function renderMeta(){
+  const all=films(),seen=all.filter(e=>e.status==="seen"),want=all.filter(e=>e.status==="want");
+  const avg=seen.length?(seen.reduce((s,e)=>s+e.rating,0)/seen.length).toFixed(1):"–";
+  document.getElementById("meta").innerHTML=`<span><b>${FILMS.length}</b>추천 후보</span><span><b>${want.length}</b>볼 영화</span><span><b>${seen.length}</b>본 영화</span><span><b>${avg}</b>평균 별점</span>`;
+  document.getElementById("cnt-watch").textContent=want.length||"";
+  document.getElementById("cnt-hall").textContent=seen.length||"";
+}
+function renderAll(){FILMS.forEach(syncNominee);renderWatch();renderHall();renderMeta()}
+
+/* ---------- tabs ---------- */
+const VIEWS=["nominees","watch","hall"];
+function show(v,push){
+  if(!VIEWS.includes(v))v="nominees";
+  VIEWS.forEach(k=>{document.getElementById("view-"+k).hidden=k!==v;const t=document.getElementById("tab-"+k);t.setAttribute("aria-selected",k===v);t.tabIndex=k===v?0:-1});
+  if(push)history.replaceState(null,"","#"+v);
+}
+document.querySelector(".tabs").addEventListener("click",e=>{const t=e.target.closest(".tab");if(t)show(t.dataset.view,true)});
+document.querySelector(".tabs").addEventListener("keydown",e=>{
+  if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft")return;
+  const cur=VIEWS.findIndex(k=>document.getElementById("tab-"+k).getAttribute("aria-selected")==="true");
+  const nx=VIEWS[(cur+(e.key==="ArrowRight"?1:2))%3];show(nx,true);document.getElementById("tab-"+nx).focus();
+});
+window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
+
+/* ---------- modal ---------- */
+const stage=document.getElementById("stage"),panel=document.getElementById("panel");
+let lastFocus=null;
+function openPanel(html,center){
+  lastFocus=document.activeElement;
+  panel.className="panel reveal"+(center?" center":"");void panel.offsetWidth;
+  panel.innerHTML=html;stage.hidden=false;document.body.style.overflow="hidden";
+}
+function closePanel(){stage.hidden=true;document.body.style.overflow="";if(lastFocus&&lastFocus.isConnected)lastFocus.focus()}
+stage.addEventListener("click",e=>{if(e.target===stage)closePanel()});
+document.addEventListener("keydown",e=>{
+  if(stage.hidden)return;
+  if(e.key==="Escape")closePanel();
+  if(e.key==="Tab"){const f=[...panel.querySelectorAll("button,input,textarea,select,[href]")].filter(n=>!n.disabled&&n.offsetParent);
+    if(!f.length)return;const a=f[0],z=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}
+});
+
+/* envelope: picks from unseen nominees + watchlist */
+let lastPick=null;
+function envelope(){
+  const want=films().filter(e=>e.status==="want").map(e=>e.key);
+  const pool=[...new Set(want.concat(FILMS.filter(f=>!(entry(f.key)&&entry(f.key).status==="seen")).map(f=>f.key)))];
+  if(!pool.length){openPanel(`<div class="eyebrow">오늘 밤의 수상작은…</div><h3 id="dlgTitle">모든 후보를 보셨네요!</h3><p style="text-align:center">볼 영화를 직접 추가하면 봉투에 함께 들어갑니다.</p><div class="pactions"><button class="close btn-line" type="button" data-close>닫기</button></div>`,true);return}
+  let k;do{k=pool[Math.floor(Math.random()*pool.length)]}while(pool.length>1&&k===lastPick);lastPick=k;
+  const e=entry(k),f=BY_KEY[k],d=f||e,isWant=e&&e.status==="want";
+  openPanel(`<div class="eyebrow">오늘 밤의 수상작은…</div><div class="wposter"><canvas aria-hidden="true"></canvas></div>
+    <h3 id="dlgTitle">${esc(d.ko)}</h3>${d.en?`<div class="en">${esc(d.en)}${d.y?` (${esc(d.y)})`:""}</div>`:""}
+    ${f?`<div class="laurel" style="justify-content:center">${LAUREL}<span>${esc(f.aw)}</span></div><p>${esc(f.p)} ${esc(f.w)}</p>`:`<p style="text-align:center">내 볼 영화 목록에서 뽑혔어요.</p>`}
+    <div class="pactions"><button class="btn-gold" type="button" id="again">다른 봉투 열기</button>
+      ${isWant?"":`<button class="btn-line" type="button" data-toggle-want="${k}" data-from-env>☆ 볼 영화에 담기</button>`}
+      <button class="btn-line" type="button" data-close>닫기</button></div>`,true);
+  paint(panel.querySelector("canvas"),f||look(e));
+  document.getElementById("again").onclick=envelope;document.getElementById("again").focus();
+}
+
+/* review / add form */
+function reviewForm(key,defStatus){
+  const e=key?entry(key):null,f=key?BY_KEY[key]:null,isNew=!e;
+  const status=e?(defStatus||e.status):(defStatus||"seen");
+  const rating=e&&e.rating?e.rating:0;
+  const fixed=!!f; /* nominee titles are fixed */
+  const v=f||e||{};
+  openPanel(`<div class="eyebrow">${status==="seen"?"Ballot · 심사표":"Waiting List · 대기 명단"}</div>
+    <h3 id="dlgTitle">${fixed?esc(f.ko):(isNew?"영화 직접 기록":"기록 수정")}</h3>
+    ${fixed?`<div class="en">${esc(f.en)} (${f.y})</div>`:""}
+    <form class="form" id="rf" novalidate>
+      ${fixed?"":`<label class="fld"><span>제목 *</span><input name="ko" required maxlength="80" value="${esc(v.ko||"")}" placeholder="예: 기생충"></label>
+      <div class="row2"><label class="fld"><span>원제 / 영문 제목</span><input name="en" maxlength="80" value="${esc(v.en||"")}" placeholder="Parasite"></label>
+      <label class="fld"><span>개봉 연도</span><input name="y" inputmode="numeric" maxlength="4" value="${esc(v.y||"")}" placeholder="2019"></label></div>
+      <label class="fld"><span>국가</span><input name="n" maxlength="40" value="${esc(v.n||"")}" placeholder="한국"></label>`}
+      <fieldset class="fld"><legend>상태</legend><div class="seg">
+        <label><input type="radio" name="status" value="want" ${status==="want"?"checked":""}><span>볼 영화</span></label>
+        <label><input type="radio" name="status" value="seen" ${status==="seen"?"checked":""}><span>봤어요</span></label></div></fieldset>
+      <div class="seen-only" ${status==="seen"?"":"hidden"}>
+        <fieldset class="fld"><legend>별점 *</legend>
+          <div class="rate">${[5,4,3,2,1].map(n=>`<input type="radio" name="rating" id="r${n}" value="${n}" ${rating===n?"checked":""}><label for="r${n}" title="${n}점" aria-label="${n}점">★</label>`).join("")}</div>
+          <div class="rate-note" id="rateNote">${rating?RATE_NOTE[rating]:"별을 눌러 시상 등급을 정하세요"}</div></fieldset>
+        <label class="fld" style="margin-top:14px"><span>관람일</span><input type="date" name="date" value="${esc(e&&e.date||today())}" max="${today()}"></label>
+      </div>
+      <label class="fld"><span id="revLabel">${status==="seen"?"나의 평":"메모 (왜 보고 싶은지)"}</span><textarea name="review" maxlength="2000" placeholder="${status==="seen"?"어떤 장면이 남았나요? 누구에게 추천하고 싶나요?":"누가 추천했는지, 어디서 볼 수 있는지 등"}">${esc(e&&e.review||"")}</textarea></label>
+      <div class="err" id="ferr" role="alert"></div>
+      <div class="pactions"><button class="btn-gold" type="submit">${status==="seen"?"명예의 전당에 올리기":"저장"}</button>
+        ${isNew?"":`<button class="btn-line" type="button" data-remove="${key}" data-in-form>기록 삭제</button>`}
+        <button class="btn-line" type="button" data-close>취소</button></div>
+    </form>`);
+  const form=document.getElementById("rf");
+  const syncStatus=()=>{const s=form.status.value;form.querySelector(".seen-only").hidden=s!=="seen";
+    document.getElementById("revLabel").textContent=s==="seen"?"나의 평":"메모 (왜 보고 싶은지)";
+    form.querySelector('[type="submit"]').textContent=s==="seen"?"명예의 전당에 올리기":"저장";
+    panel.querySelector(".eyebrow").textContent=s==="seen"?"Ballot · 심사표":"Waiting List · 대기 명단"};
+  form.querySelectorAll('[name="status"]').forEach(r=>r.onchange=syncStatus);
+  form.querySelectorAll('[name="rating"]').forEach(r=>r.onchange=()=>{document.getElementById("rateNote").textContent=RATE_NOTE[r.value]});
+  form.onsubmit=ev=>{
+    ev.preventDefault();const fd=new FormData(form),err=document.getElementById("ferr");
+    const st=fd.get("status"),rt=Number(fd.get("rating")||0);
+    const ko=fixed?f.ko:String(fd.get("ko")||"").trim();
+    if(!ko){err.textContent="제목을 입력해 주세요.";form.ko.focus();return}
+    if(st==="seen"&&!rt){err.textContent="별점을 골라 주세요.";form.querySelector('[name="rating"]').focus();return}
+    const k=key||("u:"+Date.now().toString(36)+Math.random().toString(36).slice(2,6));
+    const prev=entry(k)||{added:Date.now()};
+    const rec={...prev,key:k,status:st,review:String(fd.get("review")||"").trim(),updated:Date.now()};
+    if(!fixed){rec.ko=ko;rec.en=String(fd.get("en")||"").trim();rec.y=String(fd.get("y")||"").trim();rec.n=String(fd.get("n")||"").trim()}
+    if(st==="seen"){rec.rating=rt;rec.date=fd.get("date")||today()}else{delete rec.rating;delete rec.date}
+    DB.items[k]=rec;save();closePanel();renderAll();
+    toast(st==="seen"?`〈${ko}〉 ${AWARDS[rt]} 수상! 명예의 전당에 올렸어요.`:`〈${ko}〉 볼 영화에 담았어요.`);
+  };
+  (fixed?form.querySelector('[name="status"]:checked'):form.ko).focus();
+}
+
+function toggleWant(key){
+  const e=entry(key),f=BY_KEY[key];
+  if(e&&e.status==="want"){delete DB.items[key];toast(`〈${f?f.ko:e.ko}〉 볼 영화에서 뺐어요.`)}
+  else{DB.items[key]={...(e||{}),key,status:"want",added:Date.now(),updated:Date.now()};toast(`〈${f?f.ko:e.ko}〉 볼 영화에 담았어요.`)}
+  save();renderAll();
+}
+function removeEntry(key){
+  const e=entry(key);if(!e)return;const name=displayOf(e).ko;
+  if(e.status==="seen"&&!confirm(`〈${name}〉의 별점과 평을 삭제할까요?`))return;
+  delete DB.items[key];save();renderAll();toast(`〈${name}〉 기록을 삭제했어요.`);
+}
+
+/* one delegated click handler for every action button */
+document.addEventListener("click",ev=>{
+  const b=ev.target.closest("button");if(!b)return;const d=b.dataset;
+  if("close" in d){closePanel();return}
+  if(d.toggleWant){toggleWant(d.toggleWant);if("fromEnv" in d)closePanel();return}
+  if(d.review){reviewForm(d.review,"seen");return}
+  if(d.edit){reviewForm(d.edit);return}
+  if(d.remove){if("inForm" in d)closePanel();removeEntry(d.remove);return}
+  if(d.add){reviewForm(null,d.add);return}
+  if(d.goto){show(d.goto,true);return}
+});
+document.getElementById("openEnv").onclick=envelope;
+document.getElementById("addOwn").onclick=()=>reviewForm(null,"seen");
+document.getElementById("hallSort").onchange=renderHall;
+
+/* export / import */
+document.getElementById("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify({app:"mymoviestar",v:1,exported:new Date().toISOString(),items:DB.items},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`mymoviestar-${today()}.json`;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+const fileIn=document.getElementById("importFile");
+document.getElementById("importBtn").onclick=()=>fileIn.click();
+fileIn.onchange=async()=>{
+  const file=fileIn.files[0];fileIn.value="";if(!file)return;
+  try{const d=JSON.parse(await file.text());const items=d&&d.items;if(!items||typeof items!=="object")throw 0;
+    let n=0;for(const [k,v] of Object.entries(items)){if(v&&v.key===k&&(v.status==="want"||v.status==="seen")){DB.items[k]=v;n++}}
+    save();renderAll();toast(`${n}편의 기록을 가져왔어요.`);
+  }catch(e){toast("가져올 수 없는 파일이에요.")}
+};
+
+renderAll();
+show(location.hash.slice(1)||"nominees");
 </script>
 </body>
 </html>
