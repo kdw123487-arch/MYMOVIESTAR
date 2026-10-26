@@ -1,0 +1,50 @@
+name: Build film data
+
+# Excel -> JSON with TMDB posters, Korean age ratings and streaming services.
+# Runs when the spreadsheet or the builder changes, every Monday (to refresh
+# streaming info), or by hand from the Actions tab ("Run workflow").
+on:
+  push:
+    branches: [main]
+    paths: ["data/films.xlsx", "tools/xlsx_to_json.py"]
+  schedule:
+    - cron: "0 18 * * 0"   # Monday 03:00 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: build-data
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install openpyxl
+      - name: Build data/films.json
+        env:
+          TMDB_KEY: ${{ secrets.TMDB_KEY }}
+        run: |
+          if [ -z "$TMDB_KEY" ]; then echo "::warning::TMDB_KEY secret is not set - posters, ratings and streaming info were not refreshed."; fi
+          python tools/xlsx_to_json.py
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/films.json data/tmdb_report.md 2>/dev/null || git add data/films.json
+          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
+          git commit -m "Update film data"
+          git push
+          echo "PUSHED=1" >> "$GITHUB_ENV"
+      - name: Rebuild the site
+        if: env.PUSHED == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds" || echo "Pages will pick up the change on its own."

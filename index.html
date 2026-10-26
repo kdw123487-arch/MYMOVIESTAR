@@ -4,6 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>My Movie Star</title>
+<meta name="description" content="평단과 관객이 함께 사랑한 명작 영화 50편. 보고 싶은 영화를 담고, 본 영화에 평점을 남겨 나만의 명예의 전당을 만드세요.">
+<meta name="theme-color" content="#140a0d">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="My Movie Star">
+<meta property="og:title" content="My Movie Star — 나만의 영화 시상식">
+<meta property="og:description" content="명작 영화 50편 · 평점 · 명예의 전당">
+<meta property="og:url" content="https://kdw123487-arch.github.io/MYMOVIESTAR/">
+<meta property="og:image" content="https://kdw123487-arch.github.io/MYMOVIESTAR/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://image.tmdb.org">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap">
@@ -81,12 +93,7 @@ img.pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opaci
 .sub{font-size:12px;color:var(--faint);letter-spacing:.04em}
 .award{font-size:12px;color:var(--gold-soft);line-height:1.5}
 .plot{margin:2px 0 0;font-size:14px;color:var(--muted);line-height:1.65;font-weight:300}
-.more summary{list-style:none;cursor:pointer;font-size:12.5px;color:var(--faint);display:inline-flex;align-items:center;gap:6px;padding:2px 0}
-.more summary::-webkit-details-marker{display:none}
-.more summary::after{content:"";width:5px;height:5px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s}
-.more[open] summary::after{transform:rotate(-135deg) translate(-1px,-1px)}
-.more summary:hover{color:var(--muted)}
-.more p{margin-top:6px;animation:fadeIn .3s ease}
+.plot{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;min-height:calc(2em*1.65)}
 .verdict{display:grid;gap:4px;margin-top:4px}
 .aw{font-size:11px;letter-spacing:.24em;color:var(--gold)}
 .verdict q{font-size:14px;line-height:1.65;quotes:"“" "”";font-weight:300}
@@ -98,13 +105,13 @@ a.open{color:inherit;text-decoration:none;background-image:linear-gradient(var(-
 a.open:hover{background-size:100% 1px}
 
 /* age rating mark: soft rounded square, KMRB hues muted */
-.age{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 4px;border-radius:5px;font:600 10.5px/1 var(--f-sans);letter-spacing:-.01em;color:#f6efe3;vertical-align:1px}
-.age.ALL{background:#5d8f6c;font-size:9px}
+.age{display:inline-grid;place-items:center;min-width:17px;height:15px;padding:0 3px;border-radius:4px;font:600 9px/1 var(--f-sans);letter-spacing:-.02em;color:#f6efe3}
+.age.ALL{background:#5d8f6c;font-size:7.5px}
 .age.a12{background:#b39a52;color:#231c08}
 .age.a15{background:#b8794a}
 .age.a18{background:#a65556}
-.age.lg{min-width:30px;height:28px;border-radius:7px;font-size:13px}.age.lg.ALL{font-size:11px}
-.sub{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.age.lg{min-width:24px;height:21px;border-radius:5px;font-size:11px}.age.lg.ALL{font-size:9px}
+.sub{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .empty{margin:72px auto;max-width:420px;text-align:center;display:grid;gap:14px;justify-items:center;color:var(--muted)}
 .empty .big{font-family:var(--f-display);font-style:italic;font-size:30px;color:var(--gold)}
 .empty p{margin:0}
@@ -181,6 +188,7 @@ a.open:hover{background-size:100% 1px}
 .rf .count{justify-self:end;font-size:11.5px;color:var(--faint)}
 .rf-actions{display:flex;align-items:center;gap:18px;padding-top:4px}
 .rf-actions .btn-gold{padding:11px 26px;border-radius:999px;letter-spacing:.08em}
+.linkbox{width:100%;font:13px/1.4 var(--f-sans);color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:6px}
 .toast{position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;font-size:13.5px;background:var(--velvet-2);color:var(--ivory);border:1px solid var(--line-strong);padding:11px 20px;max-width:calc(100% - 32px)}
 
 /* film page */
@@ -322,8 +330,8 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
   <section id="view-hall" role="tabpanel" aria-labelledby="tab-hall" hidden>
     <div class="view-head"><h2>명예의 전당</h2><div class="line" id="hallStats"></div></div>
     <div id="hallTop"></div><div id="hallRoll"></div>
-    <div class="data-tools"><span>기록은 이 브라우저에만 저장됩니다.</span>
-      <button class="txt" type="button" id="exportBtn">백업 내보내기</button><button class="txt" type="button" id="importBtn">백업 불러오기</button>
+    <div class="data-tools"><span>기록은 이 브라우저에 저장됩니다. 휴대폰 등 다른 기기에서도 보려면 링크로 옮기세요.</span>
+      <button class="txt gold" type="button" id="syncBtn">다른 기기로 옮기기</button><button class="txt" type="button" id="exportBtn">백업 내보내기</button><button class="txt" type="button" id="importBtn">백업 불러오기</button>
       <input type="file" id="importFile" accept="application/json,.json" hidden></div>
   </section>
 
@@ -384,57 +392,22 @@ function paint(cv,f,W=480,H=720){
   for(let i=0;i<2200*W/480;i++){x.fillStyle=r()<.5?"rgba(255,255,255,.05)":"rgba(0,0,0,.08)";x.fillRect(r()*W,r()*H,1.5,1.5)}
 }
 
-/* ---------- TMDB: poster, Korean age rating, where to watch (JustWatch) ---------- */
-const TMDB_KEY="831c75aabec03e476b7e4b64be940d5e";
-const IMG="https://image.tmdb.org/t/p/",TC_KEY="mymoviestar.tmdb.v3",DAY=864e5;
-const TC=store.get(TC_KEY,{});
-const tq=[],tp={};let tActive=0;
-function pump(){while(tActive<4&&tq.length){tActive++;tq.shift()().finally(()=>{tActive--;pump()})}}
-async function api(path,params={}){
-  const u=new URL("https://api.themoviedb.org/3"+path),h={accept:"application/json"};
-  for(const [k,v] of Object.entries(params))if(v!=null&&v!=="")u.searchParams.set(k,v);
-  if(TMDB_KEY.length>40)h.Authorization="Bearer "+TMDB_KEY;else u.searchParams.set("api_key",TMDB_KEY);
-  const r=await fetch(u,{headers:h});if(!r.ok)throw new Error("tmdb "+r.status);return r.json();
-}
+/* ---------- TMDB data (poster, Korean age rating, streaming) is baked into films.json at build time ---------- */
+const IMG="https://image.tmdb.org/t/p/";
 const yr=s=>+(String(s||"").match(/\d{4}/)||[0])[0];
-function ageOf(m){
-  const kr=(m.release_dates?.results||[]).find(x=>x.iso_3166_1==="KR");
-  const c=(kr?.release_dates||[]).map(d=>String(d.certification||"").trim()).find(Boolean);
-  if(!c)return null;if(/^all|전체/i.test(c))return"ALL";if(/12/.test(c))return"12";if(/15/.test(c))return"15";if(/18|19|청/.test(c))return"18";return null;
-}
-async function resolve(f){
-  let id=f.tmdb,m=null;const extra={append_to_response:"release_dates,watch/providers,images",include_image_language:"ja,en,null",language:"en-US"};
-  if(id){m=await api(`/movie/${id}`,extra).catch(()=>null);if(m&&f.y&&Math.abs(yr(m.release_date)-yr(f.y))>1)m=null}
-  if(!m){const q=f.en||f.ko;let s=await api("/search/movie",{query:q,year:yr(f.y)||"",include_adult:"false"});
-    if(!s.results?.length&&f.y)s=await api("/search/movie",{query:q,include_adult:"false"});
-    const hit=(s.results||[]).find(x=>x.poster_path);if(hit)m=await api(`/movie/${hit.id}`,extra)}
-  if(!m)return{t:Date.now()};
-  const w=m["watch/providers"]?.results?.KR||{},pick=a=>(a||[]).map(p=>({id:p.provider_id,n:p.provider_name,l:p.logo_path}));
-  /* poster language: Japanese films keep their Japanese poster, everything else the English one */
-  const lang=m.original_language==="ja"?"ja":"en",best=(m.images?.posters||[]).filter(x=>x.iso_639_1===lang).sort((a,b)=>b.vote_average-a.vote_average||b.vote_count-a.vote_count)[0];
-  return{t:Date.now(),id:m.id,p:best?.file_path||m.poster_path,age:ageOf(m),w:{link:w.link||"",sub:pick(w.flatrate),rent:pick([...(w.rent||[]),...(w.buy||[])].filter((p,i,a)=>a.findIndex(q=>q.provider_id===p.provider_id)===i))}};
-}
-function tmdb(key){
-  const f=info(key),sig=[f.tmdb,f.en,f.y].join("|"),c=TC[key];
-  if(c&&c.s===sig&&Date.now()-c.t<(c.id?7:1)*DAY)return Promise.resolve(c);
-  if(!TMDB_KEY||!(f.en||f.ko))return Promise.resolve(c||{});
-  return tp[key]||(tp[key]=new Promise(res=>{tq.push(()=>resolve(f).then(d=>{d.s=sig;TC[key]=d;store.set(TC_KEY,TC);res(d)}).catch(()=>res(c||{})).finally(()=>delete tp[key]));pump()}));
-}
+const tmOf=k=>info(k).tm||{};
 const AGE={ALL:["ALL","전체 관람가"],12:["12","12세 이상 관람가"],15:["15","15세 이상 관람가"],18:["18","청소년 관람불가"]};
 const ageMark=(a,lg)=>AGE[a]?`<span class="age ${a==="ALL"?"ALL":"a"+a}${lg?" lg":""}" role="img" aria-label="${AGE[a][1]}" title="${AGE[a][1]}">${AGE[a][0]}</span>`:"";
-/* fill a poster box: real poster + age mark, once TMDB answers */
+/* fill a poster box: real poster + age mark */
 function decorate(box,key,size="w342",slot){
-  if(!box)return;const f=info(key);
-  const put=(d)=>{if(!box.isConnected)return;
-    if(slot)slot.innerHTML=ageMark(f.age||d.age);
-    if(!d.p)return;let img=box.querySelector("img.pimg");if(img&&img.dataset.p===d.p)return;
-    if(!img){img=document.createElement("img");img.className="pimg";img.alt="";img.decoding="async";img.loading="lazy";box.appendChild(img)}
-    img.dataset.p=d.p;img.onload=()=>box.classList.add("has-img");img.onerror=()=>{img.remove();box.classList.remove("has-img")};img.src=IMG+size+d.p};
-  tmdb(key).then(put);
+  if(!box)return;const f=info(key),d=tmOf(key);
+  if(slot)slot.innerHTML=ageMark(f.age||d.age);
+  if(!d.p)return;const img=document.createElement("img");img.className="pimg";img.alt="";img.decoding="async";img.loading="lazy";
+  img.onload=()=>box.classList.add("has-img");img.onerror=()=>img.remove();img.src=IMG+size+d.p;box.appendChild(img);
 }
 /* streaming services: search links for the services we know, otherwise the TMDB/JustWatch page */
-const PLAT=[[/netflix/i,q=>"https://www.netflix.com/search?q="+q],[/watcha/i,q=>"https://watcha.com/search?query="+q],[/wavve/i,q=>"https://www.wavve.com/search?searchWord="+q],
-  [/tving/i,q=>"https://www.tving.com/search?keyword="+q],[/apple/i,q=>"https://tv.apple.com/kr/search?term="+q],[/google/i,q=>"https://play.google.com/store/search?c=movies&q="+q]];
+const PLAT=[[/netflix/i,q=>"https://www.netflix.com/search?q="+q],[/watcha/i,q=>"https://watcha.com/search?query="+q],
+  [/apple tv/i,q=>"https://tv.apple.com/kr/search?term="+q],[/google play/i,q=>"https://play.google.com/store/search?c=movies&q="+q]];
 function platLink(p,f,w){const m=PLAT.find(([re])=>re.test(p.n));return m?m[1](encodeURIComponent(f.ko)):(w.link||"https://www.justwatch.com/kr")}
 
 /* ---------- nominees ---------- */
@@ -453,7 +426,7 @@ function sync(el,key,watch){
   el.querySelector(".state").textContent=seen?AWARDS[e.rating]:want&&!watch?"관람 예정":"";
   el.classList.toggle("is-seen",seen);
   el.querySelector(".slot").innerHTML=seen?`<div class="verdict">${stars(e.rating)}${e.review?`<q>${esc(clip(e.review,70))}</q>`:""}</div>`
-    :f.p?`<details class="more"><summary>소개</summary><p class="plot">${esc(f.p)}</p></details>`:"";
+    :f.p?`<p class="plot" title="${esc(f.p)}">${esc(f.p)}</p>`:"";
   el.querySelector(".acts").innerHTML=seen?`<button class="txt" type="button" data-edit="${key}">평점 수정</button>`
     :watch?`<button class="txt" type="button" data-toggle-want="${key}">빼기</button><span class="spacer"></span><button class="txt gold" type="button" data-review="${key}">평점</button>`
     :`<button class="txt" type="button" data-toggle-want="${key}" aria-pressed="${!!want}">${want?"보고 싶어요 ✓":'<span class="long">보고 </span>싶어요'}</button><span class="spacer"></span><button class="txt gold" type="button" data-review="${key}">평점</button>`;
@@ -499,7 +472,7 @@ function renderAll(){
 }
 
 /* ---------- film page ---------- */
-const sheet=$("sheet");let sheetKey=null,sheetT=null,curView="nominees",navs=0;
+const sheet=$("sheet");let sheetKey=null,sheetT=null,curView="nominees";
 addEventListener("scroll",()=>{if(sheetKey)sheet.classList.toggle("scrolled",scrollY>40)},{passive:true});
 function renderSheet(k){
   sheet.className="sheet fx-"+(info(k).ef||"classic")+(sheet.classList.contains("scrolled")?" scrolled":"");
@@ -510,7 +483,7 @@ function renderSheet(k){
     <div class="sbody">
       <aside class="side"><div class="sposter" aria-hidden="true"><canvas></canvas></div>
         ${f.aw?`<div class="honor"><h4>수상</h4>${esc(f.aw)}</div>`:""}
-        <div class="where" id="where"><h4>볼 수 있는 곳</h4><div class="note">불러오는 중…</div></div></aside>
+        <div class="where" id="where"></div></aside>
       <main><dl class="factsheet">${fx("감독",esc(f.dir))+fx("개봉",esc(f.y))+fx("러닝타임",f.rt?f.rt+"분":"")+fx("장르",esc(f.g))+fx("제작 국가",esc(f.n))+`<div id="ageCell" hidden><dt>관람등급</dt><dd></dd></div>`+fx("출연",esc(f.cast),1)}</dl>
         ${f.s?`<section class="sec"><h3>Synopsis</h3><p>${esc(f.s)}</p></section>`:""}
         ${f.w?`<section class="sec"><h3>Why it's nominated</h3><p>${esc(f.w)}</p></section>`:""}
@@ -520,14 +493,14 @@ function renderSheet(k){
           :`<p style="color:var(--faint)">아직 평점을 남기지 않았어요.</p><div class="acts">${listed?`<button class="txt" type="button" data-toggle-want="${k}" aria-pressed="${!!want}">${want?"보고 싶어요 ✓":"보고 싶어요"}</button>`:""}<button class="txt gold" type="button" data-review="${k}">평점 남기기</button></div>`}</div></section>
       </main></div>`;
   paint(sheet.querySelector(".banner canvas"),f,1600,640);paint(sheet.querySelector(".sposter canvas"),f);decorate(sheet.querySelector(".sposter"),k,"w500");
-  tmdb(k).then(d=>{if(sheetKey!==k)return;
+  {const d=tmOf(k);
     const a=f.age||d.age,cell=$("ageCell");if(a&&cell){cell.hidden=false;cell.querySelector("dd").innerHTML=ageMark(a,1)+AGE[a][1]}
-    const w=d.w,box=$("where");if(!box)return;
+    const w=d.w,box=$("where");
     const noAds=a=>(a||[]).filter(p=>!/with ads|ads|광고/i.test(p.n));
     const row=(t,list)=>(list=noAds(list)).length?`<div><div class="kind">${t}</div><div class="plats">${list.map(p=>`<a class="plat" href="${esc(platLink(p,f,w))}" target="_blank" rel="noopener">${p.l?`<img src="${IMG}w92${p.l}" alt="" width="24" height="24" loading="lazy">`:""}${esc(p.n)}</a>`).join("")}</div></div>`:"";
     box.innerHTML=`<h4>볼 수 있는 곳</h4>`+(w&&(noAds(w.sub).length||noAds(w.rent).length)?row("구독",w.sub)+row("대여 · 구매",w.rent.slice(0,6))+`<div class="note">국내 기준 · 정보 제공 JustWatch${w.link?` · <a href="${esc(w.link)}" target="_blank" rel="noopener">전체 보기</a>`:""}</div>`
-      :`<div class="note">${TMDB_KEY&&d.t?"국내 스트리밍 정보가 없습니다.":"스트리밍 정보를 불러오지 못했습니다."}</div>`);
-  });
+      :`<div class="note">${d.id?"국내 스트리밍 정보가 없습니다.":"스트리밍 정보가 아직 없습니다."}</div>`);
+  }
 }
 /* per-film English title fonts, loaded only when a film page needs one */
 const EF={elegant:"Cormorant+Garamond:ital,wght@1,500;1,600",noir:"Playfair+Display:ital,wght@1,700",epic:"Cinzel:wght@600",typewriter:"Special+Elite",mono:"Courier+Prime:wght@400;700",
@@ -535,23 +508,14 @@ const EF={elegant:"Cormorant+Garamond:ital,wght@1,500;1,600",noir:"Playfair+Disp
 const ACC={...EF,classic:"",gothic:"IM+Fell+English+SC",script:EF.elegant,neon:EF.bold};
 const efLoaded=new Set();
 function loadFont(spec){if(!spec||efLoaded.has(spec))return;efLoaded.add(spec);const l=document.createElement("link");l.rel="stylesheet";l.href=`https://fonts.googleapis.com/css2?family=${spec}&display=swap`;document.head.appendChild(l)}
-/* page tint: the poster's main colour, darkened so text stays calm and readable */
-function tone([r,g,b],maxS=.42,L=.115){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;
+/* page colour: the 배경색 column of the spreadsheet, used as is */
+function tone([r,g,b]){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn,L=.115;
   let h=0,s=d?d/(1-Math.abs(2*l-1)):0;if(d)h=mx===r?((g-b)/d+6)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h*=60;
-  s=Math.min(s,maxS)*.75;const C=(1-Math.abs(2*L-1))*s,X=C*(1-Math.abs(h/60%2-1)),m=L-C/2;
+  s=Math.min(s,.42)*.75;const C=(1-Math.abs(2*L-1))*s,X=C*(1-Math.abs(h/60%2-1)),m=L-C/2;
   const [R,G,B]=h<60?[C,X,0]:h<120?[X,C,0]:h<180?[0,C,X]:h<240?[0,X,C]:h<300?[X,0,C]:[C,0,X];
   return [R,G,B].map(v=>Math.round((v+m)*255))}
-function hex(h){const n=parseInt(h.slice(1),16);return[n>>16,n>>8&255,n&255]}
-function tint(k){
-  const f=info(k),set=c=>{if(sheetKey===k)document.documentElement.style.setProperty("--bg",tone(c).join(","))};
-  if(f.bg){if(sheetKey===k)document.documentElement.style.setProperty("--bg",tone(hex(f.bg),.8,.16).join(","));return}
-  set(hex(look(f).pal[1]));
-  tmdb(k).then(d=>{if(!d.p||sheetKey!==k)return;const im=new Image();im.crossOrigin="anonymous";
-    im.onload=()=>{try{const c=document.createElement("canvas");c.width=12;c.height=18;const x=c.getContext("2d",{willReadFrequently:true});x.drawImage(im,0,0,12,18);
-      const px=x.getImageData(0,0,12,18).data;let R=0,G=0,B=0,W=0;
-      for(let i=0;i<px.length;i+=4){const r=px[i],g=px[i+1],b=px[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),w=(mx-mn)/255*.9+.1*(mx>24&&mx<235);R+=r*w;G+=g*w;B+=b*w;W+=w}
-      if(W)set([R/W,G/W,B/W])}catch(e){}};im.src=IMG+"w92"+d.p});
-}
+const hex=h=>{const n=parseInt(h.slice(1),16);return[n>>16,n>>8&255,n&255]};
+function tint(k){const f=info(k);document.documentElement.style.setProperty("--bg",(f.bg?hex(f.bg):tone(hex(look(f).pal[1]))).join(","))}
 let homeY=0;
 function openSheet(k){
   const f=info(k),was=sheetKey;sheetKey=k;clearTimeout(sheetT);sheet.classList.remove("leaving");
@@ -566,7 +530,8 @@ function closeSheet(){
     const back=document.querySelector(`a.open[href="#film/${CSS.escape(encodeURIComponent(k))}"]`);if(back?.offsetParent)back.focus({preventScroll:true})};
   if(matchMedia("(prefers-reduced-motion: reduce)").matches)done();else{sheet.classList.add("leaving");sheetT=setTimeout(done,380)}
 }
-const leaveSheet=()=>navs>0?history.back():(history.replaceState(null,"","#"+curView),route());
+/* "back to the ceremony" always lands on the home view, however many films were opened in between */
+const leaveSheet=()=>{history.replaceState(null,"","#"+curView);route()};
 
 /* ---------- tabs & routing ---------- */
 const VIEWS=["nominees","watch","hall"];
@@ -577,13 +542,14 @@ function show(v,push){
 }
 function route(){
   const h=decodeURIComponent(location.hash.slice(1));
+  if(h.startsWith("sync=")){history.replaceState(null,"","#hall");show("hall");receiveSync(h.slice(5));return}
   if(h.startsWith("film/")){const k=h.slice(5);if(BY_KEY[k]||entry(k)){openSheet(k);return}}
   closeSheet();show(h);
 }
 document.querySelector(".tabs").addEventListener("click",e=>{const t=e.target.closest(".tab");if(t)show(t.dataset.view,true)});
 document.querySelector(".tabs").addEventListener("keydown",e=>{if(!/Arrow(Left|Right)/.test(e.key))return;
   const nx=VIEWS[(VIEWS.indexOf(curView)+(e.key==="ArrowRight"?1:2))%3];show(nx,true);$("tab-"+nx).focus()});
-addEventListener("hashchange",()=>{navs++;route()});
+addEventListener("hashchange",route);
 
 /* ---------- modal stage ---------- */
 const stage=$("stage"),panel=$("panel");let lastFocus=null;
@@ -672,8 +638,37 @@ $("importFile").onchange=async ev=>{const file=ev.target.files[0];ev.target.valu
     for(const [k,v] of Object.entries(items||{}))if(v?.key===k&&/^(want|seen)$/.test(v.status)){DB.items[k]=v;n++}
     save();renderAll();toast(`${n}편의 기록을 불러왔습니다`)}catch(e){toast("불러올 수 없는 파일입니다")}};
 
+/* ---------- move records to another device: everything packed into one link ---------- */
+const b64u=bytes=>{let s="";for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")};
+const unb64u=t=>Uint8Array.from(atob(t.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));
+const pipe=(bytes,stream)=>new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer().then(b=>new Uint8Array(b));
+async function packSync(){const raw=new TextEncoder().encode(JSON.stringify({v:1,items:DB.items}));
+  return window.CompressionStream?"1"+b64u(await pipe(raw,new CompressionStream("deflate-raw"))):"0"+b64u(raw)}
+async function unpackSync(t){const bytes=unb64u(t.slice(1));return JSON.parse(new TextDecoder().decode(t[0]==="1"?await pipe(bytes,new DecompressionStream("deflate-raw")):bytes)).items||{}}
+$("syncBtn").onclick=async()=>{
+  const n=entries().length;if(!n){toast("옮길 기록이 아직 없어요");return}
+  const url=location.href.split("#")[0]+"#sync="+await packSync();
+  const seen=entries().filter(e=>e.status==="seen").length;
+  openPanel(`<h3 id="dlgTitle">다른 기기로 옮기기</h3>
+    <p>이 링크를 휴대폰이나 다른 컴퓨터에서 열면 지금 기록(평점 ${seen}편 · 보고 싶어요 ${n-seen}편)이 그 기기에 합쳐집니다. 카카오톡 '나와의 채팅' 등으로 보내 두면 편해요.</p>
+    <input class="linkbox" id="syncLink" readonly value="${esc(url)}" aria-label="옮기기 링크">
+    <div class="pactions">${navigator.share?`<button class="btn-gold" type="button" id="syncShare">공유</button>`:""}<button class="${navigator.share?"txt gold":"btn-gold"}" type="button" id="syncCopy">링크 복사</button><button class="txt" type="button" data-close>닫기</button></div>`);
+  $("syncLink").onfocus=e=>e.target.select();
+  $("syncCopy").onclick=async()=>{try{await navigator.clipboard.writeText(url);toast("링크를 복사했어요")}catch(e){$("syncLink").select();toast("링크를 길게 눌러 복사해 주세요")}};
+  if($("syncShare"))$("syncShare").onclick=()=>navigator.share({title:"My Movie Star 기록",url}).catch(()=>{});
+};
+async function receiveSync(t){
+  let items;try{items=await unpackSync(t)}catch(e){toast("링크가 손상되어 기록을 불러올 수 없어요");return}
+  const list=Object.entries(items).filter(([k,v])=>v?.key===k&&/^(want|seen)$/.test(v.status));
+  if(!list.length){toast("링크에 옮길 기록이 없어요");return}
+  openPanel(`<h3 id="dlgTitle">기록 합치기</h3><p>다른 기기에서 보낸 기록 ${list.length}편을 이 기기에 합칠까요? 같은 영화는 더 최근에 고친 쪽이 남습니다.</p>
+    <div class="pactions"><button class="btn-gold" type="button" id="syncMerge">합치기</button><button class="txt" type="button" data-close>취소</button></div>`);
+  $("syncMerge").onclick=()=>{let n=0;for(const [k,v] of list){const cur=DB.items[k];if(!cur||(v.updated||0)>=(cur.updated||0)){DB.items[k]=v;n++}}
+    save();closePanel();renderAll();show("hall",true);toast(`${n}편의 기록을 합쳤어요`)};
+}
+
 /* ---------- boot ---------- */
-fetch("data/films.json").then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{
+fetch(`data/films.json?v=${Math.floor(Date.now()/6e4)}`).then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{
   FILMS=d.films.map((f,i)=>({...f,i}));BY_KEY=Object.fromEntries(FILMS.map(f=>[f.key,f]));RETIRED=d.retired||{};
   $("nomCount").textContent=`${FILMS.length}편`;
   const g=$("nomGrid");FILMS.forEach(f=>g.appendChild(card(f.key)));
