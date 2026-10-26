@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<title>넷플릭스 명작 시상식</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..700&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: a gala programme — spotlit masthead, category "부문" sections, nominee cards with generated poster panels, and an envelope reveal */
+:root{
+  --velvet:#150a0e;      /* stage floor */
+  --velvet-2:#22101a;    /* raised surface */
+  --curtain:#5a1222;     /* drape red */
+  --gold:#d8b46a;        /* statuette gold */
+  --gold-soft:#9c8150;   /* engraved gold */
+  --ivory:#f3ead8;       /* programme paper text */
+  --muted:#b9a99a;       /* secondary text */
+  --line:rgba(216,180,106,.28);
+  --f-display:"Bodoni Moda","Didot","Times New Roman",serif;
+  --f-body:"Gowun Batang","Noto Serif KR","AppleMyungjo",serif;
+  --f-ui:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--velvet);color:var(--ivory);font-family:var(--f-body);
+  font-size:16px;line-height:1.7;min-height:100%;
+  background-image:
+    radial-gradient(ellipse 60% 520px at 50% -80px, rgba(255,226,170,.20), transparent 70%),
+    linear-gradient(90deg, var(--curtain) 0, rgba(90,18,34,.0) 64px, transparent calc(100% - 64px), var(--curtain) 100%);
+  background-attachment:scroll;
+}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:56px 80px}
+
+/* masthead */
+.mast{text-align:center;display:grid;justify-items:center;gap:14px;padding-bottom:40px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--f-ui);font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold)}
+.mast h1{margin:0;font-family:var(--f-display);font-weight:500;font-size:clamp(40px,8vw,88px);line-height:1;letter-spacing:-.01em;text-wrap:balance}
+.mast h1 em{font-style:italic;color:var(--gold)}
+.mast h1 .ko{display:block;font-family:var(--f-body);font-weight:700;font-size:clamp(22px,3.6vw,34px);letter-spacing:.06em;margin-top:14px;color:var(--ivory)}
+.mast p{margin:0;max-width:58ch;color:var(--muted);font-size:15px}
+.meta{display:flex;gap:10px 28px;flex-wrap:wrap;justify-content:center;font-family:var(--f-ui);font-size:13px;color:var(--gold-soft);letter-spacing:.08em}
+.meta b{color:var(--ivory);font-weight:500;font-family:var(--f-display);font-size:18px;margin-right:6px;font-variant-numeric:tabular-nums}
+.envelope-btn{margin-top:10px;font-family:var(--f-ui);font-size:15px;font-weight:600;letter-spacing:.06em;color:var(--velvet);background:linear-gradient(180deg,#ecd08f,var(--gold) 55%,#b48f4b);border:0;border-radius:2px;padding:14px 26px;cursor:pointer;box-shadow:0 8px 30px rgba(216,180,106,.25)}
+.envelope-btn:hover{filter:brightness(1.08)}
+.envelope-btn:focus-visible,.chip:focus-visible,.card:focus-visible,.close:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+/* filter */
+.filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:32px 0 8px}
+.chip{font-family:var(--f-ui);font-size:13px;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+.chip[aria-pressed="true"]{color:var(--velvet);background:var(--gold);border-color:var(--gold)}
+
+/* categories */
+.cat{margin-top:56px}
+.cat-head{display:grid;grid-template-columns:auto 1fr;gap:4px 18px;align-items:baseline;margin-bottom:24px}
+.cat-no{grid-row:span 2;font-family:var(--f-display);font-style:italic;font-size:44px;line-height:1;color:var(--gold)}
+.cat-head h2{margin:0;font-family:var(--f-body);font-size:24px;font-weight:700;text-wrap:balance}
+.cat-head p{margin:0;font-family:var(--f-ui);font-size:13px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px}
+
+.card{position:relative;display:grid;grid-template-rows:auto 1fr;background:var(--velvet-2);border:1px solid var(--line);min-width:0;transition:transform .25s ease,border-color .25s ease}
+.card:hover{transform:translateY(-4px);border-color:var(--gold-soft)}
+.poster{position:relative;aspect-ratio:3/4;max-width:100%;overflow:hidden;background:#000}
+.poster canvas{display:block;width:100%;height:100%}
+.poster .num{position:absolute;top:12px;left:14px;font-family:var(--f-display);font-size:13px;letter-spacing:.2em;color:rgba(255,255,255,.85);text-shadow:0 1px 4px rgba(0,0,0,.6)}
+.poster .stamp{position:absolute;top:12px;right:12px;font-family:var(--f-ui);font-size:10px;letter-spacing:.28em;color:var(--gold);border:1px solid var(--gold);padding:3px 8px;background:rgba(10,4,6,.55)}
+.poster .ptitle{position:absolute;left:14px;right:14px;bottom:14px;font-family:var(--f-display);font-style:italic;font-size:22px;line-height:1.15;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.7);text-wrap:balance}
+.poster.licensed .stamp{color:#ffd9a8;border-color:#ffd9a8}
+
+.body{padding:18px 18px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.body h3{margin:0;font-size:20px;line-height:1.35;font-weight:700;text-wrap:balance}
+.sub{font-family:var(--f-ui);font-size:12px;color:var(--gold-soft);letter-spacing:.04em}
+.laurel{display:flex;align-items:center;gap:8px;font-family:var(--f-ui);font-size:12.5px;color:var(--gold);line-height:1.45}
+.laurel svg{flex:none;width:26px;height:26px}
+.plot{margin:0;font-size:14.5px;color:var(--ivory)}
+.why{margin:0;font-size:14px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+.why b{font-family:var(--f-ui);font-size:11px;letter-spacing:.2em;color:var(--gold);display:block;margin-bottom:2px;font-weight:500}
+
+.foot{margin-top:72px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--f-ui);font-size:12.5px;color:var(--muted);text-align:center;display:grid;gap:6px}
+
+/* envelope reveal */
+.stage{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(8,3,5,.88);padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow-y:auto}
+.winner{position:relative;width:min(560px,100%);background:var(--velvet-2);border:1px solid var(--gold);padding:28px 24px;display:grid;gap:14px;text-align:center;box-shadow:0 0 120px rgba(216,180,106,.18)}
+.winner .eyebrow{letter-spacing:.24em}
+.winner .wposter{width:min(220px,60%);margin:0 auto;aspect-ratio:3/4;max-width:100%;overflow:hidden;border:1px solid var(--line)}
+.winner .wposter canvas{width:100%;height:100%;display:block}
+.winner h3{margin:0;font-size:28px;line-height:1.3}
+.winner .en{font-family:var(--f-display);font-style:italic;color:var(--gold);font-size:18px}
+.winner p{margin:0;font-size:14.5px;color:var(--muted);text-align:left}
+.wactions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.close{font-family:var(--f-ui);font-size:14px;background:transparent;color:var(--ivory);border:1px solid var(--line);padding:10px 18px;cursor:pointer}
+.reveal{animation:rise .7s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{opacity:.0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.reveal{animation:none}.card{transition:none}}
+@media (max-width:520px){body{background-image:radial-gradient(ellipse 90% 420px at 50% -60px, rgba(255,226,170,.18), transparent 70%)}.wrap{padding-block:36px 56px}.cat-no{font-size:34px}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="eyebrow">Netflix · Foreign Masterpieces · 2026</div>
+    <h1>The <em>Nominees</em><span class="ko">넷플릭스 해외 명작 20선</span></h1>
+    <p>지금 한국 넷플릭스에서 볼 수 있는 해외 명작 스무 편을 네 개 부문으로 나눴습니다. 봉투를 열면 오늘 밤 볼 영화를 하나 골라 드려요.</p>
+    <div class="meta"><span><b>20</b>편</span><span><b>4</b>개 부문</span><span><b>13</b>개국</span></div>
+    <button class="envelope-btn" id="openEnv" type="button">✉ 봉투 열기</button>
+  </header>
+
+  <div class="filters" role="group" aria-label="부문 필터" id="filters"></div>
+  <main id="cats"></main>
+
+  <footer class="foot">
+    <span>포스터 패널은 각 영화의 분위기를 바탕으로 새로 그린 그래픽이며, 실제 포스터나 스틸이 아닙니다.</span>
+    <span>LICENSED 표시 작품은 라이선스 작품이라 서비스가 종료될 수 있어요. 앱에서 한 번 검색해 확인해 주세요.</span>
+  </footer>
+</div>
+
+<div class="stage" id="stage" hidden role="dialog" aria-modal="true" aria-labelledby="wTitle">
+  <div class="winner reveal" id="winner"></div>
+</div>
+
+<script>
+const CATS=[
+  {id:"drama",no:"I",name:"작품상 부문",desc:"아카데미가 인정한 드라마"},
+  {id:"world",no:"II",name:"국제영화 부문",desc:"유럽·아프리카·남미에서 온 걸작"},
+  {id:"auteur",no:"III",name:"거장 부문",desc:"거장 감독의 장르 영화"},
+  {id:"anim",no:"IV",name:"애니메이션 부문",desc:"어른을 위한 애니메이션 명작"}
+];
+const FILMS=[
+ {c:"drama",ko:"로마",en:"Roma",y:2018,n:"멕시코",aw:"베니스 황금사자상 · 아카데미 감독·촬영·외국어영화상",
+  p:"1970년대 멕시코시티, 중산층 가정의 가사도우미 클레오의 1년을 흑백으로 따라갑니다.",
+  w:"알폰소 쿠아론의 자전적 작품입니다. 넷플릭스 영화가 '진짜 영화'로 인정받는 계기가 됐어요.",pal:["#e9e6df","#8d8a84","#1b1b1b"],m:"waves"},
+ {c:"drama",ko:"서부 전선 이상 없다",en:"All Quiet on the Western Front",y:2022,n:"독일",aw:"아카데미 4관왕 · 국제장편영화상",
+  p:"1차 세계대전에 자원입대한 17살 소년 파울이 참호전의 참상을 겪습니다.",
+  w:"전쟁을 영웅담이 아닌 소모전으로 그린 반전 영화입니다. 압도적이고 고통스러워요.",pal:["#6f6a55","#3b3a2c","#a8352a"],m:"bands"},
+ {c:"drama",ko:"아이리시맨",en:"The Irishman",y:2019,n:"미국",aw:"아카데미 10개 부문 후보",
+  p:"트럭 운전사 프랭크 시런이 마피아 청부업자가 되어 지미 호파의 실종에 얽힙니다.",
+  w:"스코세이지, 드 니로, 파치노, 페시가 함께한 갱스터 장르의 회고록 같은 작품이에요.",pal:["#2b3a4a","#c9a46a","#0e1218"],m:"rings"},
+ {c:"drama",ko:"결혼 이야기",en:"Marriage Story",y:2019,n:"미국",aw:"아카데미 여우조연상 (로라 던)",
+  p:"연극 연출가 찰리와 배우 니콜이 이혼을 밟으며 사랑이 법정 다툼으로 변해 갑니다.",
+  w:"누구 편도 들지 않는 시선이 오히려 더 아프게 다가와요. 두 배우의 연기가 최고 수준입니다.",pal:["#e7c9a9","#c0583c","#24324a"],m:"split"},
+ {c:"drama",ko:"파워 오브 도그",en:"The Power of the Dog",y:2021,n:"뉴질랜드·호주",aw:"아카데미 감독상 (제인 캠피온)",
+  p:"1920년대 몬태나 목장, 냉소적인 필이 동생의 새 아내와 그 아들을 괴롭히기 시작합니다.",
+  w:"느리게 조여 오는 긴장감과, 끝까지 봐야 의미가 뒤집히는 결말이 인상적이에요.",pal:["#c9a26b","#7b5b3a","#2c241c"],m:"peaks"},
+ {c:"drama",ko:"두 교황",en:"The Two Popes",y:2019,n:"영국·아르헨티나",aw:"아카데미 3개 부문 후보",
+  p:"교황 베네딕토 16세와 훗날 프란치스코 교황이 되는 베르골리오 추기경의 대화.",
+  w:"홉킨스와 프라이스의 연기 대결이 볼거리입니다. 보수와 개혁의 대립을 유머까지 섞어 풀어내요.",pal:["#f1ede4","#b5262f","#d7b86a"],m:"arch"},
+ {c:"drama",ko:"맹크",en:"Mank",y:2020,n:"미국",aw:"아카데미 촬영상 · 미술상",
+  p:"각본가 허먼 맨키위츠가 〈시민 케인〉 각본을 쓰는 과정을 흑백으로 담았습니다.",
+  w:"할리우드 황금기와 정치의 이면을 다룹니다. 영화사를 좋아한다면 특히 추천해요.",pal:["#dcdcdc","#6e6e6e","#121212"],m:"rays"},
+ {c:"drama",ko:"트라이얼 오브 시카고 7",en:"The Trial of the Chicago 7",y:2020,n:"미국",aw:"아카데미 6개 부문 후보",
+  p:"1968년 반전 시위 주동자 7명이 기소된 실제 재판을 다룹니다.",
+  w:"아론 소킨의 속사포 대사와 법정 드라마의 쾌감. '정치 재판'의 실제 사례로 보기에도 좋아요.",pal:["#2d3b55","#c8b48a","#8a2f2f"],m:"grid"},
+ {c:"world",ko:"눈의 사회",en:"Society of the Snow",y:2023,n:"스페인",aw:"고야상 12관왕 · 아카데미 국제장편 후보",
+  p:"1972년 럭비팀을 태운 비행기가 안데스 설산에 추락하고, 생존자들이 72일을 버팁니다.",
+  w:"실화 바탕입니다. 극한 상황에서 인간다움을 지키는 문제를 정면으로 다뤄요.",pal:["#eef2f5","#9fb3c4","#2f3e4c"],m:"peaks"},
+ {c:"world",ko:"신의 손",en:"The Hand of God",y:2021,n:"이탈리아",aw:"베니스 심사위원대상",
+  p:"1980년대 나폴리, 마라도나에 열광하던 소년 파비에토의 삶이 비극적 사건으로 바뀝니다.",
+  w:"파올로 소렌티노의 자전적 이야기. 웃기면서도 먹먹한 성장 영화예요.",pal:["#3c8fc0","#f2d27a","#123049"],m:"sun"},
+ {c:"world",ko:"아틀란틱스",en:"Atlantics",y:2019,n:"세네갈·프랑스",aw:"칸 영화제 심사위원대상(그랑프리)",
+  p:"다카르의 노동자들이 바다로 떠난 뒤, 남겨진 여인들에게 기이한 일이 벌어집니다.",
+  w:"마티 디옵은 칸 경쟁 부문에 진출한 최초의 흑인 여성 감독이에요. 이민과 유령 이야기의 결합.",pal:["#1f6f78","#e3a14d","#0a1d24"],m:"waves"},
+ {c:"world",ko:"비스트 오브 노 네이션",en:"Beasts of No Nation",y:2015,n:"미국·가나",aw:"미국 배우조합상 남우조연상 (이드리스 엘바)",
+  p:"내전 중 가족을 잃은 소년 아구가 반군 사령관 밑에서 소년병이 됩니다.",
+  w:"넷플릭스의 첫 장편 오리지널. 보기 힘들 만큼 강렬합니다.",pal:["#c8551f","#3d5a2a","#1a120c"],m:"sun"},
+ {c:"auteur",ko:"카우보이의 노래",en:"The Ballad of Buster Scruggs",y:2018,n:"미국",aw:"베니스 각본상",
+  p:"서부 개척 시대를 배경으로 한 여섯 편의 단편 옴니버스.",
+  w:"코엔 형제 작품. 노래하는 총잡이 코미디로 시작해 죽음에 관한 우화로 깊어져요.",pal:["#d9b07a","#8a4b2a","#2e2018"],m:"bands"},
+ {c:"auteur",ko:"프랑켄슈타인",en:"Frankenstein",y:2025,n:"미국·멕시코",aw:"기예르모 델 토로의 숙원 프로젝트",
+  p:"메리 셸리의 고전을 기예르모 델 토로가 새로 해석했습니다.",
+  w:"괴물과 창조자 모두에게 자기 이야기를 들려준 뒤, 누가 진짜 괴물인지 관객이 판단하게 합니다.",pal:["#2f4a3e","#9b2a2a","#0b0f0d"],m:"rays"},
+ {c:"auteur",ko:"트레인 드림스",en:"Train Dreams",y:2025,n:"미국",aw:"로튼토마토 95% · 선댄스 화제작",
+  p:"20세기 초 미국 북서부, 벌목꾼 로버트 그레이니어의 상실로 가득한 생애.",
+  w:"데니스 존슨 원작의 조용하고 시적인 영화. 여운이 길게 남아요.",pal:["#7b8f6a","#c9b48a","#1d2419"],m:"trees"},
+ {c:"anim",ko:"기예르모 델 토로의 피노키오",en:"Guillermo del Toro's Pinocchio",y:2022,n:"미국·멕시코",aw:"아카데미 장편 애니메이션상",
+  p:"파시즘이 득세하던 1930년대 이탈리아에서 피노키오 이야기를 다시 씁니다.",
+  w:"스톱모션의 손맛. 동화가 아니라 삶과 죽음에 관한 어른의 이야기예요.",pal:["#b9783f","#4a2f1f","#e8c98f"],m:"rings"},
+ {c:"anim",ko:"클라우스",en:"Klaus",y:2019,n:"스페인",aw:"영국 아카데미 애니메이션상 · 아카데미 후보",
+  p:"게으른 우체부가 북쪽 섬마을에서 은둔한 목수를 만나 '산타 전설'을 만들어 갑니다.",
+  w:"2D 손그림에 입체 조명을 입힌 화면이 매우 아름다워요. 가볍게 보기 좋습니다.",pal:["#1e3a5f","#e9a23b","#f4efe6"],m:"dots"},
+ {c:"anim",ko:"내 몸이 사라졌다",en:"I Lost My Body",y:2019,n:"프랑스",aw:"칸 비평가주간 대상 · 아카데미 후보",
+  p:"잘린 손 하나가 연구실을 탈출해 자신의 몸을 찾아 파리를 가로지릅니다.",
+  w:"설정은 기괴하지만 상실과 운명에 관한 시 같은 영화예요.",pal:["#4b5d6b","#d6a85a","#151b20"],m:"grid"},
+ {c:"anim",ko:"센과 치히로의 행방불명",en:"Spirited Away",y:2001,n:"일본",aw:"베를린 황금곰상 · 아카데미 장편 애니메이션상",lic:1,
+  p:"이사 가던 소녀 치히로가 신들의 온천 세계에 갇혀 부모를 구하려 일합니다.",
+  w:"애니메이션 역사상 최고작으로 꼽히는 작품이에요.",pal:["#c4473a","#e9c97a","#1b2a3a"],m:"arch"},
+ {c:"anim",ko:"모노노케 히메",en:"Princess Mononoke",y:1997,n:"일본",aw:"개봉 당시 일본 흥행 1위",lic:1,
+  p:"저주받은 청년 아시타카가 숲의 신들과 인간 마을 사이의 전쟁에 휘말립니다.",
+  w:"선악 구도 없이 자연과 문명의 충돌을 그린, 지브리에서 가장 묵직한 작품이에요.",pal:["#2f5d3a","#a8c36a","#0f1d12"],m:"trees"}
+];
+FILMS.forEach((f,i)=>f.i=i);
+
+/* seeded random so each poster is stable */
+function rng(seed){let s=seed*9301+49297;return()=>((s=(s*9301+49297)%233280)/233280)}
+
+function paint(cv,f){
+  const W=cv.width=480,H=cv.height=640,x=cv.getContext("2d"),r=rng(f.i+7),[a,b,c]=f.pal;
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,b);g.addColorStop(1,c);
+  x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle=a;x.strokeStyle=a;
+  const m=f.m;
+  if(m==="sun"){x.globalAlpha=.9;x.beginPath();x.arc(W*.5,H*.42,W*.28,0,7);x.fill();
+    x.globalAlpha=1;x.fillStyle=c;for(let k=0;k<6;k++){x.fillRect(0,H*.42+k*22,W,8+k*2)}}
+  else if(m==="waves"){x.lineWidth=3;for(let k=0;k<16;k++){x.globalAlpha=.25+k*.04;x.beginPath();
+    for(let t=0;t<=W;t+=8){x.lineTo(t,H*.35+k*20+Math.sin(t/40+k*.6)*10)}x.stroke()}}
+  else if(m==="bands"){for(let k=0;k<9;k++){x.globalAlpha=.15+r()*.5;x.fillRect(0,k*H/9+r()*20,W,H/18+r()*20)}}
+  else if(m==="rings"){x.lineWidth=2;for(let k=1;k<14;k++){x.globalAlpha=1-k*.06;x.beginPath();x.arc(W*.5,H*.45,k*18,0,7);x.stroke()}}
+  else if(m==="split"){x.globalAlpha=.85;x.fillRect(0,0,W*.5,H);x.fillStyle=b;x.globalAlpha=.9;x.beginPath();x.arc(W*.5,H*.42,70,0,7);x.fill()}
+  else if(m==="peaks"){for(let k=0;k<4;k++){x.globalAlpha=.25+k*.2;x.beginPath();x.moveTo(-20,H);
+    for(let t=-20;t<=W+40;t+=60){x.lineTo(t,H*.45+k*55-r()*90)}x.lineTo(W+20,H);x.fill()}}
+  else if(m==="arch"){x.globalAlpha=.9;x.beginPath();x.moveTo(W*.22,H*.85);x.lineTo(W*.22,H*.42);x.arc(W*.5,H*.42,W*.28,Math.PI,0);x.lineTo(W*.78,H*.85);x.fill();
+    x.fillStyle=c;x.globalAlpha=.8;x.fillRect(W*.47,H*.55,W*.06,H*.3)}
+  else if(m==="rays"){x.lineWidth=2;for(let k=0;k<40;k++){const t=-Math.PI*.95+k*Math.PI*.9/40;x.globalAlpha=.2+r()*.5;
+    x.beginPath();x.moveTo(W*.5,H*.12);x.lineTo(W*.5+Math.cos(t+Math.PI/2)*H,H*.12+Math.sin(t+Math.PI/2)*H);x.stroke()}}
+  else if(m==="grid"){for(let i=0;i<8;i++)for(let j=0;j<11;j++){x.globalAlpha=r()<.18?.95:.12;x.fillRect(30+i*56,40+j*52,40,36)}}
+  else if(m==="dots"){for(let k=0;k<130;k++){x.globalAlpha=.3+r()*.7;x.beginPath();x.arc(r()*W,r()*H*.8,1+r()*4,0,7);x.fill()}
+    x.globalAlpha=.9;x.fillStyle=c;x.beginPath();x.moveTo(0,H);x.quadraticCurveTo(W*.5,H*.6,W,H);x.fill()}
+  else if(m==="trees"){for(let k=0;k<26;k++){const tx=r()*W,th=H*(.3+r()*.5),tw=10+r()*26;x.globalAlpha=.25+r()*.6;
+    x.beginPath();x.moveTo(tx,H-th);x.lineTo(tx-tw,H);x.lineTo(tx+tw,H);x.fill()}}
+  /* vignette + grain */
+  x.globalAlpha=1;const v=x.createRadialGradient(W/2,H/2,H*.2,W/2,H/2,H*.75);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.55)");
+  x.fillStyle=v;x.fillRect(0,0,W,H);
+  for(let k=0;k<2200;k++){x.fillStyle=r()<.5?"rgba(255,255,255,.05)":"rgba(0,0,0,.08)";x.fillRect(r()*W,r()*H,1.5,1.5)}
+}
+
+const LAUREL='<svg viewBox="0 0 26 26" aria-hidden="true" fill="currentColor">'+
+  [0,1,2,3,4].map(k=>{const y=20-k*3.4;return`<ellipse cx="${6+k*.3}" cy="${y}" rx="1.4" ry="3" transform="rotate(${-35+k*12} ${6+k*.3} ${y})"/><ellipse cx="${20-k*.3}" cy="${y}" rx="1.4" ry="3" transform="rotate(${35-k*12} ${20-k*.3} ${y})"/>`}).join("")+
+  '<circle cx="13" cy="13" r="2.2"/></svg>';
+
+function esc(s){return String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]))}
+
+function card(f){
+  const el=document.createElement("article");el.className="card";el.dataset.cat=f.c;
+  el.innerHTML=`<div class="poster${f.lic?" licensed":""}"><canvas aria-hidden="true"></canvas>
+    <span class="num">No.${String(f.i+1).padStart(2,"0")}</span><span class="stamp">${f.lic?"LICENSED":"NOMINEE"}</span>
+    <span class="ptitle">${esc(f.en)}</span></div>
+    <div class="body"><h3>${esc(f.ko)}</h3><div class="sub">${f.y} · ${esc(f.n)}</div>
+    <div class="laurel">${LAUREL}<span>${esc(f.aw)}</span></div>
+    <p class="plot">${esc(f.p)}</p><p class="why"><b>추천 이유</b>${esc(f.w)}</p></div>`;
+  paint(el.querySelector("canvas"),f);return el;
+}
+
+const catsEl=document.getElementById("cats");
+CATS.forEach(c=>{
+  const s=document.createElement("section");s.className="cat";s.dataset.cat=c.id;
+  const list=FILMS.filter(f=>f.c===c.id);
+  s.innerHTML=`<div class="cat-head"><span class="cat-no">${c.no}</span><h2>${c.name}</h2><p>${c.desc} · ${list.length}편</p></div><div class="grid"></div>`;
+  const g=s.querySelector(".grid");list.forEach(f=>g.appendChild(card(f)));catsEl.appendChild(s);
+});
+
+/* filters */
+const fl=document.getElementById("filters");
+[{id:"all",name:"전체"}].concat(CATS).forEach((c,i)=>{
+  const b=document.createElement("button");b.type="button";b.className="chip";b.id="chip-"+c.id;b.textContent=c.name;
+  b.setAttribute("aria-pressed",i===0?"true":"false");
+  b.onclick=()=>{fl.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");
+    document.querySelectorAll(".cat").forEach(s=>s.hidden=!(c.id==="all"||s.dataset.cat===c.id))};
+  fl.appendChild(b);
+});
+
+/* envelope */
+const stage=document.getElementById("stage"),win=document.getElementById("winner"),openBtn=document.getElementById("openEnv");
+let last=-1;
+function reveal(){
+  let k;do{k=Math.floor(Math.random()*FILMS.length)}while(k===last);last=k;const f=FILMS[k];
+  win.classList.remove("reveal");void win.offsetWidth;win.classList.add("reveal");
+  win.innerHTML=`<div class="eyebrow">오늘 밤의 수상작은…</div><div class="wposter"><canvas aria-hidden="true"></canvas></div>
+    <h3 id="wTitle">${esc(f.ko)}</h3><div class="en">${esc(f.en)} (${f.y})</div>
+    <div class="laurel" style="justify-content:center">${LAUREL}<span>${esc(f.aw)}</span></div>
+    <p>${esc(f.p)} ${esc(f.w)}</p>
+    <div class="wactions"><button class="envelope-btn" type="button" id="again">다른 봉투 열기</button><button class="close" type="button" id="closeEnv">닫기</button></div>`;
+  paint(win.querySelector("canvas"),f);
+  document.getElementById("again").onclick=reveal;
+  document.getElementById("closeEnv").onclick=close;
+  stage.hidden=false;document.getElementById("again").focus();
+}
+function close(){stage.hidden=true;openBtn.focus()}
+openBtn.onclick=reveal;
+stage.addEventListener("click",e=>{if(e.target===stage)close()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!stage.hidden)close()});
+</script>
+</body>
+</html>
