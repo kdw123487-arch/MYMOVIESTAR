@@ -123,7 +123,8 @@ def pick(cl):
         if C >= 0.04 and C1 >= 0.04:                       # both colourful: prefer a different hue, not a shade
             dh = abs((H - H1 + 180) % 360 - 180)
             hue = 0.45 + 0.55 * min(1.0, dh / 60)
-        return math.sqrt(share) * (0.12 + 6 * C) * min(1.0, d / 0.18) * hue
+        dark = 0.35 if L < 0.3 else 1.0                    # an accent has to shine on a dark page
+        return math.sqrt(share) * (0.12 + 6 * C) * min(1.0, d / 0.18) * hue * dark
     rest = [x for x in cl if x[1] != first]
     second = max(rest, key=lambda x: score2(*x))[1] if rest else first
     return first, second
@@ -149,7 +150,10 @@ def point(second, bg):
     L, C, H = to_oklch(second)
     if C >= 0.035:
         C = min(max(C, 0.12), 0.19)
-    for Lp in [x / 1000 for x in range(max(600, round(L * 1000)), 951, 5)]:
+        start = max(600, round(L * 1000))
+    else:
+        start = max(800, round(L * 1000))           # grey accents read best as a crisp light grey
+    for Lp in [x / 1000 for x in range(start, 951, 5)]:
         ac = from_oklch(Lp, C, H)
         if contrast(ac, bg) >= 4.8:
             return ac
