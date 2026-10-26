@@ -194,7 +194,8 @@ a.open:hover{background-size:100% 1px}
 /* film page */
 :root{--bg:20,10,13}
 html.film,html.film body{background:rgb(var(--bg));transition:background-color .8s ease}
-.sheet{position:relative;min-height:100vh;background:rgb(var(--bg));transition:background-color .8s ease;animation:fadeIn .45s ease}
+/* each film brings its own point colour (포인트색 column); lines and dim labels are mixed from it */
+.sheet{--gold:rgb(var(--ac,212,176,106));--gold-soft:color-mix(in srgb,var(--gold) 70%,rgb(var(--bg)));--line:color-mix(in srgb,var(--gold) 22%,transparent);--line-strong:color-mix(in srgb,var(--gold) 50%,transparent);position:relative;min-height:100vh;background:rgb(var(--bg));transition:background-color .8s ease;animation:fadeIn .45s ease}
 .sheet.leaving{animation:fadeOut .38s ease forwards;pointer-events:none}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes fadeOut{from{opacity:1}to{opacity:0;transform:scale(.985)}}
@@ -515,7 +516,8 @@ function tone([r,g,b]){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min
   const [R,G,B]=h<60?[C,X,0]:h<120?[X,C,0]:h<180?[0,C,X]:h<240?[0,X,C]:h<300?[X,0,C]:[C,0,X];
   return [R,G,B].map(v=>Math.round((v+m)*255))}
 const hex=h=>{const n=parseInt(h.slice(1),16);return[n>>16,n>>8&255,n&255]};
-function tint(k){const f=info(k);document.documentElement.style.setProperty("--bg",(f.bg?hex(f.bg):tone(hex(look(f).pal[1]))).join(","))}
+function tint(k){const f=info(k),st=document.documentElement.style;st.setProperty("--bg",(f.bg?hex(f.bg):tone(hex(look(f).pal[1]))).join(","));
+  if(f.ac)st.setProperty("--ac",hex(f.ac).join(","));else st.removeProperty("--ac")}
 let homeY=0;
 function openSheet(k){
   const f=info(k),was=sheetKey;sheetKey=k;clearTimeout(sheetT);sheet.classList.remove("leaving");
@@ -526,7 +528,7 @@ function openSheet(k){
 function closeSheet(){
   if(sheet.hidden||!sheetKey)return;const k=sheetKey;sheetKey=null;
   const done=()=>{if(sheetKey)return;sheet.hidden=true;sheet.classList.remove("leaving");sheet.replaceChildren();
-    const root=document.documentElement;root.classList.remove("film");root.style.removeProperty("--bg");$("home").hidden=false;scrollTo(0,homeY);
+    const root=document.documentElement;root.classList.remove("film");root.style.removeProperty("--bg");root.style.removeProperty("--ac");$("home").hidden=false;scrollTo(0,homeY);
     const back=document.querySelector(`a.open[href="#film/${CSS.escape(encodeURIComponent(k))}"]`);if(back?.offsetParent)back.focus({preventScroll:true})};
   if(matchMedia("(prefers-reduced-motion: reduce)").matches)done();else{sheet.classList.add("leaving");sheetT=setTimeout(done,380)}
 }
