@@ -177,6 +177,18 @@ fieldset.fld{border:0;margin:0;padding:0}
 .toast{position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;font-family:var(--f-ui);font-size:13.5px;letter-spacing:.02em;background:var(--velvet-2);color:var(--ivory);border:1px solid var(--line-strong);padding:11px 20px;max-width:calc(100% - 32px)}
 
 
+/* TMDB posters: real image fades in over the painted fallback */
+.poster,.th,.wposter,.sheet-poster{position:relative}
+img.pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease;z-index:1}
+.has-img img.pimg{opacity:1}
+.has-img .ptitle{display:none}
+.poster .num,.poster .state{z-index:2}
+.poster.has-img::before{content:"";position:absolute;inset:0 0 auto;height:30%;background:linear-gradient(rgba(10,4,6,.6),transparent);z-index:2;pointer-events:none}
+.sheet-poster{aspect-ratio:2/3;overflow:hidden;background:#000;outline:1px solid var(--line);outline-offset:-1px;border-bottom:0!important;padding:0!important}
+.sheet-poster canvas{display:block;width:100%;height:100%}
+.tmdb{font-size:11px;color:var(--faint)}
+.tmdb a{color:var(--muted)}
+
 /* film detail window */
 a.poster{display:block;color:inherit;text-decoration:none}
 a.open{color:inherit;text-decoration:none;background-image:linear-gradient(var(--gold),var(--gold));background-size:0 1px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .3s ease}
@@ -207,7 +219,8 @@ a.txt{text-decoration:none}
 .mybox{display:grid;gap:12px}
 .mybox blockquote{margin:0;font-size:17px;line-height:1.85;white-space:pre-wrap}
 .mybox .acts{border-top:0;padding-top:4px;margin-top:0}
-.credits{margin:0;display:grid;gap:18px;align-content:start;position:sticky;top:72px}
+.side{display:grid;gap:28px;align-content:start;position:sticky;top:72px;align-self:start}
+.credits{margin:0;display:grid;gap:18px;align-content:start}
 .credits div{display:grid;gap:3px;padding-bottom:16px;border-bottom:1px solid var(--line)}
 .credits dt{font-family:var(--f-ui);font-size:11px;letter-spacing:.3em;color:var(--gold-soft)}
 .credits dd{margin:0;font-size:15px;line-height:1.6}
@@ -216,8 +229,10 @@ a.txt{text-decoration:none}
   .banner{aspect-ratio:4/3;max-height:none}
   .banner::after{background:linear-gradient(180deg,rgba(20,10,13,.4) 0,rgba(20,10,13,.2) 22%,rgba(20,10,13,.75) 58%,var(--velvet) 100%)}
   .sheet-body{grid-template-columns:1fr;gap:8px;padding-top:24px}
-  .credits{position:static;grid-template-columns:1fr 1fr;gap:14px 18px;margin-bottom:36px}
+  .side{position:static;margin-bottom:36px;gap:24px}
+  .credits{grid-template-columns:1fr 1fr;gap:14px 18px}
   .credits div.wide{grid-column:1/-1}
+  .side .sheet-poster{width:min(220px,60%);justify-self:center}
   .sec p{font-size:16px}
 }
 @media (prefers-reduced-motion:reduce){.sheet{animation:none}.reveal{animation:none}.poster canvas{transition:none}}
@@ -286,7 +301,8 @@ a.txt{text-decoration:none}
   </section>
 
   <footer class="foot">
-    <span>포스터는 작품의 분위기를 바탕으로 새로 그린 그래픽입니다.</span>
+    <span>포스터 이미지는 <a href="https://www.themoviedb.org/" target="_blank" rel="noopener" style="color:var(--muted)">TMDB</a>에서 제공받습니다. 포스터가 없는 작품은 분위기를 바탕으로 새로 그린 그래픽으로 표시합니다.</span>
+    <span class="tmdb">This product uses the TMDB API but is not endorsed or certified by TMDB.</span>
     <span>후보작은 한국 넷플릭스 기준이며, 라이선스 작품은 서비스가 종료될 수 있습니다.</span>
   </footer>
 </div>
@@ -482,6 +498,48 @@ function paint(cv,f,W0,H0){
 }
 
 
+/* ---------- TMDB posters ---------- */
+/* Paste your TMDB key below: either the v3 "API Key" or the v4 "API Read Access Token". */
+const TMDB_KEY="831c75aabec03e476b7e4b64be940d5e";
+const TMDB_IMG="https://image.tmdb.org/t/p/";
+const TMDB_CACHE="mymoviestar.tmdb.v1";
+let TC={};try{TC=JSON.parse(localStorage.getItem(TMDB_CACHE)||"{}")||{}}catch(e){}
+function tcSave(){try{localStorage.setItem(TMDB_CACHE,JSON.stringify(TC))}catch(e){}}
+function tmdbSig(key){const f=BY_KEY[key],e=entry(key),d=f||e||{};
+  return{q:String(d.en||d.ko||"").trim(),y:(String(d.y||"").match(/\d{4}/)||[""])[0]}}
+const tQueue=[],tPending={};let tActive=0;
+function tPump(){while(tActive<4&&tQueue.length){tActive++;tQueue.shift()().finally(()=>{tActive--;tPump()})}}
+async function tSearch(q,y){
+  const u=new URL("https://api.themoviedb.org/3/search/movie");
+  u.searchParams.set("query",q);u.searchParams.set("include_adult","false");u.searchParams.set("language","ko-KR");
+  if(y)u.searchParams.set("year",y);
+  const bearer=TMDB_KEY.length>40,headers={accept:"application/json"};
+  if(bearer)headers.Authorization="Bearer "+TMDB_KEY;else u.searchParams.set("api_key",TMDB_KEY);
+  const r=await fetch(u,{headers});if(!r.ok)throw new Error("tmdb "+r.status);
+  const j=await r.json();const hit=(j.results||[]).find(m=>m.poster_path);return hit?{p:hit.poster_path,id:hit.id}:null;
+}
+function posterFor(key){
+  const sig=tmdbSig(key),sg=sig.q+"|"+sig.y,c=TC[key];
+  if(!sig.q)return Promise.resolve(null);
+  if(c&&c.s===sg&&(c.p||Date.now()-c.t<7*864e5))return Promise.resolve(c.p||null);
+  if(!TMDB_KEY)return Promise.resolve(null);
+  if(tPending[key])return tPending[key];
+  return tPending[key]=new Promise(res=>{tQueue.push(async()=>{
+    try{let hit=await tSearch(sig.q,sig.y);if(!hit&&sig.y)hit=await tSearch(sig.q,"");
+      TC[key]={s:sg,p:hit?hit.p:null,id:hit?hit.id:null,t:Date.now()};tcSave();res(hit?hit.p:null)}
+    catch(err){res(null)}finally{delete tPending[key]}});tPump()});
+}
+function attachPoster(box,key,size){
+  if(!box)return;
+  posterFor(key).then(p=>{
+    if(!p||!box.isConnected)return;
+    let img=box.querySelector("img.pimg");if(img&&img.dataset.p===p)return;
+    if(!img){img=document.createElement("img");img.className="pimg";img.alt="";img.decoding="async";img.loading="lazy";box.appendChild(img)}
+    img.dataset.p=p;img.onload=()=>box.classList.add("has-img");img.onerror=()=>{img.remove();box.classList.remove("has-img")};
+    img.src=TMDB_IMG+(size||"w342")+p;
+  });
+}
+
 /* ---------- helpers ---------- */
 function esc(s){return String(s??"").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]))}
 const AWARDS={5:"대상",4:"최우수작품상",3:"우수작품상",2:"특별언급",1:"황금 라즈베리"};
@@ -503,7 +561,7 @@ function nomineeCard(f){
     <div class="body"><h3><a class="open" href="${filmHref(f.key)}">${esc(f.ko)}</a></h3><div class="sub">${subLine(f)}</div>
     <div class="award">${esc(f.aw)}</div>
     <div class="slot"></div><div class="acts"></div></div>`;
-  paint(el.querySelector("canvas"),f);cardEls[f.key]=el;syncNominee(f);return el;
+  paint(el.querySelector("canvas"),f);attachPoster(el.querySelector(".poster"),f.key);cardEls[f.key]=el;syncNominee(f);return el;
 }
 function syncNominee(f){
   const el=cardEls[f.key];if(!el)return;const e=entry(f.key),seen=e&&e.status==="seen",want=e&&e.status==="want";
@@ -542,7 +600,7 @@ function watchCard(e){
       ${f?`<div class="award">${esc(f.aw)}</div>`:""}
       ${(f?f.p:e.review)?`<p class="plot">${esc(clip(f?f.p:e.review,110))}</p>`:""}
       <div class="acts"><button class="txt" type="button" data-remove="${e.key}" aria-label="${esc(d.ko)} 빼기">빼기</button><span class="spacer"></span><button class="txt gold" type="button" data-review="${e.key}">심사하기</button></div></div>`;
-  paint(el.querySelector("canvas"),look(e));return el;
+  paint(el.querySelector("canvas"),look(e));attachPoster(el.querySelector(".poster"),e.key);return el;
 }
 function emptyHTML(big,msg,btn){return`<div class="empty"><div class="big">${big}</div><p>${msg}</p>${btn||""}</div>`}
 function renderWatch(){
@@ -570,7 +628,7 @@ function renderHall(){
       <div>${starsHTML(champ.rating)}</div>
       ${champ.review?`<blockquote>${esc(champ.review)}</blockquote>`:""}
       <div><button class="txt" type="button" data-edit="${champ.key}">심사평 수정</button></div></div></article>`;
-  paint(top.querySelector("canvas"),look(champ));
+  paint(top.querySelector("canvas"),look(champ));attachPoster(top.querySelector(".poster"),champ.key,"w500");
   if(seen.length<2)return;
   roll.innerHTML=`<div class="roll-title">WINNERS</div><ol class="roll"></ol>`;
   const ol=roll.querySelector("ol");
@@ -581,7 +639,7 @@ function renderHall(){
         <div class="meta-line"><span class="verdict"><span class="aw">${esc(AWARDS[e.rating])}</span></span>${starsHTML(e.rating)}${e.date?`<span class="sub">${fmtDate(e.date)}</span>`:""}</div>
         ${e.review?`<q>${esc(e.review)}</q>`:""}</div>
       <div class="ra"><button class="txt" type="button" data-edit="${e.key}">수정</button><button class="txt" type="button" data-remove="${e.key}" aria-label="${esc(d.ko)} 기록 삭제">삭제</button></div>`;
-    paint(li.querySelector("canvas"),look(e));ol.appendChild(li);
+    paint(li.querySelector("canvas"),look(e));attachPoster(li.querySelector(".th"),e.key,"w154");ol.appendChild(li);
   });
 }
 function renderCounts(){
@@ -619,12 +677,14 @@ function renderSheet(k){
       ${f.pt?`<section class="sec"><h3>WHAT TO WATCH FOR</h3><ol class="points">${f.pt.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>`:""}`:""}
       <section class="sec"><h3>MY BALLOT</h3>${mine}</section>
     </main>
+    <aside class="side"><div class="sheet-poster" aria-hidden="true"><canvas></canvas></div>
     <dl class="credits">
       ${f?cr("감독",esc(f.dir))+cr("러닝타임",f.rt?`${f.rt}분`:"")+cr("출연",esc(f.cast),1)+cr("장르",esc(f.g))+cr("제작 국가",esc(f.n))+cr("수상",esc(f.aw),1)+cr("시청",f.lic?"넷플릭스 · 라이선스 작품이라 서비스가 종료될 수 있어요":"넷플릭스 오리지널",1)
          :cr("연도",esc(d.y))+cr("국가",esc(d.n))}
-      <div class="ext wide"><a class="txt gold" href="${watchaURL(d)}" target="_blank" rel="noopener">왓챠피디아에서 포스터·평점 보기 ↗</a></div>
-    </dl></div>`;
+      <div class="ext wide"><a class="txt gold" href="${watchaURL(d)}" target="_blank" rel="noopener">왓챠피디아에서 평점·리뷰 보기 ↗</a></div>
+    </dl></aside></div>`;
   paint(sheet.querySelector(".banner canvas"),f||look(e),1600,640);
+  paint(sheet.querySelector(".sheet-poster canvas"),f||look(e));attachPoster(sheet.querySelector(".sheet-poster"),k,"w500");
 }
 function openSheet(k){
   const was=sheetKey;sheetKey=k;renderSheet(k);
@@ -695,7 +755,7 @@ function envelope(){
       <a class="txt gold" href="${filmHref(k)}" data-close-link>자세히 보기</a>
       ${isWant?"":`<button class="txt" type="button" data-toggle-want="${k}" data-from-env>관람 예정에 담기</button>`}
       <button class="txt" type="button" data-close>닫기</button></div>`,true);
-  paint(panel.querySelector("canvas"),f||look(e));
+  paint(panel.querySelector("canvas"),f||look(e));attachPoster(panel.querySelector(".wposter"),k);
   document.getElementById("again").onclick=envelope;document.getElementById("again").focus();
 }
 
