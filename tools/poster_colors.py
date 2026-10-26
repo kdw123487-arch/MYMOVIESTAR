@@ -255,7 +255,7 @@ def main():
     c_r1, c_r2 = column(ws, "포스터1색"), column(ws, "포스터2색")
     c_bg, c_ac = column(ws, "배경색"), column(ws, "포인트색")
 
-    c_poster, c_hint = column(ws, "포스터"), column(ws, "선호색")
+    c_poster, c_hint, c_lock = column(ws, "포스터"), column(ws, "선호색"), column(ws, "색고정")
     rows, done, skipped, swapped = [], 0, [], []
     for r in range(2, ws.max_row + 1):
         en = ws.cell(r, c_en).value
@@ -265,6 +265,9 @@ def main():
         if not p:
             skipped.append(en)
             continue
+        if str(ws.cell(r, c_lock).value or "").strip().upper() in ("O", "Y", "1", "예"):
+            print(f"{en:40s} 색고정 — 직접 정한 색을 유지합니다")
+            continue                                    # colours set by hand stay as they are
         hint = str(ws.cell(r, c_hint).value or "").strip()
         hue = HUES.get(hint)
         try:
