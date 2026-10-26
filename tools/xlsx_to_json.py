@@ -18,9 +18,10 @@ COLUMNS = {
     "키": "key", "제목": "ko", "원제": "en", "연도": "y", "국가": "n", "장르": "g",
     "러닝타임": "rt", "감독": "dir", "출연": "cast", "수상": "aw", "한줄소개": "p",
     "줄거리": "s", "추천이유": "w", "관람포인트1": "pt1", "관람포인트2": "pt2", "관람포인트3": "pt3",
-    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m",
+    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef",
 }
 MOTIFS = {"sun", "waves", "bands", "rings", "split", "peaks", "arch", "rays", "grid", "dots", "trees"}
+FONTS = {"classic", "elegant", "noir", "epic", "typewriter", "mono", "bold", "scifi", "gothic", "western", "retro", "script", "hand", "comic", "light", "neon"}
 AGES = {"전체": "ALL", "ALL": "ALL", "12": "12", "15": "15", "18": "18", "19": "18", "청불": "18", "청소년관람불가": "18"}
 
 
@@ -77,6 +78,10 @@ def film(row, n):
         if f["m"] not in MOTIFS:
             sys.exit(f"{n}행: 문양은 {', '.join(sorted(MOTIFS))} 중 하나여야 합니다.")
         out["m"] = f["m"]
+    if f.get("ef"):
+        if f["ef"] not in FONTS:
+            sys.exit(f"{n}행: 영문폰트는 {', '.join(sorted(FONTS))} 중 하나여야 합니다.")
+        out["ef"] = f["ef"]
     return out
 
 
