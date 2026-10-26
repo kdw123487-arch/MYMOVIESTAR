@@ -18,7 +18,7 @@ COLUMNS = {
     "키": "key", "제목": "ko", "원제": "en", "연도": "y", "국가": "n", "장르": "g",
     "러닝타임": "rt", "감독": "dir", "출연": "cast", "수상": "aw", "한줄소개": "p",
     "줄거리": "s", "추천이유": "w", "관람포인트1": "pt1", "관람포인트2": "pt2", "관람포인트3": "pt3",
-    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef",
+    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef", "배경색": "bg",
 }
 MOTIFS = {"sun", "waves", "bands", "rings", "split", "peaks", "arch", "rays", "grid", "dots", "trees"}
 FONTS = {"classic", "elegant", "noir", "epic", "typewriter", "mono", "bold", "scifi", "gothic", "western", "retro", "script", "hand", "comic", "light", "neon"}
@@ -82,6 +82,10 @@ def film(row, n):
         if f["ef"] not in FONTS:
             sys.exit(f"{n}행: 영문폰트는 {', '.join(sorted(FONTS))} 중 하나여야 합니다.")
         out["ef"] = f["ef"]
+    if f.get("bg"):
+        if not re.fullmatch(r"#[0-9a-fA-F]{6}", f["bg"]):
+            sys.exit(f"{n}행: 배경색은 #aabbcc 형식이어야 합니다.")
+        out["bg"] = f["bg"]
     return out
 
 

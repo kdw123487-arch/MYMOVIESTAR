@@ -19,7 +19,7 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{scrollbar-gutter:stable}
+html{scrollbar-gutter:stable;scrollbar-color:rgba(212,176,106,.28) rgb(var(--bg))}
 body{margin:0;background:var(--velvet);color:var(--ivory);font-family:var(--f-sans);font-size:16px;line-height:1.7;
   background-image:radial-gradient(ellipse 50% 460px at 50% -60px,rgba(255,226,170,.14),transparent 70%);
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -184,7 +184,9 @@ a.open:hover{background-size:100% 1px}
 .toast{position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;font-size:13.5px;background:var(--velvet-2);color:var(--ivory);border:1px solid var(--line-strong);padding:11px 20px;max-width:calc(100% - 32px)}
 
 /* film page */
-.sheet{--bg:20,10,13;position:fixed;inset:0;z-index:40;background:rgb(var(--bg));transition:background-color .8s ease;overflow-y:auto;overscroll-behavior:contain;animation:fadeIn .45s ease}
+:root{--bg:20,10,13}
+html.film,html.film body{background:rgb(var(--bg));transition:background-color .8s ease}
+.sheet{position:relative;min-height:100vh;background:rgb(var(--bg));transition:background-color .8s ease;animation:fadeIn .45s ease}
 .sheet.leaving{animation:fadeOut .38s ease forwards;pointer-events:none}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes fadeOut{from{opacity:1}to{opacity:0;transform:scale(.985)}}
@@ -226,11 +228,27 @@ a.open:hover{background-size:100% 1px}
 .factsheet .full dd{font-weight:400;font-size:17px}
 .sec{padding-bottom:36px;margin-bottom:36px;border-bottom:1px solid var(--line)}
 .sec:last-child{border-bottom:0}
-.sec h3{margin:0 0 14px;font-size:11px;font-weight:500;letter-spacing:.38em;color:var(--gold-soft)}
+.sec h3{margin:0 0 16px;font-family:var(--acc,var(--f-sans));font-size:var(--acc-size,12px);font-weight:var(--acc-w,500);font-style:var(--acc-st,normal);letter-spacing:var(--acc-ls,.34em);text-transform:var(--acc-tt,uppercase);line-height:1.2;color:var(--gold)}
+/* accent type per film: same mood as the English title, chosen to stay legible at heading size */
+.fx-classic{--acc:"Bodoni Moda",serif;--acc-size:21px;--acc-st:italic;--acc-w:500;--acc-ls:.01em;--acc-tt:none}
+.fx-elegant,.fx-script{--acc:"Cormorant Garamond",serif;--acc-size:24px;--acc-st:italic;--acc-w:600;--acc-ls:.01em;--acc-tt:none}
+.fx-noir{--acc:"Playfair Display",serif;--acc-size:21px;--acc-st:italic;--acc-w:700;--acc-ls:.01em;--acc-tt:none}
+.fx-epic{--acc:"Cinzel",serif;--acc-size:17px;--acc-w:600;--acc-ls:.14em}
+.fx-gothic{--acc:"IM Fell English SC",serif;--acc-size:21px;--acc-w:400;--acc-ls:.06em;--acc-tt:none}
+.fx-typewriter{--acc:"Special Elite",monospace;--acc-size:17px;--acc-w:400;--acc-ls:.08em}
+.fx-mono{--acc:"Courier Prime",monospace;--acc-size:16px;--acc-w:700;--acc-ls:.1em}
+.fx-bold,.fx-neon{--acc:"Bebas Neue",sans-serif;--acc-size:25px;--acc-w:400;--acc-ls:.12em}
+.fx-scifi{--acc:"Orbitron",sans-serif;--acc-size:14px;--acc-w:500;--acc-ls:.22em}
+.fx-western{--acc:"Rye",serif;--acc-size:18px;--acc-w:400;--acc-ls:.06em}
+.fx-retro{--acc:"Abril Fatface",serif;--acc-size:21px;--acc-w:400;--acc-ls:.03em;--acc-tt:none}
+.fx-hand{--acc:"Caveat",cursive;--acc-size:28px;--acc-w:700;--acc-ls:.01em;--acc-tt:none}
+.fx-comic{--acc:"Bangers",sans-serif;--acc-size:24px;--acc-w:400;--acc-ls:.08em}
+.fx-light{--acc:"Josefin Sans",sans-serif;--acc-size:15px;--acc-w:400;--acc-ls:.28em}
 .sec p{margin:0;font-size:16.5px;line-height:1.9;max-width:62ch;font-weight:300}
 .points{list-style:none;margin:0;padding:0;counter-reset:pt;display:grid;gap:14px}
 .points li{counter-increment:pt;display:grid;grid-template-columns:36px 1fr;font-weight:300}
-.points li::before{content:counter(pt,upper-roman);font-family:var(--f-display);font-style:italic;color:var(--gold)}
+.points li::before{content:counter(pt,upper-roman);font-family:var(--acc,var(--f-display));font-style:var(--acc-st,italic);font-weight:var(--acc-w,400);font-size:calc(var(--acc-size,17px)*.8);line-height:1.7;color:var(--gold)}
+.points li{font-size:16.5px;line-height:1.75}
 .mybox{display:grid;gap:12px}
 .mybox blockquote{margin:0;font-size:16.5px;line-height:1.85;white-space:pre-wrap;font-weight:300}
 .mybox .acts{border-top:0;padding-top:4px;margin-top:0}
@@ -271,11 +289,11 @@ a.open:hover{background-size:100% 1px}
   .roll .rk{font-size:22px}.roll .th{width:48px}.roll .ra{grid-column:3}
   .panel{padding:28px 20px 24px}
 }
-@media (prefers-reduced-motion:reduce){.sheet,.sheet.leaving,.panel{animation:none}img.pimg{transition:none}}
+@media (prefers-reduced-motion:reduce){.sheet,.sheet.leaving,.panel{animation:none}html.film,html.film body,.sheet{transition:none}img.pimg{transition:none}}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap" id="home">
   <header class="mast">
     <h1>My Movie <em>Star</em></h1>
     <button class="btn-gold" id="openEnv" type="button">봉투 열기</button>
@@ -316,7 +334,7 @@ a.open:hover{background-size:100% 1px}
   </footer>
 </div>
 
-<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sTitle"></div>
+<div class="sheet" id="sheet" hidden role="region" aria-labelledby="sTitle"></div>
 <div class="stage" id="stage" hidden role="dialog" aria-modal="true" aria-labelledby="dlgTitle"><div class="panel" id="panel"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
@@ -482,8 +500,9 @@ function renderAll(){
 
 /* ---------- film page ---------- */
 const sheet=$("sheet");let sheetKey=null,sheetT=null,curView="nominees",navs=0;
-sheet.addEventListener("scroll",()=>sheet.classList.toggle("scrolled",sheet.scrollTop>40),{passive:true});
+addEventListener("scroll",()=>{if(sheetKey)sheet.classList.toggle("scrolled",scrollY>40)},{passive:true});
 function renderSheet(k){
+  sheet.className="sheet fx-"+(info(k).ef||"classic")+(sheet.classList.contains("scrolled")?" scrolled":"");
   const f=info(k),e=entry(k),seen=e?.status==="seen",want=e?.status==="want",listed=!!BY_KEY[k];
   const fx=(t,v,full)=>v?`<div${full?' class="full"':""}><dt>${t}</dt><dd>${v}</dd></div>`:"";
   sheet.innerHTML=`<div class="sheet-bar"><button class="txt" type="button" data-leave>← 시상식으로</button></div>
@@ -493,10 +512,10 @@ function renderSheet(k){
         ${f.aw?`<div class="honor"><h4>수상</h4>${esc(f.aw)}</div>`:""}
         <div class="where" id="where"><h4>볼 수 있는 곳</h4><div class="note">불러오는 중…</div></div></aside>
       <main><dl class="factsheet">${fx("감독",esc(f.dir))+fx("개봉",esc(f.y))+fx("러닝타임",f.rt?f.rt+"분":"")+fx("장르",esc(f.g))+fx("제작 국가",esc(f.n))+`<div id="ageCell" hidden><dt>관람등급</dt><dd></dd></div>`+fx("출연",esc(f.cast),1)}</dl>
-        ${f.s?`<section class="sec"><h3>SYNOPSIS</h3><p>${esc(f.s)}</p></section>`:""}
-        ${f.w?`<section class="sec"><h3>WHY IT'S NOMINATED</h3><p>${esc(f.w)}</p></section>`:""}
-        ${f.pt?`<section class="sec"><h3>WHAT TO WATCH FOR</h3><ol class="points">${f.pt.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>`:""}
-        <section class="sec"><h3>MY RATING</h3><div class="mybox">${seen
+        ${f.s?`<section class="sec"><h3>Synopsis</h3><p>${esc(f.s)}</p></section>`:""}
+        ${f.w?`<section class="sec"><h3>Why it's nominated</h3><p>${esc(f.w)}</p></section>`:""}
+        ${f.pt?`<section class="sec"><h3>What to watch for</h3><ol class="points">${f.pt.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>`:""}
+        <section class="sec"><h3>My rating</h3><div class="mybox">${seen
           ?`<div><span class="aw">${AWARDS[e.rating]}</span> ${stars(e.rating)}</div>${e.review?`<blockquote>${esc(e.review)}</blockquote>`:""}<div class="acts"><button class="txt gold" type="button" data-edit="${k}">평점 수정</button></div>`
           :`<p style="color:var(--faint)">아직 평점을 남기지 않았어요.</p><div class="acts">${listed?`<button class="txt" type="button" data-toggle-want="${k}" aria-pressed="${!!want}">${want?"보고 싶어요 ✓":"보고 싶어요"}</button>`:""}<button class="txt gold" type="button" data-review="${k}">평점 남기기</button></div>`}</div></section>
       </main></div>`;
@@ -511,19 +530,21 @@ function renderSheet(k){
   });
 }
 /* per-film English title fonts, loaded only when a film page needs one */
-const EF={elegant:"Cormorant+Garamond:ital,wght@1,500",noir:"Playfair+Display:ital,wght@1,700",epic:"Cinzel:wght@600",typewriter:"Special+Elite",mono:"Courier+Prime",
-  bold:"Bebas+Neue",scifi:"Orbitron:wght@500",gothic:"UnifrakturMaguntia",western:"Rye",retro:"Abril+Fatface",script:"Great+Vibes",hand:"Caveat:wght@600",comic:"Bangers",light:"Josefin+Sans:wght@300",neon:"Monoton"};
+const EF={elegant:"Cormorant+Garamond:ital,wght@1,500;1,600",noir:"Playfair+Display:ital,wght@1,700",epic:"Cinzel:wght@600",typewriter:"Special+Elite",mono:"Courier+Prime:wght@400;700",
+  bold:"Bebas+Neue",scifi:"Orbitron:wght@500",gothic:"UnifrakturMaguntia",western:"Rye",retro:"Abril+Fatface",script:"Great+Vibes",hand:"Caveat:wght@600;700",comic:"Bangers",light:"Josefin+Sans:wght@300;400",neon:"Monoton"};
+const ACC={...EF,classic:"",gothic:"IM+Fell+English+SC",script:EF.elegant,neon:EF.bold};
 const efLoaded=new Set();
-function loadFont(ef){if(!EF[ef]||efLoaded.has(ef))return;efLoaded.add(ef);const l=document.createElement("link");l.rel="stylesheet";l.href=`https://fonts.googleapis.com/css2?family=${EF[ef]}&display=swap`;document.head.appendChild(l)}
+function loadFont(spec){if(!spec||efLoaded.has(spec))return;efLoaded.add(spec);const l=document.createElement("link");l.rel="stylesheet";l.href=`https://fonts.googleapis.com/css2?family=${spec}&display=swap`;document.head.appendChild(l)}
 /* page tint: the poster's main colour, darkened so text stays calm and readable */
-function tone([r,g,b]){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;
+function tone([r,g,b],maxS=.42,L=.115){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;
   let h=0,s=d?d/(1-Math.abs(2*l-1)):0;if(d)h=mx===r?((g-b)/d+6)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h*=60;
-  s=Math.min(s,.42)*.75;const L=.115,C=(1-Math.abs(2*L-1))*s,X=C*(1-Math.abs(h/60%2-1)),m=L-C/2;
+  s=Math.min(s,maxS)*.75;const C=(1-Math.abs(2*L-1))*s,X=C*(1-Math.abs(h/60%2-1)),m=L-C/2;
   const [R,G,B]=h<60?[C,X,0]:h<120?[X,C,0]:h<180?[0,C,X]:h<240?[0,X,C]:h<300?[X,0,C]:[C,0,X];
   return [R,G,B].map(v=>Math.round((v+m)*255))}
 function hex(h){const n=parseInt(h.slice(1),16);return[n>>16,n>>8&255,n&255]}
 function tint(k){
-  const f=info(k),set=c=>{if(sheetKey===k)sheet.style.setProperty("--bg",tone(c).join(","))};
+  const f=info(k),set=c=>{if(sheetKey===k)document.documentElement.style.setProperty("--bg",tone(c).join(","))};
+  if(f.bg){if(sheetKey===k)document.documentElement.style.setProperty("--bg",tone(hex(f.bg),.8,.16).join(","));return}
   set(hex(look(f).pal[1]));
   tmdb(k).then(d=>{if(!d.p||sheetKey!==k)return;const im=new Image();im.crossOrigin="anonymous";
     im.onload=()=>{try{const c=document.createElement("canvas");c.width=12;c.height=18;const x=c.getContext("2d",{willReadFrequently:true});x.drawImage(im,0,0,12,18);
@@ -531,14 +552,17 @@ function tint(k){
       for(let i=0;i<px.length;i+=4){const r=px[i],g=px[i+1],b=px[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),w=(mx-mn)/255*.9+.1*(mx>24&&mx<235);R+=r*w;G+=g*w;B+=b*w;W+=w}
       if(W)set([R/W,G/W,B/W])}catch(e){}};im.src=IMG+"w92"+d.p});
 }
+let homeY=0;
 function openSheet(k){
-  const was=sheetKey;sheetKey=k;clearTimeout(sheetT);sheet.classList.remove("leaving");loadFont(info(k).ef);renderSheet(k);if(was!==k)tint(k);
-  if(sheet.hidden){sheet.hidden=false;document.documentElement.style.overflow="hidden"}
-  if(was!==k){sheet.scrollTop=0;sheet.classList.remove("scrolled");sheet.querySelector("[data-leave]").focus()}
+  const f=info(k),was=sheetKey;sheetKey=k;clearTimeout(sheetT);sheet.classList.remove("leaving");
+  loadFont(EF[f.ef]);loadFont(ACC[f.ef||"classic"]);renderSheet(k);if(was!==k)tint(k);
+  if(sheet.hidden){homeY=scrollY;$("home").hidden=true;sheet.hidden=false;document.documentElement.classList.add("film")}
+  if(was!==k){scrollTo(0,0);sheet.classList.remove("scrolled");sheet.querySelector("[data-leave]").focus({preventScroll:true})}
 }
 function closeSheet(){
   if(sheet.hidden||!sheetKey)return;const k=sheetKey;sheetKey=null;
-  const done=()=>{if(sheetKey)return;sheet.style.removeProperty("--bg");sheet.hidden=true;sheet.classList.remove("leaving");sheet.replaceChildren();document.documentElement.style.overflow="";
+  const done=()=>{if(sheetKey)return;sheet.hidden=true;sheet.classList.remove("leaving");sheet.replaceChildren();
+    const root=document.documentElement;root.classList.remove("film");root.style.removeProperty("--bg");$("home").hidden=false;scrollTo(0,homeY);
     const back=document.querySelector(`a.open[href="#film/${CSS.escape(encodeURIComponent(k))}"]`);if(back?.offsetParent)back.focus({preventScroll:true})};
   if(matchMedia("(prefers-reduced-motion: reduce)").matches)done();else{sheet.classList.add("leaving");sheetT=setTimeout(done,380)}
 }
@@ -564,7 +588,7 @@ addEventListener("hashchange",()=>{navs++;route()});
 /* ---------- modal stage ---------- */
 const stage=$("stage"),panel=$("panel");let lastFocus=null;
 function openPanel(html,center){lastFocus=document.activeElement;panel.className="panel"+(center?" center":"");void panel.offsetWidth;panel.innerHTML=html;stage.hidden=false;document.documentElement.style.overflow="hidden"}
-function closePanel(){stage.hidden=true;document.documentElement.style.overflow=sheetKey?"hidden":"";lastFocus?.isConnected&&lastFocus.focus()}
+function closePanel(){stage.hidden=true;document.documentElement.style.overflow="";lastFocus?.isConnected&&lastFocus.focus()}
 stage.addEventListener("click",e=>{if(e.target===stage)closePanel()});
 document.addEventListener("keydown",e=>{
   if(stage.hidden){if(e.key==="Escape"&&sheetKey)leaveSheet();return}
