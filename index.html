@@ -38,7 +38,7 @@ body{margin:0;background:var(--velvet);color:var(--ivory);font-family:var(--f-sa
 button{font:inherit}
 img{max-width:100%}
 :focus-visible{outline:1px solid var(--gold);outline-offset:3px}
-.wrap{max-width:1120px;margin:0 auto;padding:72px max(16px,env(safe-area-inset-right,0px)) 96px max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:1120px;margin:0 auto;padding:72px max(16px,env(safe-area-inset-right,0px)) calc(150px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 
 /* masthead */
 .mast{text-align:center;display:grid;justify-items:center;gap:18px;padding-bottom:56px}
@@ -55,19 +55,38 @@ img{max-width:100%}
 .txt.gold,.txt[aria-pressed="true"]{color:var(--gold)}
 
 /* section index */
-.tabs{display:flex;justify-content:center;gap:clamp(20px,6vw,72px);border-block:1px solid var(--line);position:sticky;top:0;z-index:20;background:rgba(20,10,13,.94);backdrop-filter:blur(6px)}
-.tab{background:none;border:0;color:var(--muted);cursor:pointer;padding:16px 2px 14px;display:flex;align-items:baseline;gap:8px;border-bottom:1px solid transparent;margin-bottom:-1px;white-space:nowrap}
-.tab .no{font-family:var(--f-display);font-style:italic;font-size:14px;color:var(--faint)}
-.tab .t{font-size:14px;letter-spacing:.06em}
-.tab .c{font-family:var(--f-display);font-size:13px;color:var(--gold-soft)}
-.tab[aria-selected="true"]{color:var(--ivory);border-bottom-color:var(--gold)}
-.tab[aria-selected="true"] .no{color:var(--gold)}
+/* bottom tab bar, fixed on every screen */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;justify-content:center;gap:clamp(8px,8vw,96px);padding:6px max(12px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px));background:rgba(20,10,13,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+html.film .tabs{background:rgba(var(--bg),.94)}
+.tab{position:relative;flex:0 1 96px;background:none;border:0;color:var(--faint);cursor:pointer;padding:6px 4px 4px;display:grid;justify-items:center;gap:3px;border-radius:10px;transition:color .2s}
+.tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
+.tab .t{font-size:11.5px;letter-spacing:.04em}
+.tab .c{position:absolute;top:2px;left:calc(50% + 10px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--gold);color:var(--velvet);font:600 10px/16px var(--f-sans);text-align:center}
+.tab .c:empty{display:none}
+.tab:hover{color:var(--muted)}
+.tab[aria-selected="true"]{color:var(--gold)}
+.tab[aria-selected="true"] svg{fill:color-mix(in srgb,currentColor 18%,transparent)}
+html.film .tab[aria-selected="true"]{color:var(--faint)}
 
 /* view heads + toolbar */
 .view-head{text-align:center;display:grid;gap:8px;justify-items:center;margin:64px 0 40px}
 .view-head .it{font-family:var(--f-display);font-size:15px;letter-spacing:.2em}
 .view-head h2{margin:0;font-size:28px;font-weight:700;letter-spacing:.02em}
 .view-head .line{font-size:12.5px;color:var(--faint);letter-spacing:.04em}
+.genres{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:-12px 0 28px}
+.genre{font-size:13px;color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:6px 15px;cursor:pointer;white-space:nowrap;transition:color .2s,border-color .2s}
+.genre:hover{color:var(--ivory);border-color:var(--line-strong)}
+.genre[aria-pressed="true"]{color:var(--velvet);background:var(--gold);border-color:var(--gold)}
+.sortbox{position:relative}
+.sortbox::after{content:"";position:absolute;right:4px;top:50%;width:6px;height:6px;border-right:1px solid var(--muted);border-bottom:1px solid var(--muted);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+#sortSel{appearance:none;-webkit-appearance:none;font:13px var(--f-sans);color:var(--ivory);background:transparent;border:0;border-bottom:1px solid var(--line);padding:5px 22px 5px 2px;cursor:pointer}
+#sortSel option{background:var(--velvet-2);color:var(--ivory)}
+.heart{display:inline-grid;place-items:center;width:34px;height:34px;margin:-8px -6px;border:0;background:none;color:var(--muted);cursor:pointer;border-radius:50%}
+.heart svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;transition:transform .2s ease,fill .2s ease}
+.heart:hover{color:var(--ivory)}.heart:hover svg{transform:scale(1.12)}
+.heart[aria-pressed="true"]{color:#d9707f}.heart[aria-pressed="true"] svg{fill:currentColor}
+.heart.pop svg{animation:pop .35s ease}
+@keyframes pop{50%{transform:scale(1.3)}}
 .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:-8px 0 32px;padding-bottom:12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--faint)}
 .sort{display:flex;gap:4px 18px;flex-wrap:wrap;justify-content:flex-end}
 .sort button{background:none;border:0;border-bottom:1px solid transparent;color:var(--faint);font-size:13px;padding:3px 0;cursor:pointer}
@@ -91,12 +110,12 @@ img.pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opaci
 .body{padding:18px 0 0;display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
 .body h3{margin:0;font-size:18px;line-height:1.4;font-weight:700}
 .sub{font-size:12px;color:var(--faint);letter-spacing:.04em}
-.award{font-size:12px;color:var(--gold-soft);line-height:1.5}
+.award{font-size:12px;color:var(--gold-soft);line-height:1.5;overflow-wrap:anywhere}
 .plot{margin:2px 0 0;font-size:14px;color:var(--muted);line-height:1.65;font-weight:300}
 .plot{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;min-height:calc(2em*1.65)}
 .verdict{display:grid;gap:4px;margin-top:4px}
 .aw{font-size:11px;letter-spacing:.24em;color:var(--gold)}
-.verdict q{font-size:14px;line-height:1.65;quotes:"“" "”";font-weight:300}
+.verdict q{font-size:14px;line-height:1.65;quotes:"“" "”";font-weight:300;white-space:pre-wrap;overflow-wrap:anywhere}
 .acts{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;gap:18px;flex-wrap:nowrap;align-items:center}
 .spacer{flex:1}
 .stars{letter-spacing:.12em;color:var(--gold);font-size:13px;white-space:nowrap}
@@ -143,12 +162,10 @@ a.open:hover{background-size:100% 1px}
 .foot a{color:var(--muted)}
 .foot img{display:block;opacity:.75;margin:6px 0}
 
-/* modal stage (envelope, ballot) */
+/* modal stage (rating, transfer) */
 .stage{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(8,3,5,.9);padding:16px;overflow-y:auto}
 .panel{width:min(520px,100%);background:var(--velvet-2);border:1px solid var(--line-strong);padding:36px 32px 30px;display:grid;gap:14px;animation:rise .7s cubic-bezier(.2,.8,.2,1)}
 .panel.center{text-align:center}
-.panel .wposter{position:relative;border-radius:6px;width:min(190px,54%);margin:6px auto;aspect-ratio:2/3;overflow:hidden;outline:1px solid var(--line);outline-offset:-1px}
-.panel .wposter canvas{width:100%;height:100%;display:block}
 .panel h3{margin:0;font-size:26px;line-height:1.25}
 .panel p{margin:0;font-size:14.5px;color:var(--muted);text-align:left;line-height:1.75;font-weight:300}
 .pactions{display:flex;gap:22px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:8px}
@@ -189,7 +206,7 @@ a.open:hover{background-size:100% 1px}
 .rf-actions{display:flex;align-items:center;gap:18px;padding-top:4px}
 .rf-actions .btn-gold{padding:11px 26px;border-radius:999px;letter-spacing:.08em}
 .linkbox{width:100%;font:13px/1.4 var(--f-sans);color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:6px}
-.toast{position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;font-size:13.5px;background:var(--velvet-2);color:var(--ivory);border:1px solid var(--line-strong);padding:11px 20px;max-width:calc(100% - 32px)}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;font-size:13.5px;background:var(--velvet-2);color:var(--ivory);border:1px solid var(--line-strong);padding:11px 20px;max-width:calc(100% - 32px)}
 
 /* film page */
 :root{--bg:20,10,13}
@@ -199,13 +216,16 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 .sheet.leaving{animation:fadeOut .38s ease forwards;pointer-events:none}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes fadeOut{from{opacity:1}to{opacity:0;transform:scale(.985)}}
-.sheet-bar{position:sticky;top:0;z-index:5;padding:14px max(20px,env(safe-area-inset-left,0px));background:linear-gradient(rgba(var(--bg),.85),rgba(var(--bg),0));border-bottom:1px solid transparent;transition:background-color .25s,border-color .25s}
-.sheet.scrolled .sheet-bar{background:rgba(var(--bg),.96);border-bottom-color:var(--line)}
-.sheet-bar .txt{color:var(--ivory)}
-.banner{position:relative;margin-top:-58px;aspect-ratio:5/2;max-height:66vh;overflow:hidden;background:#000}
+.sheet-bar{position:sticky;top:0;z-index:5;height:56px;display:flex;align-items:center;padding:0 max(14px,env(safe-area-inset-left,0px));background:linear-gradient(rgba(var(--bg),.7),rgba(var(--bg),0));transition:background-color .25s,box-shadow .25s}
+.sheet.scrolled .sheet-bar{background:rgba(var(--bg),.96);box-shadow:0 1px 0 var(--line)}
+.home-btn{display:inline-grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:rgba(0,0,0,.22);color:var(--ivory);cursor:pointer;transition:background-color .2s}
+.home-btn:hover{background:rgba(0,0,0,.4)}
+.home-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.banner{position:relative;margin-top:-56px;aspect-ratio:5/2;max-height:66vh;overflow:hidden;background:#000}
 .banner canvas{display:block;width:100%;height:100%;object-fit:cover}
 .banner::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--bg),.35) 0,transparent 30%,transparent 45%,rgb(var(--bg)) 100%)}
 .cap{position:absolute;inset:auto 0 0;z-index:1;max-width:1120px;margin:0 auto;padding:0 calc(364px + max(16px,env(safe-area-inset-left,0px))) 40px max(16px,env(safe-area-inset-left,0px));display:grid;gap:8px}
+.cap h2:focus{outline:none}
 .cap h2{margin:0;font-size:clamp(32px,5.4vw,60px);line-height:1.12;font-weight:700;letter-spacing:-.01em;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.5)}
 .cap .en{font-size:clamp(18px,2.2vw,26px);color:var(--gold);line-height:1.25}
 .ef-elegant{font-family:"Cormorant Garamond",serif!important;font-style:italic;font-weight:500;font-size:clamp(22px,2.6vw,32px)!important}
@@ -223,7 +243,7 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 .ef-comic{font-family:"Bangers",sans-serif!important;font-style:normal!important;letter-spacing:.06em;font-size:clamp(24px,3vw,36px)!important}
 .ef-light{font-family:"Josefin Sans",sans-serif!important;font-style:normal!important;font-weight:300;letter-spacing:.22em;text-transform:uppercase;font-size:clamp(15px,1.8vw,21px)!important}
 .ef-neon{font-family:"Monoton",sans-serif!important;font-style:normal!important;font-size:clamp(20px,2.6vw,32px)!important;letter-spacing:.04em}
-.sbody{max-width:1120px;margin:0 auto;padding:40px max(16px,env(safe-area-inset-left,0px)) 96px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:64px}
+.sbody{max-width:1120px;margin:0 auto;padding:40px max(16px,env(safe-area-inset-left,0px)) calc(150px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:64px}
 .sbody>main{grid-column:1;grid-row:1;min-width:0}
 .side{grid-column:2;grid-row:1;display:grid;gap:28px;align-content:start;align-self:start;margin-top:-210px;position:relative;z-index:2}
 .sposter{position:relative;border-radius:8px;aspect-ratio:2/3;overflow:hidden;background:#000;outline:1px solid var(--line);outline-offset:-1px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
@@ -287,10 +307,10 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 }
 @media (max-width:640px){
   .wrap{padding-top:48px;padding-bottom:64px}
-  .tabs{gap:18px}.tab .no{display:none}.tab .t{font-size:13.5px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:32px 16px}
   .poster .ptitle{font-size:16px}.body h3{font-size:16px}
-  .acts{gap:12px}.long{display:none}
+  .acts{gap:12px}
+  .genres{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;margin:-12px -16px 24px;padding:0 16px;scrollbar-width:none}.genres::-webkit-scrollbar{display:none}
   .toolbar{flex-direction:column;align-items:flex-start}.sort{justify-content:flex-start}
   .headline{grid-template-columns:1fr;gap:24px;padding:32px 0;text-align:center}
   .headline .poster{width:min(220px,64%);justify-self:center}
@@ -305,32 +325,27 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 <div class="wrap" id="home">
   <header class="mast">
     <h1>My Movie <em>Star</em></h1>
-    <button class="btn-gold" id="openEnv" type="button">봉투 열기</button>
   </header>
 
-  <nav class="tabs" role="tablist" aria-label="섹션">
-    <button class="tab" role="tab" id="tab-nominees" aria-controls="view-nominees" data-view="nominees"><span class="no">I</span><span class="t">후보작</span></button>
-    <button class="tab" role="tab" id="tab-watch" aria-controls="view-watch" data-view="watch"><span class="no">II</span><span class="t">관람 예정</span><span class="c" id="cnt-watch"></span></button>
-    <button class="tab" role="tab" id="tab-hall" aria-controls="view-hall" data-view="hall"><span class="no">III</span><span class="t">명예의 전당</span><span class="c" id="cnt-hall"></span></button>
-  </nav>
 
   <section id="view-nominees" role="tabpanel" aria-labelledby="tab-nominees">
-    <div class="view-head"><h2>후보작</h2></div>
+    <div class="view-head"><h2>전체</h2></div>
+    <div class="genres" role="group" aria-label="장르" id="genres"></div>
     <div class="toolbar"><span id="nomCount"></span>
-      <div class="sort" role="group" aria-label="정렬" id="sort">
-        <button type="button" data-sort="pick">추천순</button><button type="button" data-sort="new">최신작</button><button type="button" data-sort="old">오래된 작품</button><button type="button" data-sort="title">제목순</button><button type="button" data-sort="short">러닝타임 짧은 순</button>
-      </div></div>
+      <label class="sortbox"><span class="sr">정렬</span><select class="sel" id="sortSel">
+        <option value="pick">추천순</option><option value="new">최신작</option><option value="old">오래된 작품</option><option value="title">제목순</option><option value="short">러닝타임 짧은 순</option>
+      </select></label></div>
     <div class="grid" id="nomGrid"></div>
   </section>
 
   <section id="view-watch" role="tabpanel" aria-labelledby="tab-watch" hidden>
-    <div class="view-head"><h2>관람 예정</h2></div>
+    <div class="view-head"><h2>찜 목록</h2></div>
     <div class="grid" id="watchGrid"></div>
   </section>
 
   <section id="view-hall" role="tabpanel" aria-labelledby="tab-hall" hidden>
     <div class="view-head"><h2>명예의 전당</h2><div class="line" id="hallStats"></div></div>
-    <div id="hallTop"></div><div id="hallRoll"></div>
+    <div class="grid" id="hallGrid"></div>
     <div class="data-tools"><span>기록은 이 브라우저에 저장됩니다. 휴대폰 등 다른 기기에서도 보려면 링크로 옮기세요.</span>
       <button class="txt gold" type="button" id="syncBtn">다른 기기로 옮기기</button><button class="txt" type="button" id="exportBtn">백업 내보내기</button><button class="txt" type="button" id="importBtn">백업 불러오기</button>
       <input type="file" id="importFile" accept="application/json,.json" hidden></div>
@@ -343,6 +358,11 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
   </footer>
 </div>
 
+<nav class="tabs" role="tablist" aria-label="메뉴">
+  <button class="tab" role="tab" id="tab-nominees" aria-controls="view-nominees" data-view="nominees"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span class="t">전체</span></button>
+  <button class="tab" role="tab" id="tab-watch" aria-controls="view-watch" data-view="watch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.9 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg><span class="t">찜</span><span class="c" id="cnt-watch"></span></button>
+  <button class="tab" role="tab" id="tab-hall" aria-controls="view-hall" data-view="hall"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z"/></svg><span class="t">평점</span><span class="c" id="cnt-hall"></span></button>
+</nav>
 <div class="sheet" id="sheet" hidden role="region" aria-labelledby="sTitle"></div>
 <div class="stage" id="stage" hidden role="dialog" aria-modal="true" aria-labelledby="dlgTitle"><div class="panel" id="panel"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
@@ -411,63 +431,72 @@ const PLAT=[[/netflix/i,q=>"https://www.netflix.com/search?q="+q],[/watcha/i,q=>
   [/apple tv/i,q=>"https://tv.apple.com/kr/search?term="+q],[/google play/i,q=>"https://play.google.com/store/search?c=movies&q="+q]];
 function platLink(p,f,w){const m=PLAT.find(([re])=>re.test(p.n));return m?m[1](encodeURIComponent(f.ko)):(w.link||"https://www.justwatch.com/kr")}
 
-/* ---------- nominees ---------- */
+/* ---------- cards (same plate in 전체, 찜 목록 and 명예의 전당) ---------- */
+const HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.9 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg>';
+const heartBtn=(k,on)=>`<button class="heart" type="button" data-toggle-want="${k}" aria-pressed="${!!on}" aria-label="${on?"찜 해제":"찜하기"}" title="${on?"찜 해제":"찜하기"}">${HEART}</button>`;
 const cards={};
-function card(key,watch){
-  const f=info(key),el=document.createElement("article");el.className="card";
+function card(key,keep){
+  const f=info(key),el=document.createElement("article");el.className="card";el.dataset.key=key;
   el.innerHTML=`<a class="poster" href="#film/${encodeURIComponent(key)}" tabindex="-1" aria-hidden="true"><canvas></canvas><span class="state"></span><span class="ptitle">${esc(f.en||f.ko)}</span></a>
     <div class="body"><h3><a class="open" href="#film/${encodeURIComponent(key)}">${esc(f.ko)}</a></h3><div class="sub"><span>${[f.y,f.n].filter(Boolean).map(esc).join(" · ")}</span><span class="age-slot"></span></div>
-    ${f.aw?`<div class="award">${esc(f.aw)}</div>`:""}<div class="slot"></div><div class="acts"></div></div>`;
+    ${f.aw?`<div class="award" data-aw="${esc(f.aw)}" title="${esc(f.aw)}">${esc(f.aw)}</div>`:""}<div class="slot"></div><div class="acts"></div></div>`;
   paint(el.querySelector("canvas"),f);decorate(el.querySelector(".poster"),key,"w342",el.querySelector(".age-slot"));
-  if(watch)sync(el,key,true);else{cards[key]=el;sync(el,key)}
-  return el;
+  if(keep)cards[key]=el;sync(el,key);return el;
 }
-function sync(el,key,watch){
+function sync(el,key){
   const f=info(key),e=entry(key),seen=e?.status==="seen",want=e?.status==="want";
-  el.querySelector(".state").textContent=seen?AWARDS[e.rating]:want&&!watch?"관람 예정":"";
+  el.querySelector(".state").textContent=seen?AWARDS[e.rating]:"";
   el.classList.toggle("is-seen",seen);
-  el.querySelector(".slot").innerHTML=seen?`<div class="verdict">${stars(e.rating)}${e.review?`<q>${esc(clip(e.review,70))}</q>`:""}</div>`
+  el.querySelector(".slot").innerHTML=seen?`<div class="verdict">${stars(e.rating)}${e.review?`<q>${esc(e.review)}</q>`:""}</div>`
     :f.p?`<p class="plot" title="${esc(f.p)}">${esc(f.p)}</p>`:"";
   el.querySelector(".acts").innerHTML=seen?`<button class="txt" type="button" data-edit="${key}">평점 수정</button>`
-    :watch?`<button class="txt" type="button" data-toggle-want="${key}">빼기</button><span class="spacer"></span><button class="txt gold" type="button" data-review="${key}">평점</button>`
-    :`<button class="txt" type="button" data-toggle-want="${key}" aria-pressed="${!!want}">${want?"보고 싶어요 ✓":'<span class="long">보고 </span>싶어요'}</button><span class="spacer"></span><button class="txt gold" type="button" data-review="${key}">평점</button>`;
+    :`${heartBtn(key,want)}<span class="spacer"></span><button class="txt gold" type="button" data-review="${key}">평점</button>`;
+}
+/* award line: at most two lines — drop the less important honours (listed last) instead of cutting text */
+function fitAwards(root=document){
+  root.querySelectorAll(".award[data-aw]").forEach(el=>{
+    if(!el.offsetParent)return;
+    const full=el.dataset.aw,max=parseFloat(getComputedStyle(el).lineHeight)*2+1;
+    let parts=full.split(" · ");el.textContent=full;
+    while(el.scrollHeight>max&&parts.length>1){parts.pop();el.textContent=parts.join(" · ")}
+    if(el.scrollHeight>max)el.textContent=parts.join(" · ").replace(/\s*\([^)]*\)/g,"");
+  });
+}
+let fitT;addEventListener("resize",()=>{clearTimeout(fitT);fitT=setTimeout(fitAwards,150)});
+/* genres: tags from the 장르 column; rare ones fold into a close, common one */
+const GENRE_ALIAS={"미스터리":"스릴러","공포":"스릴러","호러":"스릴러","모험":"액션","뮤지컬":"로맨스","법정":"드라마","실화":"드라마","전기":"드라마","전쟁":"드라마","음악":"드라마","고딕":"판타지","웨스턴":"드라마"};
+const tagsOf=f=>new Set(String(f.g||"").split("·").map(t=>t.trim()).filter(Boolean).map(t=>GENRE_ALIAS[t]||t));
+let curGenre="전체",curSort="pick";
+function buildGenres(){
+  const count={};FILMS.forEach(f=>tagsOf(f).forEach(t=>count[t]=(count[t]||0)+1));
+  const list=["전체",...Object.keys(count).filter(t=>count[t]>=3).sort((a,b)=>count[b]-count[a])];
+  $("genres").innerHTML=list.map(t=>`<button class="genre" type="button" data-genre="${esc(t)}" aria-pressed="${t===curGenre}">${esc(t)}</button>`).join("");
+}
+function applyList(){
+  const g=$("nomGrid"),sorted=[...FILMS].sort((a,b)=>SORTS[curSort](a,b)||a.i-b.i);let n=0;
+  sorted.forEach(f=>{const el=cards[f.key],on=curGenre==="전체"||tagsOf(f).has(curGenre);el.hidden=!on;if(on)n++;g.appendChild(el)});
+  $("nomCount").textContent=`${n}편`;
+  $("genres").querySelectorAll(".genre").forEach(b=>b.setAttribute("aria-pressed",b.dataset.genre===curGenre));
+  $("sortSel").value=curSort;fitAwards($("nomGrid"));
 }
 const SORTS={pick:()=>0,new:(a,b)=>yr(b.y)-yr(a.y),old:(a,b)=>yr(a.y)-yr(b.y),title:(a,b)=>a.ko.localeCompare(b.ko,"ko"),short:(a,b)=>(a.rt||999)-(b.rt||999)};
-function sortNominees(by){
-  if(!SORTS[by])by="pick";store.set("mymoviestar.sort",by);
-  $("sort").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.sort===by));
-  const g=$("nomGrid");[...FILMS].sort((a,b)=>SORTS[by](a,b)||a.i-b.i).forEach(f=>g.appendChild(cards[f.key]));
-}
+$("sortSel").onchange=e=>{curSort=SORTS[e.target.value]?e.target.value:"pick";store.set("mymoviestar.sort",curSort);applyList()};
 
-/* ---------- watchlist & hall ---------- */
-const empty=(big,msg)=>`<div class="empty"><div class="big">${big}</div><p>${msg}</p><button class="txt gold" type="button" data-goto="nominees">후보작 둘러보기</button></div>`;
-function renderWatch(){
-  const g=$("watchGrid"),list=entries().filter(e=>e.status==="want").sort((a,b)=>(b.added||0)-(a.added||0));
-  g.replaceChildren();g.style.display=list.length?"":"block";
-  if(!list.length){g.innerHTML=empty("Empty Seats","아직 관람 예정인 작품이 없습니다.");return}
-  list.forEach(e=>g.appendChild(card(e.key,true)));
+/* ---------- 찜 목록 & 명예의 전당 ---------- */
+const empty=(big,msg)=>`<div class="empty"><div class="big">${big}</div><p>${msg}</p><button class="txt gold" type="button" data-goto="nominees">전체 둘러보기</button></div>`;
+function fillGrid(id,list,big,msg){
+  const g=$(id);g.replaceChildren();g.style.display=list.length?"":"block";
+  if(!list.length){g.innerHTML=empty(big,msg);return}
+  list.forEach(e=>g.appendChild(card(e.key)));fitAwards(g);
 }
+function renderWatch(){fillGrid("watchGrid",entries().filter(e=>e.status==="want").sort((a,b)=>(b.added||0)-(a.added||0)),"Empty Seats","아직 찜한 작품이 없어요. 하트를 눌러 담아 보세요.")}
 function renderHall(){
-  const top=$("hallTop"),roll=$("hallRoll"),seen=entries().filter(e=>e.status==="seen").sort((a,b)=>b.rating-a.rating||(b.updated||0)-(a.updated||0));
-  top.innerHTML=roll.innerHTML="";$("hallStats").textContent=seen.length?`헌액 ${seen.length}편 · 평균 ${(seen.reduce((s,e)=>s+e.rating,0)/seen.length).toFixed(1)}`:"";
-  if(!seen.length){top.innerHTML=empty("The Hall Awaits","평점을 남기면 이곳에 이름이 새겨집니다.");return}
-  const ch=seen[0],f=info(ch.key),href="#film/"+encodeURIComponent(ch.key);
-  top.innerHTML=`<article class="headline"><a class="poster" href="${href}" tabindex="-1" aria-hidden="true"><canvas></canvas><span class="ptitle">${esc(f.en||f.ko)}</span></a>
-    <div class="hl"><div class="eyebrow">Best Picture · ${AWARDS[ch.rating]}</div><h3><a class="open" href="${href}">${esc(f.ko)}</a></h3>
-    ${f.en&&f.en!==f.ko?`<div class="en">${esc(f.en)}${f.y?`, ${esc(f.y)}`:""}</div>`:""}<div>${stars(ch.rating)}</div>
-    ${ch.review?`<blockquote>${esc(ch.review)}</blockquote>`:""}<div><button class="txt" type="button" data-edit="${ch.key}">평점 수정</button></div></div></article>`;
-  paint(top.querySelector("canvas"),f);decorate(top.querySelector(".poster"),ch.key,"w500");
-  if(seen.length<2)return;
-  roll.innerHTML=`<div class="roll-title">WINNERS</div><ol class="roll"></ol>`;
-  seen.slice(1).forEach((e,i)=>{const f=info(e.key),li=document.createElement("li");
-    li.innerHTML=`<div class="rk">${i+2}</div><div class="th"><canvas></canvas></div>
-      <div class="info"><h4><a class="open" href="#film/${encodeURIComponent(e.key)}">${esc(f.ko)}</a>${f.en&&f.en!==f.ko?`<span>${esc(f.en)}</span>`:""}</h4>
-      <div class="ml"><span class="aw">${AWARDS[e.rating]}</span>${stars(e.rating)}</div>${e.review?`<q>${esc(e.review)}</q>`:""}</div>
-      <div class="ra"><button class="txt" type="button" data-edit="${e.key}">수정</button><button class="txt" type="button" data-remove="${e.key}" aria-label="${esc(f.ko)} 기록 삭제">삭제</button></div>`;
-    paint(li.querySelector("canvas"),f);decorate(li.querySelector(".th"),e.key,"w154");roll.querySelector("ol").appendChild(li)});
+  const seen=entries().filter(e=>e.status==="seen").sort((a,b)=>b.rating-a.rating||(b.updated||0)-(a.updated||0));
+  $("hallStats").textContent=seen.length?`헌액 ${seen.length}편 · 평균 ${(seen.reduce((s,e)=>s+e.rating,0)/seen.length).toFixed(1)}`:"";
+  fillGrid("hallGrid",seen,"The Hall Awaits","평점을 남기면 이곳에 이름이 새겨집니다.");
 }
 function renderAll(){
-  FILMS.forEach(f=>sync(cards[f.key],f.key));renderWatch();renderHall();
+  FILMS.forEach(f=>sync(cards[f.key],f.key));renderWatch();renderHall();fitAwards();
   $("cnt-watch").textContent=entries().filter(e=>e.status==="want").length||"";$("cnt-hall").textContent=entries().filter(e=>e.status==="seen").length||"";
   if(sheetKey)renderSheet(sheetKey);
 }
@@ -479,8 +508,8 @@ function renderSheet(k){
   sheet.className="sheet fx-"+(info(k).ef||"classic")+(sheet.classList.contains("scrolled")?" scrolled":"");
   const f=info(k),e=entry(k),seen=e?.status==="seen",want=e?.status==="want",listed=!!BY_KEY[k];
   const fx=(t,v,full)=>v?`<div${full?' class="full"':""}><dt>${t}</dt><dd>${v}</dd></div>`:"";
-  sheet.innerHTML=`<div class="sheet-bar"><button class="txt" type="button" data-leave>← 시상식으로</button></div>
-    <header class="banner"><canvas aria-hidden="true"></canvas><div class="cap"><h2 id="sTitle">${esc(f.ko)}</h2>${f.en&&f.en!==f.ko?`<div class="en${f.ef&&f.ef!=="classic"?" ef-"+f.ef:""}" lang="en">${esc(f.en)}</div>`:""}</div></header>
+  sheet.innerHTML=`<div class="sheet-bar"><button class="home-btn" type="button" data-leave aria-label="홈으로" title="홈으로"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h4.5v-5.5h4V20h4.5V9.5"/></svg></button></div>
+    <header class="banner"><canvas aria-hidden="true"></canvas><div class="cap"><h2 id="sTitle" tabindex="-1">${esc(f.ko)}</h2>${f.en&&f.en!==f.ko?`<div class="en${f.ef&&f.ef!=="classic"?" ef-"+f.ef:""}" lang="en">${esc(f.en)}</div>`:""}</div></header>
     <div class="sbody">
       <aside class="side"><div class="sposter" aria-hidden="true"><canvas></canvas></div>
         ${f.aw?`<div class="honor"><h4>수상</h4>${esc(f.aw)}</div>`:""}
@@ -491,7 +520,7 @@ function renderSheet(k){
         ${f.pt?`<section class="sec"><h3>What to watch for</h3><ol class="points">${f.pt.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>`:""}
         <section class="sec"><h3>My rating</h3><div class="mybox">${seen
           ?`<div><span class="aw">${AWARDS[e.rating]}</span> ${stars(e.rating)}</div>${e.review?`<blockquote>${esc(e.review)}</blockquote>`:""}<div class="acts"><button class="txt gold" type="button" data-edit="${k}">평점 수정</button></div>`
-          :`<p style="color:var(--faint)">아직 평점을 남기지 않았어요.</p><div class="acts">${listed?`<button class="txt" type="button" data-toggle-want="${k}" aria-pressed="${!!want}">${want?"보고 싶어요 ✓":"보고 싶어요"}</button>`:""}<button class="txt gold" type="button" data-review="${k}">평점 남기기</button></div>`}</div></section>
+          :`<p style="color:var(--faint)">아직 평점을 남기지 않았어요.</p><div class="acts">${listed?heartBtn(k,want):""}<button class="txt gold" type="button" data-review="${k}">평점 남기기</button></div>`}</div></section>
       </main></div>`;
   paint(sheet.querySelector(".banner canvas"),f,1600,640,bannerPal(f));paint(sheet.querySelector(".sposter canvas"),f);decorate(sheet.querySelector(".sposter"),k,"w500");
   {const d=tmOf(k);
@@ -529,7 +558,7 @@ function openSheet(k){
   const f=info(k),was=sheetKey;sheetKey=k;clearTimeout(sheetT);sheet.classList.remove("leaving");
   loadFont(EF[f.ef]);loadFont(ACC[f.ef||"classic"]);renderSheet(k);if(was!==k)tint(k);
   if(sheet.hidden){homeY=scrollY;$("home").hidden=true;sheet.hidden=false;document.documentElement.classList.add("film")}
-  if(was!==k){scrollTo(0,0);sheet.classList.remove("scrolled");sheet.querySelector("[data-leave]").focus({preventScroll:true})}
+  if(was!==k){scrollTo(0,0);sheet.classList.remove("scrolled");$("sTitle").focus({preventScroll:true})}
 }
 function closeSheet(){
   if(sheet.hidden||!sheetKey)return;const k=sheetKey;sheetKey=null;
@@ -547,6 +576,7 @@ function show(v,push){
   if(!VIEWS.includes(v))v="nominees";curView=v;
   VIEWS.forEach(k=>{$("view-"+k).hidden=k!==v;const t=$("tab-"+k);t.setAttribute("aria-selected",k===v);t.tabIndex=k===v?0:-1});
   if(push)history.replaceState(null,"","#"+v);
+  fitAwards($("view-"+v));
 }
 function route(){
   const h=decodeURIComponent(location.hash.slice(1));
@@ -554,7 +584,8 @@ function route(){
   if(h.startsWith("film/")){const k=h.slice(5);if(BY_KEY[k]||entry(k)){openSheet(k);return}}
   closeSheet();show(h);
 }
-document.querySelector(".tabs").addEventListener("click",e=>{const t=e.target.closest(".tab");if(t)show(t.dataset.view,true)});
+document.querySelector(".tabs").addEventListener("click",e=>{const t=e.target.closest(".tab");if(!t)return;
+  if(sheetKey){history.replaceState(null,"","#"+t.dataset.view);route();scrollTo(0,0)}else{show(t.dataset.view,true);scrollTo({top:0,behavior:"smooth"})}});
 document.querySelector(".tabs").addEventListener("keydown",e=>{if(!/Arrow(Left|Right)/.test(e.key))return;
   const nx=VIEWS[(VIEWS.indexOf(curView)+(e.key==="ArrowRight"?1:2))%3];show(nx,true);$("tab-"+nx).focus()});
 addEventListener("hashchange",route);
@@ -570,19 +601,6 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Tab"){const f=[...panel.querySelectorAll("button,input,textarea,a[href]")].filter(n=>n.offsetParent);if(!f.length)return;
     const a=f[0],z=f.at(-1);if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}
 });
-let lastPick=null;
-function envelope(){
-  const pool=[...new Set(entries().filter(e=>e.status==="want").map(e=>e.key).concat(FILMS.filter(f=>entry(f.key)?.status!=="seen").map(f=>f.key)))];
-  if(!pool.length){openPanel(`<div class="eyebrow">And the winner is</div><h3 id="dlgTitle">모든 후보작에 평점을 남기셨네요</h3><div class="pactions"><button class="txt" type="button" data-close>닫기</button></div>`,true);return}
-  let k;do{k=pool[Math.floor(Math.random()*pool.length)]}while(pool.length>1&&k===lastPick);lastPick=k;
-  const f=info(k),want=entry(k)?.status==="want";
-  openPanel(`<div class="eyebrow">And the winner is</div><div class="wposter"><canvas></canvas></div>
-    <h3 id="dlgTitle">${esc(f.ko)}</h3>${f.en?`<div class="en">${esc(f.en)}${f.y?`, ${esc(f.y)}`:""}</div>`:""}
-    ${f.aw?`<div class="award">${esc(f.aw)}</div>`:""}${f.p?`<p>${esc(f.p)} ${esc(f.w||"")}</p>`:""}
-    <div class="pactions"><button class="btn-gold" type="button" id="again">다시 열기</button><a class="txt gold" href="#film/${encodeURIComponent(k)}" data-close>자세히 보기</a>
-    ${want?"":`<button class="txt" type="button" data-toggle-want="${k}" data-close>보고 싶어요</button>`}<button class="txt" type="button" data-close>닫기</button></div>`,true);
-  paint(panel.querySelector("canvas"),f);decorate(panel.querySelector(".wposter"),k);$("again").onclick=envelope;$("again").focus();
-}
 const NOTE={1:"별로였어요",2:"아쉬웠어요",3:"괜찮았어요",4:"좋았어요",5:"최고예요"};
 function ballot(k,status){
   const f=info(k),e=entry(k),st=status||e?.status||"seen",rating=e?.rating||0;
@@ -590,12 +608,12 @@ function ballot(k,status){
       <div class="rf-head"><div class="rf-poster"><canvas></canvas></div><div><h3 id="dlgTitle">${esc(f.ko)}</h3>${f.en?`<div class="en">${esc(f.en)}${f.y?`, ${esc(f.y)}`:""}</div>`:""}</div></div>
       <div class="seg pill" role="radiogroup" aria-label="상태">
         <label><input type="radio" name="status" value="seen" ${st==="seen"?"checked":""}><span>봤어요</span></label>
-        <label><input type="radio" name="status" value="want" ${st==="want"?"checked":""}><span>보고 싶어요</span></label></div>
+        <label><input type="radio" name="status" value="want" ${st==="want"?"checked":""}><span>찜</span></label></div>
       <fieldset class="fld rf-rate" id="rateBox" ${st==="seen"?"":"hidden"}><legend class="sr">별점</legend>
         <div class="rate">${[5,4,3,2,1].map(n=>`<input type="radio" name="rating" id="r${n}" value="${n}" ${rating===n?"checked":""}><label for="r${n}" aria-label="${n}점 ${NOTE[n]}">★</label>`).join("")}</div>
         <div class="rate-note" id="rateNote">${rating?NOTE[rating]:"별을 눌러 평가해 주세요"}</div></fieldset>
       <label class="fld"><span class="sr" id="revLabel">${st==="seen"?"리뷰":"메모"}</span>
-        <textarea name="review" maxlength="1000" placeholder="${st==="seen"?"이 영화 어땠나요?":"보고 싶은 이유를 적어 두세요"}">${esc(e?.review||"")}</textarea>
+        <textarea name="review" maxlength="1000" placeholder="${st==="seen"?"이 영화 어땠나요?":"찜한 이유를 적어 두세요"}">${esc(e?.review||"")}</textarea>
         <span class="count" id="cnt">${(e?.review||"").length} / 1000</span></label>
       <div class="err" id="ferr" role="alert"></div>
       <div class="rf-actions">${e?`<button class="txt" type="button" data-remove="${k}" data-close>기록 삭제</button>`:""}<span class="spacer"></span>
@@ -607,18 +625,18 @@ function ballot(k,status){
   form.querySelectorAll(".rate label").forEach(l=>{l.onmouseenter=()=>$("rateNote").textContent=NOTE[l.htmlFor.slice(1)];
     l.onmouseleave=()=>$("rateNote").textContent=form.rating.value?NOTE[form.rating.value]:"별을 눌러 평가해 주세요"});
   form.onchange=ev=>{const s=form.status.value;$("rateBox").hidden=s!=="seen";$("revLabel").textContent=s==="seen"?"리뷰":"메모";
-    ta.placeholder=s==="seen"?"이 영화 어땠나요?":"보고 싶은 이유를 적어 두세요";if(ev.target.name==="rating")$("rateNote").textContent=NOTE[ev.target.value]};
+    ta.placeholder=s==="seen"?"이 영화 어땠나요?":"찜한 이유를 적어 두세요";if(ev.target.name==="rating")$("rateNote").textContent=NOTE[ev.target.value]};
   form.onsubmit=ev=>{ev.preventDefault();const s=form.status.value,r=+(form.rating.value||0);
     if(s==="seen"&&!r){$("ferr").textContent="별점을 골라 주세요.";return}
     const rec={...(e||{added:Date.now()}),key:k,ko:f.ko,en:f.en,y:f.y,n:f.n,status:s,review:ta.value.trim(),updated:Date.now()};
     if(s==="seen")rec.rating=r;else delete rec.rating;delete rec.date;
-    DB.items[k]=rec;save();closePanel();renderAll();toast(s==="seen"?`〈${f.ko}〉 별점 ${r}점을 남겼어요`:`〈${f.ko}〉 보고 싶은 영화에 담았어요`)};
+    DB.items[k]=rec;save();closePanel();renderAll();toast(s==="seen"?`〈${f.ko}〉 별점 ${r}점을 남겼어요`:`〈${f.ko}〉 찜 목록에 담았어요`)};
   (form.querySelector("[name=rating]:checked")||form.querySelector("[name=status]:checked")).focus();
 }
 function toggleWant(k){
   const f=info(k),e=entry(k);
-  if(e?.status==="want"){delete DB.items[k];toast(`〈${f.ko}〉 보고 싶은 영화에서 뺐어요`)}
-  else{DB.items[k]={...(e||{}),key:k,ko:f.ko,en:f.en,y:f.y,n:f.n,status:"want",added:Date.now(),updated:Date.now()};toast(`〈${f.ko}〉 보고 싶은 영화에 담았어요`)}
+  if(e?.status==="want"){delete DB.items[k];toast(`〈${f.ko}〉 찜 목록에서 뺐어요`)}
+  else{DB.items[k]={...(e||{}),key:k,ko:f.ko,en:f.en,y:f.y,n:f.n,status:"want",added:Date.now(),updated:Date.now()};toast(`〈${f.ko}〉 찜 목록에 담았어요`)}
   save();renderAll();
 }
 function removeEntry(k){
@@ -628,13 +646,13 @@ function removeEntry(k){
 }
 document.addEventListener("click",ev=>{
   const b=ev.target.closest("button,a[data-close]");if(!b)return;const d=b.dataset;
-  if(d.toggleWant)toggleWant(d.toggleWant);
+  if(d.genre){curGenre=d.genre;applyList();return}
+  if(d.toggleWant){toggleWant(d.toggleWant);const h=document.querySelector(`.card[data-key="${CSS.escape(d.toggleWant)}"] .heart, #sheet .heart`);h?.classList.add("pop")}
   if(d.remove)removeEntry(d.remove);
   if("close" in d){closePanel();return}
   if(d.review)ballot(d.review,"seen");else if(d.edit)ballot(d.edit);
-  else if(d.goto)show(d.goto,true);else if("leave" in d)leaveSheet();else if(d.sort)sortNominees(d.sort);
+  else if(d.goto)show(d.goto,true);else if("leave" in d)leaveSheet();
 });
-$("openEnv").onclick=envelope;
 
 /* ---------- backup ---------- */
 $("exportBtn").onclick=()=>{const a=document.createElement("a");
@@ -658,7 +676,7 @@ $("syncBtn").onclick=async()=>{
   const url=location.href.split("#")[0]+"#sync="+await packSync();
   const seen=entries().filter(e=>e.status==="seen").length;
   openPanel(`<h3 id="dlgTitle">다른 기기로 옮기기</h3>
-    <p>이 링크를 휴대폰이나 다른 컴퓨터에서 열면 지금 기록(평점 ${seen}편 · 보고 싶어요 ${n-seen}편)이 그 기기에 합쳐집니다. 카카오톡 '나와의 채팅' 등으로 보내 두면 편해요.</p>
+    <p>이 링크를 휴대폰이나 다른 컴퓨터에서 열면 지금 기록(평점 ${seen}편 · 찜 ${n-seen}편)이 그 기기에 합쳐집니다. 카카오톡 '나와의 채팅' 등으로 보내 두면 편해요.</p>
     <input class="linkbox" id="syncLink" readonly value="${esc(url)}" aria-label="옮기기 링크">
     <div class="pactions">${navigator.share?`<button class="btn-gold" type="button" id="syncShare">공유</button>`:""}<button class="${navigator.share?"txt gold":"btn-gold"}" type="button" id="syncCopy">링크 복사</button><button class="txt" type="button" data-close>닫기</button></div>`);
   $("syncLink").onfocus=e=>e.target.select();
@@ -679,9 +697,9 @@ async function receiveSync(t){
 fetch(`data/films.json?v=${Math.floor(Date.now()/6e4)}`).then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{
   FILMS=d.films.map((f,i)=>({...f,i}));BY_KEY=Object.fromEntries(FILMS.map(f=>[f.key,f]));RETIRED=d.retired||{};
   $("nomCount").textContent=`${FILMS.length}편`;
-  const g=$("nomGrid");FILMS.forEach(f=>g.appendChild(card(f.key)));
-  sortNominees(store.get("mymoviestar.sort","pick"));renderAll();route();
-}).catch(()=>{$("nomGrid").innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="big">Intermission</div><p>후보작 목록을 불러오지 못했습니다. 잠시 후 새로고침해 주세요.</p></div>`;route()});
+  const g=$("nomGrid");FILMS.forEach(f=>g.appendChild(card(f.key,true)));
+  curSort=SORTS[store.get("mymoviestar.sort","pick")]?store.get("mymoviestar.sort","pick"):"pick";buildGenres();applyList();renderAll();route();
+}).catch(()=>{$("nomGrid").innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="big">Intermission</div><p>영화 목록을 불러오지 못했습니다. 잠시 후 새로고침해 주세요.</p></div>`;route()});
 </script>
 </body>
 </html>
