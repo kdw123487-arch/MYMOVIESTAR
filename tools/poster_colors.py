@@ -24,7 +24,8 @@ XLSX, JSON, PREVIEW = ROOT / "data" / "films.xlsx", ROOT / "data" / "films.json"
 IMG = "https://image.tmdb.org/t/p/w185"
 IVORY, MUTED = (241, 232, 214), (168, 154, 140)
 KEY = os.environ.get("TMDB_KEY", "").strip()
-# 선호색 column: the colour a film's page should carry; the poster search favours posters that have it
+# 선호색 column: the colour a film's page should carry (it becomes the background);
+# the poster search favours posters that have it
 HUES = {"빨강": 25, "주황": 55, "노랑": 95, "초록": 145, "청록": 195, "파랑": 260, "남색": 270, "보라": 305, "분홍": 350}
 WEAK = 0.95          # palettes scoring below this get an alternative-poster search
 
@@ -104,7 +105,7 @@ def clusters(data):
     return [(c / total, tuple(pal[i * 3:i * 3 + 3])) for c, i in sorted(counts, reverse=True)], im
 
 
-def pick(cl):
+def pick(cl, first=None):
     def vivid(rgb):
         L, C, _ = to_oklch(rgb)
         return C, L
@@ -115,7 +116,7 @@ def pick(cl):
         extreme = 0.6 if L < 0.16 or L > 0.95 else 1.0
         small = 0.4 if share < 0.10 else 1.0
         return share * (0.6 + 2.2 * C) * extreme * small
-    first = max(cl, key=lambda x: score1(*x))[1]
+    first = first or max(cl, key=lambda x: score1(*x))[1]
     def score2(share, rgb):
         d = oklab_dist(rgb, first)
         if d < 0.07:
@@ -189,9 +190,7 @@ def analyse(data, hue=None):
         h = hint_cluster(cl, hue)
         if h:
             q += 1.2
-            near = lambda rgb: to_oklch(rgb)[1] >= 0.05 and abs((to_oklch(rgb)[2] - hue + 180) % 360 - 180) <= 35
-            if not near(first) and not near(second):
-                second = h[1]                       # make sure the wanted colour is on the page
+            first, second = pick(cl, first=h[1])    # the wanted colour carries the page; the accent is chosen to go with it
         else:
             q -= 0.5
     return cl, thumb, first, second, q
