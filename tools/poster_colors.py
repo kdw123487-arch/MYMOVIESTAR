@@ -12,7 +12,7 @@ Writes 포스터1색 / 포스터2색 (raw) and 배경색 / 포인트색 (usable)
 and a preview sheet data/poster_colors.jpg. Run tools/xlsx_to_json.py afterwards.
 Needs: pip install openpyxl pillow
 """
-import io, json, math, sys, time, urllib.request
+import io, json, math, os, sys, time, urllib.parse, urllib.request
 from copy import copy
 from pathlib import Path
 from openpyxl import load_workbook
@@ -23,6 +23,10 @@ ROOT = Path(__file__).resolve().parent.parent
 XLSX, JSON, PREVIEW = ROOT / "data" / "films.xlsx", ROOT / "data" / "films.json", ROOT / "data" / "poster_colors.jpg"
 IMG = "https://image.tmdb.org/t/p/w185"
 IVORY, MUTED = (241, 232, 214), (168, 154, 140)
+KEY = os.environ.get("TMDB_KEY", "").strip()
+# 선호색 column: the colour a film's page should carry; the poster search favours posters that have it
+HUES = {"빨강": 25, "주황": 55, "노랑": 95, "초록": 145, "청록": 195, "파랑": 260, "남색": 270, "보라": 305, "분홍": 350}
+WEAK = 0.95          # palettes scoring below this get an alternative-poster search
 
 
 # ---------- colour maths ----------
@@ -160,6 +164,65 @@ def point(second, bg):
     return from_oklch(0.92, min(C, 0.06), H)
 
 
+def quality(first, second):
+    """How usable a 1st/2nd pair is: some colour in the background, a vivid and different accent."""
+    _, C1, H1 = to_oklch(first)
+    L2, C2, H2 = to_oklch(second)
+    q = 0.6 * min(C1, 0.10) / 0.10 + 1.0 * min(C2, 0.15) / 0.15 + 0.3 * min(1.0, oklab_dist(first, second) / 0.35)
+    if C1 >= 0.04 and C2 >= 0.04:
+        q += 0.3 * min(1.0, abs((H2 - H1 + 180) % 360 - 180) / 90)
+    return q
+
+
+def hint_cluster(cl, hue):
+    """The largest clearly-coloured cluster near the wanted hue, if the poster has one."""
+    near = [(sh, rgb) for sh, rgb in cl
+            if to_oklch(rgb)[1] >= 0.05 and abs((to_oklch(rgb)[2] - hue + 180) % 360 - 180) <= 35 and sh >= 0.05]
+    return max(near, default=None)
+
+
+def analyse(data, hue=None):
+    cl, thumb = clusters(data)
+    first, second = pick(cl)
+    q = quality(first, second)
+    if hue is not None:
+        h = hint_cluster(cl, hue)
+        if h:
+            q += 1.2
+            near = lambda rgb: to_oklch(rgb)[1] >= 0.05 and abs((to_oklch(rgb)[2] - hue + 180) % 360 - 180) <= 35
+            if not near(first) and not near(second):
+                second = h[1]                       # make sure the wanted colour is on the page
+        else:
+            q -= 0.5
+    return cl, thumb, first, second, q
+
+
+def api(path, **params):
+    params = {k: v for k, v in params.items() if v}
+    headers = {"accept": "application/json"}
+    if len(KEY) > 40:
+        headers["Authorization"] = "Bearer " + KEY
+    else:
+        params["api_key"] = KEY
+    url = f"https://api.themoviedb.org/3{path}?{urllib.parse.urlencode(params)}"
+    with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=20) as r:
+        return json.load(r)
+
+
+def candidates(tmdb_id, lang, current):
+    """Other posters for the film in the same language (Japanese for Japanese films, English otherwise)."""
+    if not KEY or not tmdb_id:
+        return []
+    try:
+        imgs = api(f"/movie/{tmdb_id}/images", include_image_language=lang).get("posters", [])
+    except Exception:
+        return []
+    imgs = [p for p in imgs if p.get("iso_639_1") == lang and p["file_path"] != current
+            and p.get("width", 0) >= 1000 and 0.64 <= p.get("aspect_ratio", 0) <= 0.70]   # proper, full-size posters only
+    imgs.sort(key=lambda p: (p.get("vote_count", 0), p.get("vote_average", 0)), reverse=True)
+    return [p["file_path"] for p in imgs[:14]]
+
+
 def fetch(path):
     for attempt in range(3):
         try:
@@ -193,20 +256,37 @@ def main():
     c_r1, c_r2 = column(ws, "포스터1색"), column(ws, "포스터2색")
     c_bg, c_ac = column(ws, "배경색"), column(ws, "포인트색")
 
-    rows, done, skipped = [], 0, []
+    c_poster, c_hint = column(ws, "포스터"), column(ws, "선호색")
+    rows, done, skipped, swapped = [], 0, [], []
     for r in range(2, ws.max_row + 1):
         en = ws.cell(r, c_en).value
         f = films.get(en)
-        p = ((f or {}).get("tm") or {}).get("p")
+        tm = (f or {}).get("tm") or {}
+        p = tm.get("p")
         if not p:
             skipped.append(en)
             continue
+        hint = str(ws.cell(r, c_hint).value or "").strip()
+        hue = HUES.get(hint)
         try:
-            cl, thumb = clusters(fetch(p))
+            cl, thumb, first, second, q = analyse(fetch(p), hue)
         except Exception as e:
             skipped.append(f"{en} ({e})")
             continue
-        first, second = pick(cl)
+        q0, new = q, None
+        if q < WEAK or hue is not None:
+            lang = "ja" if str(f.get("n", "")).startswith("일본") else "en"
+            for cand in candidates(tm.get("id"), lang, p):
+                try:
+                    res = analyse(fetch(cand), hue)
+                except Exception:
+                    continue
+                if res[4] > q + 0.15:
+                    cl, thumb, first, second, q = res
+                    new = cand
+        if new:
+            ws.cell(r, c_poster, new)
+            swapped.append(f"{en}: {q0:.2f} → {q:.2f}")
         bg = background(first, second)
         ac = point(second, bg)
         for col, rgb in ((c_r1, first), (c_r2, second)):
@@ -217,9 +297,9 @@ def main():
         cb.fill, cb.font = PatternFill("solid", fgColor=hexc(bg)[1:]), Font(color="F1E8D6")
         ca = ws.cell(r, c_ac, hexc(ac))
         ca.fill, ca.font = PatternFill("solid", fgColor=hexc(bg)[1:]), Font(color=hexc(ac)[1:], bold=True)
-        rows.append((en, thumb, cl, first, second, bg, ac))
+        rows.append((en, thumb, cl, first, second, bg, ac, q, bool(new)))
         done += 1
-        print(f"{en:40s} 1:{hexc(first)} 2:{hexc(second)} -> bg {hexc(bg)}  point {hexc(ac)}  ({contrast(ac, bg):.1f}:1)")
+        print(f"{en:40s} q {q0:.2f}{' -> %.2f NEW POSTER' % q if new else ''}  bg {hexc(bg)}  point {hexc(ac)}  ({contrast(ac, bg):.1f}:1)")
     wb.save(XLSX)
 
     # preview: poster | its colour clusters | 제1색 제2색 | the film page swatch
@@ -231,7 +311,7 @@ def main():
         small = ImageFont.truetype("DejaVuSans.ttf", 12)
     except OSError:
         font = small = ImageFont.load_default()
-    for i, (en, thumb, cl, first, second, bg, ac) in enumerate(rows):
+    for i, (en, thumb, cl, first, second, bg, ac, q, new) in enumerate(rows):
         x, y = (i % COLS) * W, (i // COLS) * RH
         t = thumb.copy()
         t.thumbnail((90, 135))
@@ -244,13 +324,17 @@ def main():
         d.rectangle((x + 108, y + 40, x + 158, y + 70), fill=first)
         d.rectangle((x + 162, y + 40, x + 212, y + 70), fill=second)
         d.text((x + 108, y + 74), "1st   2nd", font=small, fill=(150, 140, 130))
+        d.text((x + 108, y + 96), f"score {q:.2f}", font=small, fill=(150, 140, 130))
+        if new:
+            d.text((x + 108, y + 116), "NEW POSTER", font=font, fill=(212, 176, 106))
         d.rectangle((x + 330, y + 10, x + 590, y + 140), fill=bg)
         d.text((x + 342, y + 22), en[:26], font=font, fill=ac)
         d.text((x + 342, y + 50), "Synopsis", font=font, fill=ac)
         d.text((x + 342, y + 76), "Body text on the page", font=small, fill=IVORY)
         d.text((x + 342, y + 112), f"{hexc(bg)}  {hexc(ac)}", font=small, fill=mix(ac, bg, 0.7))
     sheet.save(PREVIEW, quality=86, optimize=True)
-    print(f"\n{done}편 분석 · 건너뜀 {len(skipped)}편{': ' + ', '.join(skipped) if skipped else ''}")
+    print("\n포스터 교체: " + ("; ".join(swapped) if swapped else "없음"))
+    print(f"{done}편 분석 · 건너뜀 {len(skipped)}편{': ' + ', '.join(skipped) if skipped else ''}")
     if done == 0:
         sys.exit("포스터를 하나도 분석하지 못했습니다.")
 

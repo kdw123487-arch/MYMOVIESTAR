@@ -25,7 +25,7 @@ COLUMNS = {
     "키": "key", "제목": "ko", "원제": "en", "연도": "y", "국가": "n", "장르": "g",
     "러닝타임": "rt", "감독": "dir", "출연": "cast", "수상": "aw", "한줄소개": "p",
     "줄거리": "s", "추천이유": "w", "관람포인트1": "pt1", "관람포인트2": "pt2", "관람포인트3": "pt3",
-    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef", "배경색": "bg", "포인트색": "ac",
+    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef", "배경색": "bg", "포인트색": "ac", "포스터": "poster",
 }
 MOTIFS = {"sun", "waves", "bands", "rings", "split", "peaks", "arch", "rays", "grid", "dots", "trees"}
 FONTS = {"classic", "elegant", "noir", "epic", "typewriter", "mono", "bold", "scifi", "gothic", "western", "retro", "script", "hand", "comic", "light", "neon"}
@@ -65,7 +65,7 @@ def film(row, n):
         if not f.get(need):
             fail(n, f"'{[k for k, v in COLUMNS.items() if v == need][0]}' 칸이 비어 있습니다.")
     out = {"key": f.get("key") or slug(f["en"]), "ko": f["ko"], "en": f["en"]}
-    for k in ("y", "n", "g", "dir", "cast", "aw", "p", "s", "w"):
+    for k in ("y", "n", "g", "dir", "cast", "aw", "p", "s", "w", "poster"):
         if f.get(k):
             out[k] = f[k]
     for k in ("rt", "tmdb"):
@@ -261,6 +261,10 @@ def main():
                 f["tm"] = old[f["key"]]
         print("TMDB_KEY가 없어 TMDB 정보는 기존 값을 그대로 썼습니다.")
 
+    for f in films:                                  # 포스터 column: a poster chosen for its colours wins
+        chosen = f.pop("poster", "")
+        if chosen and f.get("tm"):
+            f["tm"]["p"] = chosen
     OUT.write_text(json.dumps({"films": films, "retired": retired}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     if KEY:
         lines = [f"# TMDB 확인 결과 ({date.today().isoformat()})", "",

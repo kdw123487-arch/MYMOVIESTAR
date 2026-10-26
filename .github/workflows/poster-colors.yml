@@ -28,6 +28,8 @@ jobs:
           python-version: "3.12"
       - run: pip install openpyxl pillow
       - name: Analyse posters
+        env:
+          TMDB_KEY: ${{ secrets.TMDB_KEY }}
         run: python tools/poster_colors.py
       - name: Rebuild data/films.json
         env:
