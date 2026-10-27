@@ -451,8 +451,6 @@ function sceneKit(x,W,H,cx,cy,r,[a,b,c],pal){
 const SCENES={
 "r:spider-man-into-the-spider-verse":d=>{const{x,rect,cir,cx,u,W,H,r,a,l,ice,h}=d,st=Math.max(10,W/110);
   for(let yy=st/2;yy<H;yy+=st)for(let xx=(yy/st%2)*st/2;xx<W;xx+=st){const t=Math.max(0,(xx/W*.9+(1-yy/H)*.6)-.45);if(t>0)cir(xx,yy,Math.min(st*.48,t*st*.75),a,.45)}
-  const B=[];for(let t=-u*.1;t<W;){const bw=u*(.16+r()*.22),k=Math.min(1,Math.abs(t+bw/2-cx)/Math.min(W*.5,u*2.4)),bh=H*(.16+r()*.45)*Math.max(.12,1-k*k*.9);B.push([t,bw,bh]);t+=bw+u*.03}
-  [[-u*.05,l,.75],[u*.05,ice,.55],[0,h,1]].forEach(([o,col,al])=>B.forEach(([t,bw,bh])=>rect(t+o,H-bh+o*.6,bw,bh,col,al)));
   const vg=x.createLinearGradient(0,H*.45,0,H);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.72)");x.globalAlpha=1;x.fillStyle=vg;x.fillRect(0,H*.45,W,H*.55)},
 "r:marriage-story":d=>{const{ring,cir,ln,cx,cy,u,a,l,H}=d;ring(cx-u*.32,cy,u*.62,a,3,.9);ring(cx+u*.32,cy,u*.62,a,3,.9);cir(cx,cy,u*.2,a,.22);ln(cx,H*.06,cx,H*.94,l,1.5,.45)},
 "r:the-irishman":d=>{const{poly,ln,rect,cx,cy,u,W,H,a,w,h}=d,dw=u*.2,dh=u*.36;
@@ -501,9 +499,10 @@ const SCENES={
   x.setLineDash([u*.07,u*.05]);ln(0,cy+u*.1,W,cy+u*.1,l,2,.6);x.setLineDash([]);cir(cx,cy+u*.1,u*.05,a,1)},
 "r:mad-max-fury-road":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d;cir(cx,cy+u*.15,u*.75,a,.92);
   for(let i=0;i<5;i++)rect(cx-u*.8,cy+u*.25+i*u*.13,u*1.6,u*(.02+i*.012),h,.95);rect(0,cy+u*.9,W,H,h,1)},
-"r:inception":d=>{const{rect,ln,cx,cy,u,W,a}=d,bw=u*.09,gp=u*.035,n=Math.ceil(W/(bw+gp))+1,o=(cx-bw/2)%(bw+gp)-(bw+gp);
+"r:inception":d=>{const{x,rect,ln,cx,cy,u,W,H,a}=d,bw=u*.09,gp=u*.035,n=Math.ceil(W/(bw+gp))+1,o=(cx-bw/2)%(bw+gp)-(bw+gp);
   for(let i=0;i<n;i++){const px=o+i*(bw+gp),dx=Math.min(1,Math.abs(px+bw/2-cx)/(Math.min(W/2,u*2.2))),bh=u*(.1+.8*dx**1.6);rect(px,cy-bh,bw,bh,a,.7);rect(px,cy+u*.05,bw,bh,a,.22)}
-  ln(0,cy+u*.025,W,cy+u*.025,a,1.5,.8)},
+  ln(0,cy+u*.025,W,cy+u*.025,a,1.5,.8);
+  x.globalAlpha=1;[[0,1],[W,-1]].forEach(([x0,dr])=>{const ew=Math.max(0,(W-u*4)/2)+u*.6,g=x.createLinearGradient(x0,0,x0+dr*ew,0);g.addColorStop(0,"rgba(0,0,0,.82)");g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(dr>0?0:W-ew,0,ew,H)})},
 "r:no-country-for-old-men":d=>{const{ring,cir,poly,rect,cx,cy,u,W,H,a,h}=d,y0=H*.66;rect(0,y0,W,H-y0,h,1);
   poly([[cx-u*.03,y0],[cx+u*.03,y0],[cx+u*.75,H],[cx-u*.75,H]],a,.3);
   ring(cx,cy-u*.15,u*.4,a,3.5,.95);ring(cx,cy-u*.15,u*.32,a,1.5,.6);cir(cx,cy-u*.15,u*.4,a,.12)},
