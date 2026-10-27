@@ -558,11 +558,11 @@ const SCENES={
 "r:leon-the-professional":d=>{const{ln,cir,cx,cy,u,a,h}=d,by=cy+u*.7;
   for(let i=0;i<9;i++){const t=-Math.PI/2+(i-4)*.3,L=u*(.6+((i*37)%5)*.06),qx=cx+Math.cos(t)*L,qy=by+Math.sin(t)*L;ln(cx,by,qx,qy,a,2.5,.8);cir(qx,qy,u*.04,a,.95)}},
 "r:chungking-express":d=>{const{x,rect,W,H,u,r,a,l}=d;
-  x.save();x.filter="blur("+Math.max(3,u*.03)+"px)";
-  for(let i=0;i<22;i++){const y=H*(.06+.88*(i+r()*.6)/22),len=W*(.2+r()*.5),px=r()*(W-len*.6)-len*.2,hh=u*(.02+r()*.07);rect(px,y,len,hh,i%3?a:l,.4+r()*.5)}
+  x.save();x.filter="blur("+Math.max(3,u*.022)+"px)";
+  let y=H*.04;while(y<H*.96){const hh=u*(.025+r()*.09);rect(-W*.1,y,W*1.2,hh,r()<.28?l:a,.3+r()*.6);y+=hh+u*(.02+r()*.07)}
   x.restore()},
-"r:roman-holiday":d=>{const{x,cir,glow,cx,cy,u,W,a,ice}=d;glow(cx,cy,u*.9,a,.4);cir(cx,cy,u*.5,a,.55);
-  x.setLineDash([u*.02,u*.035]);x.globalAlpha=.85;x.strokeStyle=ice;x.lineWidth=2.5;x.lineCap="round";x.beginPath();for(let t=0;t<=W;t+=6){const k=t/W;x.lineTo(t,cy+u*.15+Math.sin(k*9)*u*.22*Math.sin(k*3.14))}x.stroke();x.setLineDash([])},
+"r:roman-holiday":d=>{const{x,cir,glow,cx,cy,u,a}=d;glow(cx,cy,u*1.3,a,.5);
+  x.save();x.filter="blur("+Math.max(8,u*.09)+"px)";cir(cx,cy,u*.5,a,.55);x.restore()},
 "r:pulp-fiction":d=>{const{poly,rect,glow,cx,cy,u,a,h}=d;poly([[cx-u*.4,cy],[cx+u*.4,cy],[cx+u*1,cy-u*.95],[cx-u*1,cy-u*.95]],a,.2);glow(cx,cy-u*.05,u*.9,a,.7);
   rect(cx-u*.45,cy,u*.9,u*.5,h,1);rect(cx-u*.45,cy-u*.02,u*.9,u*.025,a,.95)}
 };
