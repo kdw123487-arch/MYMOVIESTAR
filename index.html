@@ -453,8 +453,6 @@ function sceneKit(x,W,H,cx,cy,r,[a,b,c],pal){
 const SCENES={
 "r:spider-man-into-the-spider-verse":d=>{const{cir,W,H,a}=d,st=Math.max(10,W/110);
   for(let yy=st/2;yy<H;yy+=st)for(let xx=(yy/st%2)*st/2;xx<W;xx+=st){const t=Math.max(0,(xx/W*.9+(1-yy/H)*.6)-.45);if(t>0)cir(xx,yy,Math.min(st*.48,t*st*.75),a,.45)}},
-"r:marriage-story":d=>{const{x,ring,cir,cx,cy,u,a,l}=d,R=u*.58,o=u*.36;
-  x.save();x.beginPath();x.arc(cx-o,cy,R,0,7);x.clip();cir(cx+o,cy,R*.92,a,.2);x.restore();ring(cx-o,cy,R,a,2.5,.9);ring(cx+o,cy,R*.92,l,2.5,.8)},
 "r:the-irishman":d=>{const{rect,cx,u,W,H,a,l}=d,w=u*.2,st=u*.4,n=Math.ceil(W/st)+2;
   for(let i=-n;i<=n;i++){const px=cx+i*st-w/2,f=Math.max(0,1-Math.abs(px+w/2-cx)/(W*.5)),al=Math.pow(f,1.3)*.85;if(al<.02)continue;rect(px,0,w,H,a,al*.75)}},
 "r:the-power-of-the-dog":d=>{const{hill,cir,cx,cy,u,H,a,w,h}=d;cir(cx+u*.9,cy-u*.35,u*.2,a,.35);
