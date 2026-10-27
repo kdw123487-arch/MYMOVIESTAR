@@ -101,7 +101,7 @@ html.film .tab[aria-selected="true"]{color:var(--faint)}
 .sort-menu li:hover,.sort-menu li.active{background:rgba(212,176,106,.1);color:var(--ivory)}
 .sort-menu li[aria-selected="true"]{color:var(--gold)}
 .sort-menu li[aria-selected="true"]::after{content:"";width:8px;height:4px;border-left:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg) translateY(-2px)}
-@media (max-width:640px){.sort-menu{left:0;right:auto}}
+@media (max-width:640px){.sort-menu{max-width:calc(100vw - 24px)}}
 .heart{display:inline-grid;place-items:center;width:34px;height:34px;margin:-8px -6px;border:0;background:none;color:var(--muted);cursor:pointer;border-radius:50%}
 .heart svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;transition:transform .2s ease,fill .2s ease}
 .heart:hover{color:var(--ivory)}.heart:hover svg{transform:scale(1.12)}
@@ -716,7 +716,8 @@ const DEFDIR={year:"desc",title:"asc",rt:"asc"};
 const sortBtn=$("sortBtn"),sortMenu=$("sortMenu"),sortItems=[...sortMenu.querySelectorAll("li")];let sortActive=0;
 function syncSort(){const db=$("dirBtn");db.hidden=curSort==="pick";db.dataset.dir=curDir;const lb=curSort==="year"?(curDir==="desc"?"최신순":"오래된 순"):curSort==="title"?(curDir==="asc"?"가나다 순":"가나다 역순"):curSort==="rt"?(curDir==="asc"?"짧은 순":"긴 순"):"";db.setAttribute("aria-label",lb?`${lb} (눌러서 순서 바꾸기)`:"");db.title=lb;sortItems.forEach(li=>li.setAttribute("aria-selected",li.dataset.v===curSort));$("sortLabel").textContent=sortItems.find(li=>li.dataset.v===curSort).textContent}
 function moveActive(i){sortActive=(i+sortItems.length)%sortItems.length;sortItems.forEach((li,j)=>li.classList.toggle("active",j===sortActive))}
-function openSort(){sortMenu.hidden=false;sortBtn.setAttribute("aria-expanded","true");moveActive(sortItems.findIndex(li=>li.dataset.v===curSort));sortMenu.focus()}
+function fitSort(){sortMenu.style.left="";sortMenu.style.right="0";const r=sortMenu.getBoundingClientRect(),vw=document.documentElement.clientWidth,m=12;let dx=0;if(r.right>vw-m)dx=vw-m-r.right;if(r.left+dx<m)dx=m-r.left;if(dx){sortMenu.style.right="auto";sortMenu.style.left=(sortMenu.offsetLeft+dx)+"px"}}
+function openSort(){sortMenu.hidden=false;fitSort();sortBtn.setAttribute("aria-expanded","true");moveActive(sortItems.findIndex(li=>li.dataset.v===curSort));sortMenu.focus()}
 function closeSort(focus){sortMenu.hidden=true;sortBtn.setAttribute("aria-expanded","false");if(focus)sortBtn.focus()}
 function saveSort(){store.set("mymoviestar.sort",curSort);store.set("mymoviestar.dir",curDir)}
 function pickSort(v){v=SORTS[v]?v:"pick";if(v!==curSort)curDir=DEFDIR[v]||curDir;curSort=v;saveSort();closeSort(true);applyList()}
