@@ -403,6 +403,22 @@ function paint(cv,f,W=480,H=720,pal){
     case"rings":x.lineWidth=2;k(14).forEach(i=>{x.globalAlpha=1-i*.06;x.beginPath();x.arc(cx,H*.45,(i+1)*18,0,7);x.stroke()});break;
     case"split":x.globalAlpha=.85;x.fillRect(0,0,cx,H);x.fillStyle=b;x.beginPath();x.arc(cx,cy,70,0,7);x.fill();break;
     case"peaks":k(4).forEach(i=>{x.globalAlpha=.25+i*.2;x.beginPath();x.moveTo(-20,H);for(let t=-20;t<=W+40;t+=60)x.lineTo(t,H*.45+i*55-r()*90);x.lineTo(W+20,H);x.fill()});break;
+    case"snowpeaks":{/* snow-covered ranges: icy ridges in the background hue, whiter toward the front, light snowfall */
+      const sky=pal?.sky||b,ice=pal?.ice||[c,b,a,"#e9eff3"];
+      const gs=x.createLinearGradient(0,0,0,H);gs.addColorStop(0,c);gs.addColorStop(.6,sky);gs.addColorStop(1,c);x.globalAlpha=1;x.fillStyle=gs;x.fillRect(0,0,W,H);
+      ice.forEach((col,i)=>{
+        const baseY=H*(.5+i*.12),amp=H*(.42-i*.07),n=Math.round(W/(H*(.55-i*.06)));
+        const pts=[[-W*.05,baseY]];for(let k=0;k<=n;k++){const t=(k+.5+(r()-.5)*.5)/n*W*1.1-W*.05;pts.push([t,baseY-amp*(.45+r()*.55)]);pts.push([t+W/n*.55,baseY-amp*(.05+r()*.25)])}
+        const g=x.createLinearGradient(0,baseY-amp,0,H);g.addColorStop(0,col);g.addColorStop(.7,c);
+        x.globalAlpha=.6+i*.12;x.fillStyle=g;x.beginPath();x.moveTo(-10,H);pts.forEach(([t,y])=>x.lineTo(t,y));x.lineTo(W+10,H);x.closePath();x.fill();
+        /* snow cap = the top part of each peak, with a ragged lower edge */
+        x.globalAlpha=.45+i*.13;x.fillStyle="#f2f6f8";
+        for(let k=1;k<pts.length-1;k++){const [px,py]=pts[k],[lx,ly]=pts[k-1],[nx,ny]=pts[k+1];if(py>ly||py>ny)continue;
+          const d=.22+r()*.12,L=[px+(lx-px)*d,py+(ly-py)*d],R=[px+(nx-px)*d,py+(ny-py)*d];
+          x.beginPath();x.moveTo(px,py);x.lineTo(R[0],R[1]);x.lineTo((px+R[0])/2+4,(py+R[1])/2+amp*.06);x.lineTo(px,py+amp*.1);x.lineTo((px+L[0])/2-3,(py+L[1])/2+amp*.05);x.lineTo(L[0],L[1]);x.closePath();x.fill()}
+      });
+      x.fillStyle="#ffffff";for(let i=0;i<260*W/1600;i++){x.globalAlpha=.12+r()*.4;x.beginPath();x.arc(r()*W,r()*H,.6+r()*1.6,0,7);x.fill()}
+      break}
     case"arcade":{/* a stone arcade: arches cut into a wall, the accent kept to one thin line */
       const wall=pal?.wall||b,hole=pal?.hole||c,line=pal?.line||a,n=W>900?5:3,top=H*.1,base=H*.8,w=W/(n+1.4),gap=(W-n*w)/(n+1),r=w/2;
       x.globalAlpha=1;x.fillStyle=hole;x.fillRect(0,0,W,H);
@@ -557,6 +573,7 @@ function bannerPal(f){
     [bh,bs,bl]=toHsl(hex(f.bg)),[ah,as,al]=toHsl(hex(f.ac));
   const p=[hsl(ah,as*.8,al*.88),hsl(bh,Math.min(.6,bs*1.25+.04),bl+.11),hsl(bh,bs,bl*.7)];
   p.wall=hsl(bh,bs*.8,bl+.07);p.hole=hsl(bh,bs,bl*.6);p.line=hsl(ah,as,al);
+  p.sky=hsl(bh,bs*.75,bl+.2);p.ice=[hsl(bh,bs*.55,.34),hsl(bh,bs*.4,.5),hsl(bh,bs*.3,.68),hsl(bh,bs*.2,.86)];
   return p;
 }
 /* page colour: the 배경색 column of the spreadsheet, used as is */
