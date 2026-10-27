@@ -449,10 +449,11 @@ function sceneKit(x,W,H,cx,cy,r,[a,b,c],pal){
   D.stars=(n,ymax,al=.6)=>{for(let i=0;i<n;i++)D.cir(r()*W,r()*ymax,.6+r()*1.5,ice,al*(.4+r()*.6))};
   return D}
 const SCENES={
-"r:spider-man-into-the-spider-verse":d=>{const{x,rect,cir,cx,u,W,H,r,a,l,ice,h}=d,st=Math.max(10,W/110);
-  for(let yy=st/2;yy<H;yy+=st)for(let xx=(yy/st%2)*st/2;xx<W;xx+=st){const t=Math.max(0,(xx/W*.9+(1-yy/H)*.6)-.45);if(t>0)cir(xx,yy,Math.min(st*.48,t*st*.75),a,.45)}
+"r:spider-man-into-the-spider-verse":d=>{const{x,cir,W,H,a,l}=d,st=Math.max(10,W/110),dot=(col,ox,oy,al,fl)=>{for(let yy=st/2;yy<H;yy+=st)for(let xx=(yy/st%2)*st/2;xx<W;xx+=st){const fx=fl?1-xx/W:xx/W,t=Math.max(0,(fx*.9+(1-yy/H)*.6)-.45);if(t>0)cir(xx+ox,yy+oy,Math.min(st*.48,t*st*.75),col,al)}};
+  dot(l,st*.3,st*.22,.3,1);dot(a,0,0,.45,0);
   const vg=x.createLinearGradient(0,H*.45,0,H);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.72)");x.globalAlpha=1;x.fillStyle=vg;x.fillRect(0,H*.45,W,H*.55)},
-"r:marriage-story":d=>{const{ring,cir,ln,cx,cy,u,a,l,H}=d;ring(cx-u*.32,cy,u*.62,a,3,.9);ring(cx+u*.32,cy,u*.62,a,3,.9);cir(cx,cy,u*.2,a,.22);ln(cx,H*.06,cx,H*.94,l,1.5,.45)},
+"r:marriage-story":d=>{const{x,ring,cir,cx,cy,u,a,l}=d,R=u*.58,o=u*.36;
+  x.save();x.beginPath();x.arc(cx-o,cy,R,0,7);x.clip();cir(cx+o,cy,R*.92,a,.2);x.restore();ring(cx-o,cy,R,a,2.5,.9);ring(cx+o,cy,R*.92,l,2.5,.8)},
 "r:the-irishman":d=>{const{poly,ln,rect,cx,cy,u,W,H,a,w,h}=d,dw=u*.2,dh=u*.36;
   poly([[0,0],[cx-dw,cy-dh],[cx-dw,cy+dh],[0,H]],w,.55);poly([[W,0],[cx+dw,cy-dh],[cx+dw,cy+dh],[W,H]],w,.55);
   [[0,0,-1,-1],[W,0,1,-1],[0,H,-1,1],[W,H,1,1]].forEach(([px,py,sx,sy])=>ln(px,py,cx+sx*dw,cy+sy*dh,a,1.5,.35));
@@ -478,13 +479,15 @@ const SCENES={
 "r:roma":d=>{const{ell,ln,cx,cy,u,W,H,a,w}=d;
   for(let t=0;t<W;t+=u*.3)ln(t,H*.45,t,H,w,1,.3);for(let y=H*.45;y<H;y+=u*.22)ln(0,y,W,y,w,1,.3);
   for(let i=1;i<6;i++)ell(cx,cy+u*.15,u*.28*i,u*.05*i,a,.9-i*.14,0,2)},
-"r:all-quiet-on-the-western-front":d=>{const{rect,ln,cir,cx,cy,u,W,H,a,h}=d;
-  [0,1,2,3].forEach(i=>rect(0,H*.5+i*u*.14,W,u*.05,a,.1+i*.05));ln(0,H*.72,W,H*.72,a,2,.7);
-  ln(cx-u*.6,H*.72,cx-u*.6,H*.5,a,2.5,.8);cir(cx+u*.9,cy-u*.5,u*.06,a,.5);rect(0,H*.72,W,H*.28,h,.9)},
+"r:all-quiet-on-the-western-front":d=>{const{x,cir,glow,cx,u,W,H,a,ice}=d,seg=W/64;
+  for(let i=0;i<9;i++){const y=H*.52+i*u*.11;x.globalAlpha=.14+i*.07;x.strokeStyle=a;x.lineWidth=1.5;x.beginPath();for(let k=0;k<=64;k++)x.lineTo(k*seg,y+(k%2?1:-1)*u*.007*(i+1));x.stroke()}
+  glow(cx+u*.8,H*.2,u*.25,ice,.45);cir(cx+u*.8,H*.2,u*.022,ice,.95)},
 "r:amelie":d=>{const{x,cir,rect,cx,cy,u,W,H,a,h,l}=d,y0=cy+u*.5;
   x.globalAlpha=.95;x.fillStyle=a;x.beginPath();x.arc(cx,y0,u*.55,Math.PI,0);x.fill();rect(0,y0,W,H-y0,h,1);
   const s=u*.2,px=cx,py=cy-u*.75;x.globalAlpha=1;x.fillStyle=l;x.beginPath();x.moveTo(px,py+s*.5);x.bezierCurveTo(px-s*1.2,py-s*.1,px-s*.6,py-s*.9,px,py-s*.35);x.bezierCurveTo(px+s*.6,py-s*.9,px+s*1.2,py-s*.1,px,py+s*.5);x.fill()},
-"r:the-intouchables":d=>{const{ring,cir,cx,cy,u,a}=d;ring(cx-u*.25,cy,u*.7,a,u*.05,.95);ring(cx+u*.55,cy+u*.3,u*.38,a,u*.03,.85);cir(cx+u*.55,cy+u*.3,u*.07,a,1)},
+"r:the-intouchables":d=>{const{rect,cir,ring,cx,cy,u,r,a,ice}=d;
+  for(let i=0;i<14;i++){const y=cy+(r()-.5)*u*1.2,L=u*(.6+r()*1.8);rect(cx-u*.45-L,y,L,1.5,a,.25)}
+  cir(cx-u*.22,cy,u*.42,a,.92);ring(cx+u*.3,cy,u*.42,ice,3,.85)},
 "r:the-lives-of-others":d=>{const{x,cir,cx,cy,u,a,l}=d,px=cx-u*.45;cir(px,cy,u*.07,l,1);
   [.3,.55,.8,1.05,1.3].forEach((k,i)=>{x.globalAlpha=.9-i*.15;x.strokeStyle=a;x.lineWidth=2.5;x.lineCap="round";x.beginPath();x.arc(px,cy,u*k,-.7,.7);x.stroke()})},
 "r:pan-s-labyrinth":d=>{const{x,cir,cx,cy,u,a,l}=d;cir(cx+u*.95,cy-u*.5,u*.17,l,.8);
@@ -497,8 +500,10 @@ const SCENES={
   ln(cx+u*.2,H*.08,cx+u*.2,H*.8,a,2.5,.9);cir(cx+u*.2,H*.8,5,a,1)},
 "r:frankenstein":d=>{const{x,ln,rect,cir,glow,cx,cy,u,W,a,l}=d;rect(cx-u*.018,0,u*.036,d.H,a,.85);glow(cx,cy,u*.6,a,.3);
   x.setLineDash([u*.07,u*.05]);ln(0,cy+u*.1,W,cy+u*.1,l,2,.6);x.setLineDash([]);cir(cx,cy+u*.1,u*.05,a,1)},
-"r:mad-max-fury-road":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d;cir(cx,cy+u*.15,u*.75,a,.92);
-  for(let i=0;i<5;i++)rect(cx-u*.8,cy+u*.25+i*u*.13,u*1.6,u*(.02+i*.012),h,.95);rect(0,cy+u*.9,W,H,h,1)},
+"r:mad-max-fury-road":d=>{const{x,cir,rect,ln,cx,cy,u,W,H,a,h}=d,y0=cy+u*.55,sy=y0-u*.12,R=u*.72;
+  x.save();x.beginPath();x.rect(0,0,W,y0);x.clip();x.beginPath();x.arc(cx,sy,R,0,7);x.clip();cir(cx,sy,R,a,.95);
+  for(let i=0;i<6;i++)rect(0,sy-u*.42+i*u*.12,W,u*(.012+i*.013),h,1);x.restore();
+  ln(0,y0,W,y0,a,2,.8);const g=x.createLinearGradient(0,y0,0,H);g.addColorStop(0,"rgba(0,0,0,.1)");g.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,y0,W,H-y0)},
 "r:inception":d=>{const{x,rect,ln,cx,cy,u,W,H,a}=d,bw=u*.09,gp=u*.035,n=Math.ceil(W/(bw+gp))+1,o=(cx-bw/2)%(bw+gp)-(bw+gp);
   for(let i=0;i<n;i++){const px=o+i*(bw+gp),dx=Math.min(1,Math.abs(px+bw/2-cx)/(Math.min(W/2,u*2.2))),bh=u*(.1+.8*dx**1.6);rect(px,cy-bh,bw,bh,a,.7);rect(px,cy+u*.05,bw,bh,a,.22)}
   ln(0,cy+u*.025,W,cy+u*.025,a,1.5,.8);
@@ -541,10 +546,11 @@ const SCENES={
 "r:your-name":d=>{const{x,poly,cir,stars,glow,cx,cy,u,W,H,a,l}=d,hx=cx+u*.55,hy=cy-u*.35;stars(90,H*.6);
   poly([[hx,hy],[hx-u*1.7,hy+u*.95],[hx-u*1.5,hy+u*.6]],a,.3);glow(hx,hy,u*.3,a,.6);cir(hx,hy,u*.06,a,1);
   x.globalAlpha=.9;x.strokeStyle=l;x.lineWidth=3;x.beginPath();for(let t=0;t<=W;t+=8)x.lineTo(t,H*.62+Math.sin(t/(u*.3))*u*.12-t/W*u*.2);x.stroke()},
-"r:up":d=>{const{cir,cx,u,H,r,a,ice}=d;
-  for(let i=0;i<30;i++){const t=r(),py=H*(.9-t*.82),px=cx+(r()-.5)*u*(.25+t*2.2),rr=u*(.035+(1-t)*.11)*(.7+r()*.5);cir(px,py,rr,i%4?a:ice,.2+(1-t)*.65)}},
-"r:the-godfather":d=>{const{poly,cir,cx,cy,u,W,H,a}=d;
-  for(let t=-u*.3;t<W+u;t+=u*.32)poly([[t,0],[t+u*.14,0],[t+u*.14+u*.5,H],[t+u*.5,H]],a,.16);cir(cx,cy,u*.2,a,.9)},
+"r:up":d=>{const{x,cir,cx,cy,u,W,H,r,a,ice}=d,sp=Math.min(u*1.5,W*.42),p1=[cx+sp*.6,cy-u*.35];
+  x.setLineDash([u*.015,u*.04]);x.globalAlpha=.7;x.strokeStyle=ice;x.lineWidth=2;x.lineCap="round";x.beginPath();x.moveTo(cx-sp,H*.88);x.bezierCurveTo(cx-sp*.3,H*.9,cx,cy+u*.3,p1[0],p1[1]);x.stroke();x.setLineDash([]);
+  for(let i=0;i<14;i++){const t=r()*6.283,rr=r()*u*.28;cir(p1[0]+Math.cos(t)*rr,p1[1]-u*.12+Math.sin(t)*rr*.8,u*(.04+r()*.05),i%3?a:ice,.75)}},
+"r:the-godfather":d=>{const{ln,cir,glow,cx,u,W,H,a}=d,n=W>900?9:5,g=Math.min(u*.22,W/(n+1));glow(cx,0,u*1.2,a,.25);
+  for(let i=0;i<n;i++){const px=cx+(i-(n-1)/2)*g,L=H*(.3+.35*Math.abs(Math.sin(i*1.7+.4)));ln(px,0,px,L,a,1.5,.75);cir(px,L,u*.03,a,.95)}},
 "r:the-shawshank-redemption":d=>{const{rect,cx,cy,u,a,h}=d,x0=cx-u*.45,y0=cy-u*.7,ww=u*.9,hh=u*1.2;
   rect(x0,y0,ww,hh,a,.6);for(let i=0;i<5;i++)rect(x0+ww*(i+.5)/5-u*.02,y0,u*.04,hh,h,1)},
 "r:cinema-paradiso":d=>{const{x,poly,rect,cx,cy,u,W,a,h}=d;poly([[0,d.H],[cx-u*.5,cy-u*.45],[cx+u*.6,cy+u*.4]],a,.1);
@@ -554,8 +560,8 @@ const SCENES={
   [-1,1].forEach(s=>{ln(cx+s*u*1.6,H,cx+s*u*.1,cy+u*.85,l,6,.9);ln(cx+s*u*1.75,H,cx+s*u*.2,cy+u*.95,l,2,.6)})},
 "r:good-will-hunting":d=>{const{x,ln,cy,u,W,a}=d;for(let i=0;i<6;i++)ln(0,d.H*.15+i*u*.28,W,d.H*.15+i*u*.28,a,1,.14);
   x.globalAlpha=.9;x.strokeStyle=a;x.lineWidth=4;x.beginPath();for(let t=0;t<=W;t+=8)x.lineTo(t,cy+u*.1+Math.sin(t/(u*.35))*u*.28*Math.sin(t/W*3.14));x.stroke()},
-"r:leon-the-professional":d=>{const{ln,cir,cx,cy,u,a,h}=d,by=cy+u*.7;
-  for(let i=0;i<9;i++){const t=-Math.PI/2+(i-4)*.3,L=u*(.6+((i*37)%5)*.06),qx=cx+Math.cos(t)*L,qy=by+Math.sin(t)*L;ln(cx,by,qx,qy,a,2.5,.8);cir(qx,qy,u*.04,a,.95)}},
+"r:leon-the-professional":d=>{const{rect,glow,cx,cy,u,a,ice,l}=d;glow(cx,cy,u*.8,ice,.3);rect(cx-u*.45,cy-u*.6,u*.9,u*1.2,ice,.08);
+  rect(cx-u*.12,cy-u*.38,u*.07,u*.9,a,.95);rect(cx+u*.06,cy+u*.08,u*.07,u*.44,l,.95)},
 "r:chungking-express":d=>{const{cir,rect,cx,cy,u,W,H,r,a,l}=d;
   for(let i=0;i<28;i++)cir(r()*W,r()*H*.85,u*(.08+r()*.22),i%5?a:l,.06+r()*.16);rect(0,cy+u*.55,W,3,l,.8)},
 "r:roman-holiday":d=>{const{ring,cir,ln,cx,cy,u,W,a,h}=d,y0=cy+u*.68;cir(cx,cy,u*.8,a,.9);ln(0,y0,W,y0,h,u*.05,1);  ring(cx-u*.35,y0-u*.16,u*.16,h,u*.05,1);ring(cx+u*.35,y0-u*.16,u*.16,h,u*.05,1)},
