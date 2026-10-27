@@ -422,6 +422,24 @@ function paint(cv,f,W=480,H=720,pal){
     case"rings":x.lineWidth=2;k(14).forEach(i=>{x.globalAlpha=1-i*.06;x.beginPath();x.arc(cx,H*.45,(i+1)*18,0,7);x.stroke()});break;
     case"split":x.globalAlpha=.85;x.fillRect(0,0,cx,H);x.fillStyle=b;x.beginPath();x.arc(cx,cy,70,0,7);x.fill();break;
     case"peaks":k(4).forEach(i=>{x.globalAlpha=.25+i*.2;x.beginPath();x.moveTo(-20,H);for(let t=-20;t<=W+40;t+=60)x.lineTo(t,H*.45+i*55-r()*90);x.lineTo(W+20,H);x.fill()});break;
+    case"comic":{/* comic-book city: halftone screen, burst lines, skyline with lit windows */
+      const sky=pal?.sky||b,hole=pal?.hole||c,ink=a;
+      const gs=x.createLinearGradient(0,0,0,H);gs.addColorStop(0,hole);gs.addColorStop(.7,sky);gs.addColorStop(1,hole);x.globalAlpha=1;x.fillStyle=gs;x.fillRect(0,0,W,H);
+      /* halftone: dots grow toward the upper right */
+      const st=Math.max(10,W/110);x.fillStyle=ink;
+      for(let yy=st/2;yy<H*.8;yy+=st)for(let xx=(yy/st%2)*st/2;xx<W;xx+=st){const t=Math.max(0,(xx/W*.9+(1-yy/H)*.6)-.45);if(t<=0)continue;x.globalAlpha=.55;x.beginPath();x.arc(xx,yy,Math.min(st*.48,t*st*.75),0,7);x.fill()}
+      /* burst / speed lines from a focal point */
+      const fx=W*.62,fy=H*.32;x.strokeStyle=ink;
+      for(let i=0;i<70;i++){const ang=i/70*Math.PI*2+r()*.05,l0=H*(.18+r()*.1),l1=H*(.55+r()*.9);x.globalAlpha=.08+r()*.18;x.lineWidth=1+r()*2.5;
+        x.beginPath();x.moveTo(fx+Math.cos(ang)*l0,fy+Math.sin(ang)*l0);x.lineTo(fx+Math.cos(ang)*l1,fy+Math.sin(ang)*l1);x.stroke()}
+      /* skyline */
+      let bx=-10;const base=H;
+      while(bx<W){const bw=W*(.03+r()*.05),bh=H*(.22+r()*.5);x.globalAlpha=1;x.fillStyle=hole;x.fillRect(bx,base-bh,bw,bh);
+        x.globalAlpha=.9;x.fillStyle="rgba(0,0,0,.35)";x.fillRect(bx+bw-3,base-bh,3,bh);
+        if(r()<.3){x.fillStyle=hole;x.fillRect(bx+bw*.4,base-bh-H*.06,Math.max(2,bw*.08),H*.06)}
+        const ws=Math.max(4,bw/7);for(let wy=base-bh+ws;wy<base-ws;wy+=ws*1.8)for(let wx=bx+ws*.8;wx<bx+bw-ws;wx+=ws*1.7)if(r()<.22){x.globalAlpha=.55+r()*.4;x.fillStyle=r()<.7?"#ffe7a3":ink;x.fillRect(wx,wy,ws*.7,ws)}
+        bx+=bw+W*.004}
+      x.globalAlpha=1;break}
     case"snowpeaks":{/* snow-covered ranges: icy ridges in the background hue, whiter toward the front, light snowfall */
       const sky=pal?.sky||b,ice=pal?.ice||[c,b,a,"#e9eff3"];
       const gs=x.createLinearGradient(0,0,0,H);gs.addColorStop(0,c);gs.addColorStop(.6,sky);gs.addColorStop(1,c);x.globalAlpha=1;x.fillStyle=gs;x.fillRect(0,0,W,H);

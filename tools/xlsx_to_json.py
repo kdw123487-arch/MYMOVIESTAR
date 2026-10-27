@@ -27,7 +27,7 @@ COLUMNS = {
     "줄거리": "s", "추천이유": "w", "관람포인트1": "pt1", "관람포인트2": "pt2", "관람포인트3": "pt3",
     "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef", "배경색": "bg", "포인트색": "ac", "배너색": "bc", "포스터": "poster",
 }
-MOTIFS = {"arcade", "snowpeaks", "sun", "waves", "bands", "rings", "split", "peaks", "arch", "rays", "grid", "dots", "trees"}
+MOTIFS = {"comic", "arcade", "snowpeaks", "sun", "waves", "bands", "rings", "split", "peaks", "arch", "rays", "grid", "dots", "trees"}
 FONTS = {"classic", "elegant", "noir", "epic", "typewriter", "mono", "bold", "scifi", "gothic", "western", "retro", "script", "hand", "comic", "light", "neon"}
 AGES = {"전체": "ALL", "ALL": "ALL", "12": "12", "15": "15", "18": "18", "19": "18", "청불": "18", "청소년관람불가": "18"}
 HEX = re.compile(r"#[0-9a-fA-F]{6}")
