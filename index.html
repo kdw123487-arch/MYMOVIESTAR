@@ -454,11 +454,8 @@ const SCENES={
   const vg=x.createLinearGradient(0,H*.45,0,H);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.72)");x.globalAlpha=1;x.fillStyle=vg;x.fillRect(0,H*.45,W,H*.55)},
 "r:marriage-story":d=>{const{x,ring,cir,cx,cy,u,a,l}=d,R=u*.58,o=u*.36;
   x.save();x.beginPath();x.arc(cx-o,cy,R,0,7);x.clip();cir(cx+o,cy,R*.92,a,.2);x.restore();ring(cx-o,cy,R,a,2.5,.9);ring(cx+o,cy,R*.92,l,2.5,.8)},
-"r:the-irishman":d=>{const{poly,ln,rect,glow,cx,cy,u,W,H,a,w,h,ice}=d,dw=u*.17,dh=u*.3;
-  poly([[0,0],[W,0],[cx+dw,cy-dh],[cx-dw,cy-dh]],h,.55);poly([[0,H],[W,H],[cx+dw,cy+dh],[cx-dw,cy+dh]],w,.4);
-  poly([[0,0],[cx-dw,cy-dh],[cx-dw,cy+dh],[0,H]],w,.6);poly([[W,0],[cx+dw,cy-dh],[cx+dw,cy+dh],[W,H]],w,.6);
-  [[0,0,-1,-1],[W,0,1,-1],[0,H,-1,1],[W,H,1,1]].forEach(([px,py,sx,sy])=>ln(px,py,cx+sx*dw,cy+sy*dh,a,1.5,.5));
-  poly([[cx-dw,cy+dh],[cx+dw,cy+dh],[cx+u*.7,H],[cx-u*.7,H]],a,.1);glow(cx,cy,u*.3,ice,.15);rect(cx-dw,cy-dh,dw*2,dh*2,ice,.85);rect(cx-dw*.15,cy-dh,dw*.9,dh*2,h,.9)},
+"r:the-irishman":d=>{const{rect,cx,u,W,H,a,l}=d,w=u*.2,st=u*.4,n=Math.ceil(W/st)+2;
+  for(let i=-n;i<=n;i++){const px=cx+i*st-w/2,f=Math.max(0,1-Math.abs(px+w/2-cx)/(W*.5)),al=Math.pow(f,1.3)*.85;if(al<.02)continue;rect(px,0,w,H,a,al*.75)}},
 "r:the-power-of-the-dog":d=>{const{hill,cir,cx,cy,u,H,a,w,h}=d;cir(cx+u*.9,cy-u*.35,u*.2,a,.35);
   hill(H*.58,H*.28,a,.22,.8,1);hill(H*.68,H*.22,w,.8,1.1,3);hill(H*.8,H*.12,h,1,1.6,5)},
 "r:the-trial-of-the-chicago-7":d=>{const{rect,cx,u,W,H,a,l}=d,w=u*.2,st=u*.4,n=Math.ceil(W/st)+2;
@@ -547,8 +544,8 @@ const SCENES={
   x.globalAlpha=.9;x.strokeStyle=l;x.lineWidth=3;x.beginPath();for(let t=0;t<=W;t+=8)x.lineTo(t,H*.62+Math.sin(t/(u*.3))*u*.12-t/W*u*.2);x.stroke()},
 "r:up":d=>{const{cir,cx,u,H,r,a,ice}=d;
   for(let i=0;i<30;i++){const t=r(),py=H*(.9-t*.82),px=cx+(r()-.5)*u*(.25+t*2.2),rr=u*(.035+(1-t)*.11)*(.7+r()*.5);cir(px,py,rr,i%4?a:ice,.2+(1-t)*.65)}},
-"r:the-godfather":d=>{const{ln,cir,glow,cx,u,W,H,a}=d,n=W>900?9:5,g=Math.min(u*.22,W/(n+1));glow(cx,0,u*1.2,a,.25);
-  for(let i=0;i<n;i++){const px=cx+(i-(n-1)/2)*g,L=H*(.3+.35*Math.abs(Math.sin(i*1.7+.4)));ln(px,0,px,L,a,1.5,.75);cir(px,L,u*.03,a,.95)}},
+"r:the-godfather":d=>{const{rect,cx,u,W,H,a,l}=d,w=u*.2,st=u*.4,n=Math.ceil(W/st)+2;
+  for(let i=-n;i<=n;i++){const px=cx+i*st-w/2,f=Math.max(0,1-Math.abs(px+w/2-cx)/(W*.5)),al=Math.pow(f,1.3)*.85;if(al<.02)continue;rect(px,0,w,H,a,al*.75)}},
 "r:the-shawshank-redemption":d=>{const{poly,W,H,u,a,l,r}=d,n=14;
   for(let i=0;i<n;i++){const x0=W*(i/n)+r()*u*.2,w=u*(.08+r()*.18),sk=H*.5;poly([[x0,0],[x0+w,0],[x0+w-sk,H],[x0-sk,H]],i%4?a:l,.05+r()*.12)}},
 "r:cinema-paradiso":d=>{const{x,poly,rect,cx,cy,u,W,a,h}=d;poly([[0,d.H],[cx-u*.5,cy-u*.45],[cx+u*.6,cy+u*.4]],a,.1);
