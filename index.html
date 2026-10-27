@@ -124,6 +124,18 @@ img.pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opaci
 .verdict q{font-size:14px;line-height:1.65;quotes:"“" "”";font-weight:300;white-space:pre-wrap;overflow-wrap:anywhere}
 .acts{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;gap:18px;flex-wrap:nowrap;align-items:center}
 .spacer{flex:1}
+/* card action bar: two equal halves, icon + label */
+.card .acts{display:grid;grid-template-columns:1fr 1fr;gap:0;padding-top:0;align-items:stretch}
+.card .acts.one{grid-template-columns:1fr}
+.act-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 4px;background:none;border:0;font:13px var(--f-sans);letter-spacing:.04em;color:var(--muted);cursor:pointer;transition:color .2s,background-color .2s;border-radius:0 0 6px 6px}
+.act-btn+.act-btn{border-left:1px solid var(--line)}
+.act-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;transition:transform .2s ease,fill .2s ease}
+.act-btn:hover{color:var(--ivory);background:rgba(212,176,106,.05)}
+.act-btn:hover svg{transform:scale(1.1)}
+.act-btn.heart-act[aria-pressed="true"]{color:#d9707f}.act-btn.heart-act[aria-pressed="true"] svg{fill:currentColor}
+.act-btn.star-act{color:var(--gold-soft)}.act-btn.star-act:hover{color:var(--gold)}
+.act-btn.star-act.done{color:var(--gold)}.act-btn.star-act.done svg{fill:currentColor}
+.act-btn.pop svg{animation:pop .35s ease}
 .stars{letter-spacing:.12em;color:var(--gold);font-size:13px;white-space:nowrap}
 .stars .off{color:rgba(212,176,106,.22)}
 a.open{color:inherit;text-decoration:none;background-image:linear-gradient(var(--gold),var(--gold));background-size:0 1px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .3s ease}
@@ -465,6 +477,7 @@ const PLAT=[[/netflix/i,q=>"https://www.netflix.com/search?q="+q],[/watcha/i,q=>
 function platLink(p,f,w){const m=PLAT.find(([re])=>re.test(p.n));return m?m[1](encodeURIComponent(f.ko)):(w.link||"https://www.justwatch.com/kr")}
 
 /* ---------- cards (same plate in 전체, 찜 목록 and 명예의 전당) ---------- */
+const STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z"/></svg>';
 const HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.9 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg>';
 const heartBtn=(k,on)=>`<button class="heart" type="button" data-toggle-want="${k}" aria-pressed="${!!on}" aria-label="${on?"찜 해제":"찜하기"}" title="${on?"찜 해제":"찜하기"}">${HEART}</button>`;
 const cards={};
@@ -482,8 +495,9 @@ function sync(el,key){
   el.classList.toggle("is-seen",seen);
   el.querySelector(".slot").innerHTML=seen?`<div class="verdict">${stars(e.rating)}${e.review?`<q>${esc(e.review)}</q>`:""}</div>`
     :f.p?`<p class="plot" title="${esc(f.p)}">${esc(f.p)}</p>`:"";
-  el.querySelector(".acts").innerHTML=seen?`<button class="txt" type="button" data-edit="${key}">평점 수정</button>`
-    :`${heartBtn(key,want)}<span class="spacer"></span><button class="txt gold" type="button" data-review="${key}">평점</button>`;
+  const acts=el.querySelector(".acts");acts.classList.toggle("one",seen);
+  acts.innerHTML=seen?`<button class="act-btn star-act done" type="button" data-edit="${key}">${STAR}<span>평점 수정</span></button>`
+    :`<button class="act-btn heart-act" type="button" data-toggle-want="${key}" aria-pressed="${!!want}" aria-label="${want?"찜 해제":"찜하기"}">${HEART}<span>찜</span></button><button class="act-btn star-act" type="button" data-review="${key}">${STAR}<span>평점</span></button>`;
 }
 /* award line: at most two lines — drop the less important honours (listed last) instead of cutting text */
 function fitAwards(root=document){
@@ -699,7 +713,7 @@ function removeEntry(k){
 document.addEventListener("click",ev=>{
   const b=ev.target.closest("button,a[data-close]");if(!b)return;const d=b.dataset;
   if(d.genre){curGenre=d.genre;applyList();return}
-  if(d.toggleWant){toggleWant(d.toggleWant);const h=document.querySelector(`.card[data-key="${CSS.escape(d.toggleWant)}"] .heart, #sheet .heart`);h?.classList.add("pop")}
+  if(d.toggleWant){toggleWant(d.toggleWant);const h=document.querySelector(`.card[data-key="${CSS.escape(d.toggleWant)}"] .heart-act, #sheet .heart`);h?.classList.add("pop")}
   if(d.remove)removeEntry(d.remove);
   if("close" in d){closePanel();return}
   if(d.review)ballot(d.review,"seen");else if(d.edit)ballot(d.edit);
