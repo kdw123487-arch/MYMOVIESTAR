@@ -181,7 +181,7 @@ a.open:hover{background-size:100% 1px}
 
 /* modal stage (rating, transfer) */
 .stage{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(8,3,5,.9);padding:16px;overflow-y:auto}
-.panel{width:min(520px,100%);background:var(--velvet-2);border:1px solid var(--line-strong);padding:36px 32px 30px;display:grid;gap:14px;animation:rise .7s cubic-bezier(.2,.8,.2,1)}
+.panel{width:min(520px,100%);border-radius:12px;background:var(--velvet-2);border:1px solid var(--line-strong);padding:36px 32px 30px;display:grid;gap:14px;animation:rise .7s cubic-bezier(.2,.8,.2,1)}
 .panel.center{text-align:center}
 .panel h3{margin:0;font-size:26px;line-height:1.25}
 .panel p{margin:0;font-size:14.5px;color:var(--muted);text-align:left;line-height:1.75;font-weight:300}
@@ -223,7 +223,7 @@ a.open:hover{background-size:100% 1px}
 .rf-actions{display:flex;align-items:center;gap:18px;padding-top:4px}
 .rf-actions .btn-gold{padding:11px 26px;border-radius:999px;letter-spacing:.08em}
 .linkbox{width:100%;font:13px/1.4 var(--f-sans);color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:6px}
-.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;font-size:13.5px;background:var(--velvet-2);color:var(--ivory);border:1px solid var(--line-strong);padding:11px 20px;max-width:calc(100% - 32px)}
+.toast{border-radius:8px;position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;font-size:13.5px;background:var(--velvet-2);color:var(--ivory);border:1px solid var(--line-strong);padding:11px 20px;max-width:calc(100% - 32px)}
 
 /* film page */
 :root{--bg:20,10,13}
@@ -485,7 +485,7 @@ function card(key,keep){
   el.innerHTML=`<a class="poster" href="#film/${encodeURIComponent(key)}" tabindex="-1" aria-hidden="true"><canvas></canvas><span class="state"></span><span class="ptitle">${esc(f.en||f.ko)}</span></a>
     <div class="body"><h3><a class="open" href="#film/${encodeURIComponent(key)}">${esc(f.ko)}</a></h3><div class="sub"><span>${[f.y,f.n].filter(Boolean).map(esc).join(" · ")}</span><span class="age-slot"></span></div>
     ${f.aw?`<div class="award" data-aw="${esc(f.aw)}" title="${esc(f.aw)}">${esc(f.aw)}</div>`:""}<div class="slot"></div><div class="acts"></div></div>`;
-  paint(el.querySelector("canvas"),f);decorate(el.querySelector(".poster"),key,"w342",el.querySelector(".age-slot"));
+  paint(el.querySelector("canvas"),f,480,720,bannerPal(f));decorate(el.querySelector(".poster"),key,"w342",el.querySelector(".age-slot"));
   if(keep)cards[key]=el;sync(el,key);return el;
 }
 function sync(el,key){
@@ -578,7 +578,7 @@ function renderSheet(k){
           ?`<div><span class="aw">${AWARDS[e.rating]}</span> ${stars(e.rating)}</div>${e.review?`<blockquote>${esc(e.review)}</blockquote>`:""}<div class="acts"><button class="txt gold" type="button" data-edit="${k}">평점 수정</button></div>`
           :`<p style="color:var(--faint)">아직 평점을 남기지 않았어요.</p><div class="acts">${listed?heartBtn(k,want):""}<button class="txt gold" type="button" data-review="${k}">평점 남기기</button></div>`}</div></section>
       </main></div>`;
-  paint(sheet.querySelector(".banner canvas"),f,1600,640,bannerPal(f));paint(sheet.querySelector(".sposter canvas"),f);decorate(sheet.querySelector(".sposter"),k,"w500");
+  paint(sheet.querySelector(".banner canvas"),f,1600,640,bannerPal(f));paint(sheet.querySelector(".sposter canvas"),f,480,720,bannerPal(f));decorate(sheet.querySelector(".sposter"),k,"w500");
   {const d=tmOf(k);
     const a=f.age||d.age,cell=$("ageCell");if(a&&cell){cell.hidden=false;cell.querySelector("dd").innerHTML=ageMark(a,1)+AGE[a][1]}
     const w=d.w,box=$("where");
@@ -684,7 +684,7 @@ function ballot(k,status){
       <div class="rf-actions">${e?`<button class="txt" type="button" data-remove="${k}" data-close>기록 삭제</button>`:""}<span class="spacer"></span>
         <button class="txt" type="button" data-close>취소</button><button class="btn-gold" type="submit">저장</button></div>
     </form>`);
-  paint(panel.querySelector(".rf-poster canvas"),f);decorate(panel.querySelector(".rf-poster"),k,"w154");
+  paint(panel.querySelector(".rf-poster canvas"),f,480,720,bannerPal(f));decorate(panel.querySelector(".rf-poster"),k,"w154");
   const form=$("bf"),ta=form.review;
   ta.oninput=()=>$("cnt").textContent=`${ta.value.length} / 1000`;
   form.querySelectorAll(".rate label").forEach(l=>{l.onmouseenter=()=>$("rateNote").textContent=NOTE[l.htmlFor.slice(1)];
