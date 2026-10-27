@@ -486,9 +486,8 @@ const SCENES={
 "r:the-intouchables":d=>{const{ell,ln,cx,cy,u,W,H,a,w}=d;
   for(let t=0;t<W;t+=u*.3)ln(t,H*.45,t,H,w,1,.3);for(let y=H*.45;y<H;y+=u*.22)ln(0,y,W,y,w,1,.3);
   for(let i=1;i<6;i++)ell(cx,cy+u*.15,u*.28*i,u*.05*i,a,.9-i*.14,0,2)},
-"r:pan-s-labyrinth":d=>{const{x,cir,cx,cy,u,a,l}=d;
-  for(let i=1;i<=7;i++){const R=u*.11*i,st=i*1.7,gp=.75/i;x.globalAlpha=.9-i*.06;x.strokeStyle=a;x.lineWidth=2.5;x.lineCap="round";x.beginPath();x.arc(cx,cy,R,st+gp,st+Math.PI*2-gp);x.stroke()}
-  cir(cx,cy,u*.04,l,1)},
+"r:pan-s-labyrinth":d=>{const{ell,cir,cx,cy,u,a}=d;
+  for(let i=1;i<13;i++)d.ring(cx,cy,u*.11*i,a,i%3?1.6:3.2,.9-i*.055);cir(cx,cy,u*.05,a,.95)},
 "r:shoplifters":d=>{const{hill,cir,cx,cy,u,H,a,w,h}=d;cir(cx+u*.9,cy-u*.35,u*.2,a,.35);
   hill(H*.58,H*.28,a,.22,.8,1);hill(H*.68,H*.22,w,.8,1.1,3);hill(H*.8,H*.12,h,1,1.6,5)},
 "r:anatomy-of-a-fall":d=>{const{x,ln,ring,cx,u,W,H,a,ice,l}=d,px=cx+u*.9;
@@ -517,8 +516,8 @@ const SCENES={
   for(let k=-5;k<=5;k++){const y0=cy-u*.1+k*u*.16;x.globalAlpha=.85-Math.abs(k)*.12;x.strokeStyle=a;x.lineWidth=k?1.4:2.4;x.beginPath();
     for(let t=0;t<=W;t+=6){const dx=(t-cx)/(u*.55);x.lineTo(t,y0+u*.6*Math.exp(-dx*dx)*(1-Math.abs(k)*.13))}x.stroke()}
   cir(cx,cy+u*.5,u*.045,a,1)},
-"r:get-out":d=>{const{ring,cir,ln,cx,cy,u,a,h}=d;ring(cx,cy,u*.55,a,3,.7);cir(cx,cy,u*.3,a,.95);cir(cx,cy,u*.12,h,1);
-  ln(cx,cy+u*.55,cx,cy+u*1.05,a,3,.8);cir(cx,cy+u*1.1,u*.04,a,.9)},
+"r:get-out":d=>{const{ell,cir,cx,cy,u,a}=d;
+  for(let i=1;i<13;i++)d.ring(cx,cy,u*.11*i,a,i%3?1.6:3.2,.9-i*.055);cir(cx,cy,u*.05,a,.95)},
 "r:arrival":d=>{const{x,W,cy,u,a,ice}=d,st=u*.1,n=Math.ceil(W*.75/st);
   [[W*.3,a],[W*.7,ice]].forEach(([sx,c])=>{for(let k=1;k<=n;k++){x.beginPath();x.arc(sx,cy,k*st,0,7);x.globalAlpha=Math.max(0,.75-k/n*.7);x.strokeStyle=c;x.lineWidth=1.6;x.stroke()}})},
 "r:gone-girl":d=>{const{x,cir,ring,cx,cy,u,a}=d;cir(cx-u*.32,cy,u*.4,a,.92);x.setLineDash([u*.08,u*.06]);ring(cx+u*.32,cy,u*.4,a,3,.8);x.setLineDash([])},
