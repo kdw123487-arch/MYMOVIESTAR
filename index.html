@@ -553,8 +553,6 @@ const SCENES={
 "r:life-is-beautiful":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d,y0=cy+u*.62;cir(cx,cy,u*.75,a,.9);rect(0,y0,W,H-y0,h,1);rect(cx-u*.18,y0-u*.2,u*.36,u*.2,h,1)},
 "r:back-to-the-future":d=>{const{ring,cir,ln,cx,cy,u,H,a,l}=d;ring(cx,cy-u*.1,u*.6,a,u*.04,.95);cir(cx,cy-u*.1,u*.05,a,1);
   [-1,1].forEach(s=>{ln(cx+s*u*1.6,H,cx+s*u*.1,cy+u*.85,l,6,.9);ln(cx+s*u*1.75,H,cx+s*u*.2,cy+u*.95,l,2,.6)})},
-"r:good-will-hunting":d=>{const{x,ln,cy,u,W,a}=d;for(let i=0;i<6;i++)ln(0,d.H*.15+i*u*.28,W,d.H*.15+i*u*.28,a,1,.14);
-  x.globalAlpha=.9;x.strokeStyle=a;x.lineWidth=4;x.beginPath();for(let t=0;t<=W;t+=8)x.lineTo(t,cy+u*.1+Math.sin(t/(u*.35))*u*.28*Math.sin(t/W*3.14));x.stroke()},
 "r:leon-the-professional":d=>{const{ln,cir,cx,cy,u,a,h}=d,by=cy+u*.7;
   for(let i=0;i<9;i++){const t=-Math.PI/2+(i-4)*.3,L=u*(.6+((i*37)%5)*.06),qx=cx+Math.cos(t)*L,qy=by+Math.sin(t)*L;ln(cx,by,qx,qy,a,2.5,.8);cir(qx,qy,u*.04,a,.95)}},
 "r:chungking-express":d=>{const{x,rect,W,H,u,r,a,l}=d;
