@@ -458,8 +458,9 @@ const SCENES={
   for(let i=0;i<n;i++){const t=i/(n-1),hh=u*(1.35-1.15*t),px=cx+(i-(n-1)/2)*g-bw/2,last=i==n-1;rect(px,base-hh,bw,hh,last?l:a,last?1:.9-.6*t)}},
 "r:the-power-of-the-dog":d=>{const{hill,cir,cx,cy,u,H,a,w,h}=d;cir(cx+u*.9,cy-u*.35,u*.2,a,.35);
   hill(H*.58,H*.28,a,.22,.8,1);hill(H*.68,H*.22,w,.8,1.1,3);hill(H*.8,H*.12,h,1,1.6,5)},
-"r:the-trial-of-the-chicago-7":d=>{const{rect,cx,cy,u,W,a}=d,g=Math.min(u*.26,W/8.5),bw=u*.05;
-  for(let i=0;i<7;i++)rect(cx+(i-3)*g-bw/2,cy-u*.55,bw,u*1.1,a,.8)},
+"r:the-trial-of-the-chicago-7":d=>{const{cir,ln,cx,cy,u,W,a,l}=d,R=u*.58;
+  for(let i=0;i<7;i++){const t=i/7*6.283-Math.PI/2;cir(cx+Math.cos(t)*R,cy+Math.sin(t)*R,u*.11,a,.85)}
+  ln(cx-u*.3,cy,cx+u*.3,cy,l,2.5,.9)},
 "r:whiplash":d=>{const{x,cy,u,W,a,l,w}=d,hits=[.14,.36,.54,.68,.79,.87];
   x.lineJoin="round";x.globalAlpha=.9;x.strokeStyle=a;x.lineWidth=2;x.beginPath();x.moveTo(0,cy);
   hits.forEach((p,i)=>{const hx=W*p,amp=u*(.22+i*.09),last=i==hits.length-1;x.lineTo(hx,cy);
@@ -494,9 +495,10 @@ const SCENES={
 "r:shoplifters":d=>{const{x,cx,cy,u,a,ice}=d,R=u*.58,parts=[[0,.9,.9,6],[.95,.55,.55,10],[1.55,1.4,.8,4],[3.0,.7,.45,8],[3.75,1.2,.7,5],[5.0,1.1,.85,7]];
   parts.forEach(([st,len,al,lw],i)=>{x.globalAlpha=al;x.strokeStyle=i%2?ice:a;x.lineWidth=lw;x.lineCap="round";x.beginPath();x.arc(cx,cy,R,st,st+len-.08);x.stroke()})},
 "r:perfect-days":d=>{const{ell,W,H,u,r,a}=d;for(let i=0;i<70;i++)ell(r()*W,r()*H*.85,u*(.03+r()*.1),u*(.025+r()*.07),a,.08+r()*.22,r()*3)},
-"r:anatomy-of-a-fall":d=>{const{ln,cir,glow,cx,u,W,H,a,l}=d,n=7,top=H*.1,bot=H*.8;
-  for(let k=0;k<n;k++){const t=k/(n-1),y=top+t*t*(bot-top);if(k<n-1)glow(cx,y,u*.16,a,.15*(.3+t));cir(cx,y,u*(.06+.02*t),k==n-1?l:a,.2+.8*t)}
-  ln(cx-u*.6,bot+u*.1,cx+u*.6,bot+u*.1,a,2,.8)},
+"r:anatomy-of-a-fall":d=>{const{x,poly,ln,ring,cx,u,W,H,a,ice,l}=d,by=H*.84,pk=[cx,H*.14],px=cx+u*.34;
+  poly([[cx-u*1.5,by],[cx-u*.55,H*.5],[cx-u*.1,by]],ice,.07);poly([[cx+u*.1,by],[cx+u*.7,H*.42],[cx+u*1.5,by]],ice,.07);
+  poly([[cx-u*.95,by],[pk[0],pk[1]],[cx+u*.95,by]],a,.22);x.globalAlpha=.9;x.strokeStyle=a;x.lineWidth=2;x.beginPath();x.moveTo(cx-u*.95,by);x.lineTo(pk[0],pk[1]);x.lineTo(cx+u*.95,by);x.stroke();
+  ln(0,by,W,by,a,1.5,.5);x.setLineDash([u*.04,u*.03]);ln(px,H*.46,px,by-u*.06,l,2,.95);x.setLineDash([]);ring(px,by,u*.06,l,2,.95)},
 "r:frankenstein":d=>{const{x,ln,rect,cir,glow,cx,cy,u,W,a,l}=d;rect(cx-u*.018,0,u*.036,d.H,a,.85);glow(cx,cy,u*.6,a,.3);
   x.setLineDash([u*.07,u*.05]);ln(0,cy+u*.1,W,cy+u*.1,l,2,.6);x.setLineDash([]);cir(cx,cy+u*.1,u*.05,a,1)},
 "r:mad-max-fury-road":d=>{const{x,cir,rect,ln,cx,cy,u,W,H,a,h}=d,y0=cy+u*.55,sy=y0-u*.12,R=u*.72;
