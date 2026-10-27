@@ -61,8 +61,6 @@ html.film .tabs{background:rgba(var(--bg),.94)}
 .tab{position:relative;flex:0 1 96px;background:none;border:0;color:var(--faint);cursor:pointer;padding:6px 4px 4px;display:grid;justify-items:center;gap:3px;border-radius:10px;transition:color .2s}
 .tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
 .tab .t{font-size:11.5px;letter-spacing:.04em}
-.tab .c{position:absolute;top:2px;left:calc(50% + 10px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--gold);color:var(--velvet);font:600 10px/16px var(--f-sans);text-align:center}
-.tab .c:empty{display:none}
 .tab:hover{color:var(--muted)}
 .tab[aria-selected="true"]{color:var(--gold)}
 .tab[aria-selected="true"] svg{fill:color-mix(in srgb,currentColor 18%,transparent)}
@@ -78,9 +76,17 @@ html.film .tab[aria-selected="true"]{color:var(--faint)}
 .genre:hover{color:var(--ivory);border-color:var(--line-strong)}
 .genre[aria-pressed="true"]{color:var(--velvet);background:var(--gold);border-color:var(--gold)}
 .sortbox{position:relative}
-.sortbox::after{content:"";position:absolute;right:4px;top:50%;width:6px;height:6px;border-right:1px solid var(--muted);border-bottom:1px solid var(--muted);transform:translateY(-70%) rotate(45deg);pointer-events:none}
-#sortSel{appearance:none;-webkit-appearance:none;font:13px var(--f-sans);color:var(--ivory);background:transparent;border:0;border-bottom:1px solid var(--line);padding:5px 22px 5px 2px;cursor:pointer}
-#sortSel option{background:var(--velvet-2);color:var(--ivory)}
+.sort-btn{display:inline-flex;align-items:center;gap:10px;font:13px var(--f-sans);letter-spacing:.04em;color:var(--ivory);background:transparent;border:0;border-bottom:1px solid var(--line);padding:5px 2px;cursor:pointer;transition:border-color .2s}
+.sort-btn:hover,.sort-btn[aria-expanded="true"]{border-bottom-color:var(--gold)}
+.sort-btn svg{width:11px;height:11px;fill:none;stroke:var(--muted);stroke-width:1.4;transition:transform .2s}
+.sort-btn[aria-expanded="true"] svg{transform:rotate(180deg);stroke:var(--gold)}
+.sort-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:30;min-width:172px;margin:0;padding:6px;list-style:none;background:rgba(30,15,22,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line-strong);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.45);animation:menuIn .16s ease}
+@keyframes menuIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.sort-menu li{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 12px;border-radius:6px;font-size:13.5px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.sort-menu li:hover,.sort-menu li.active{background:rgba(212,176,106,.1);color:var(--ivory)}
+.sort-menu li[aria-selected="true"]{color:var(--gold)}
+.sort-menu li[aria-selected="true"]::after{content:"";width:8px;height:4px;border-left:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg) translateY(-2px)}
+@media (max-width:640px){.sort-menu{left:0;right:auto}}
 .heart{display:inline-grid;place-items:center;width:34px;height:34px;margin:-8px -6px;border:0;background:none;color:var(--muted);cursor:pointer;border-radius:50%}
 .heart svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;transition:transform .2s ease,fill .2s ease}
 .heart:hover{color:var(--ivory)}.heart:hover svg{transform:scale(1.12)}
@@ -276,7 +282,7 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 .sec p{margin:0;font-size:16.5px;line-height:1.9;max-width:62ch;font-weight:300}
 .points{list-style:none;margin:0;padding:0;counter-reset:pt;display:grid;gap:14px}
 .points li{counter-increment:pt;display:grid;grid-template-columns:36px 1fr;font-weight:300}
-.points li::before{content:counter(pt,upper-roman);font-family:var(--acc,var(--f-display));font-style:var(--acc-st,italic);font-weight:var(--acc-w,400);font-size:calc(var(--acc-size,17px)*.8);line-height:1.7;color:var(--gold)}
+.points li::before{content:counter(pt,upper-roman);font-family:var(--f-sans);font-style:normal;font-weight:500;font-size:13px;letter-spacing:.08em;line-height:1.75rem;color:var(--gold)}
 .points li{font-size:16.5px;line-height:1.75}
 .mybox{display:grid;gap:12px}
 .mybox blockquote{margin:0;font-size:16.5px;line-height:1.85;white-space:pre-wrap;font-weight:300}
@@ -332,9 +338,11 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
     <div class="view-head"><h2>전체</h2></div>
     <div class="genres" role="group" aria-label="장르" id="genres"></div>
     <div class="toolbar"><span id="nomCount"></span>
-      <label class="sortbox"><span class="sr">정렬</span><select class="sel" id="sortSel">
-        <option value="pick">추천순</option><option value="new">최신작</option><option value="old">오래된 작품</option><option value="title">제목순</option><option value="short">러닝타임 짧은 순</option>
-      </select></label></div>
+      <div class="sortbox" id="sortBox">
+        <button class="sort-btn" type="button" id="sortBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="정렬"><span id="sortLabel">추천순</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></button>
+        <ul class="sort-menu" id="sortMenu" role="listbox" aria-label="정렬" tabindex="-1" hidden>
+          <li role="option" data-v="pick">추천순</li><li role="option" data-v="new">최신작</li><li role="option" data-v="old">오래된 작품</li><li role="option" data-v="title">제목순</li><li role="option" data-v="short">러닝타임 짧은 순</li>
+        </ul></div></div>
     <div class="grid" id="nomGrid"></div>
   </section>
 
@@ -360,8 +368,8 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 
 <nav class="tabs" role="tablist" aria-label="메뉴">
   <button class="tab" role="tab" id="tab-nominees" aria-controls="view-nominees" data-view="nominees"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span class="t">전체</span></button>
-  <button class="tab" role="tab" id="tab-watch" aria-controls="view-watch" data-view="watch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.9 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg><span class="t">찜</span><span class="c" id="cnt-watch"></span></button>
-  <button class="tab" role="tab" id="tab-hall" aria-controls="view-hall" data-view="hall"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z"/></svg><span class="t">평점</span><span class="c" id="cnt-hall"></span></button>
+  <button class="tab" role="tab" id="tab-watch" aria-controls="view-watch" data-view="watch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.9 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg><span class="t">찜</span></button>
+  <button class="tab" role="tab" id="tab-hall" aria-controls="view-hall" data-view="hall"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z"/></svg><span class="t">평점</span></button>
 </nav>
 <div class="sheet" id="sheet" hidden role="region" aria-labelledby="sTitle"></div>
 <div class="stage" id="stage" hidden role="dialog" aria-modal="true" aria-labelledby="dlgTitle"><div class="panel" id="panel"></div></div>
@@ -502,10 +510,21 @@ function applyList(){
   sorted.forEach(f=>{const el=cards[f.key],on=curGenre==="전체"||tagsOf(f).has(curGenre);el.hidden=!on;if(on)n++;g.appendChild(el)});
   $("nomCount").textContent=`${n}편`;
   $("genres").querySelectorAll(".genre").forEach(b=>b.setAttribute("aria-pressed",b.dataset.genre===curGenre));
-  $("sortSel").value=curSort;fitAwards($("nomGrid"));
+  syncSort();fitAwards($("nomGrid"));
 }
 const SORTS={pick:()=>0,new:(a,b)=>yr(b.y)-yr(a.y),old:(a,b)=>yr(a.y)-yr(b.y),title:(a,b)=>a.ko.localeCompare(b.ko,"ko"),short:(a,b)=>(a.rt||999)-(b.rt||999)};
-$("sortSel").onchange=e=>{curSort=SORTS[e.target.value]?e.target.value:"pick";store.set("mymoviestar.sort",curSort);applyList()};
+/* sort menu: a small listbox styled like the rest of the site (keyboard: ↑↓ Enter Esc) */
+const sortBtn=$("sortBtn"),sortMenu=$("sortMenu"),sortItems=[...sortMenu.querySelectorAll("li")];let sortActive=0;
+function syncSort(){sortItems.forEach(li=>li.setAttribute("aria-selected",li.dataset.v===curSort));$("sortLabel").textContent=sortItems.find(li=>li.dataset.v===curSort).textContent}
+function moveActive(i){sortActive=(i+sortItems.length)%sortItems.length;sortItems.forEach((li,j)=>li.classList.toggle("active",j===sortActive))}
+function openSort(){sortMenu.hidden=false;sortBtn.setAttribute("aria-expanded","true");moveActive(sortItems.findIndex(li=>li.dataset.v===curSort));sortMenu.focus()}
+function closeSort(focus){sortMenu.hidden=true;sortBtn.setAttribute("aria-expanded","false");if(focus)sortBtn.focus()}
+function pickSort(v){curSort=SORTS[v]?v:"pick";store.set("mymoviestar.sort",curSort);closeSort(true);applyList()}
+sortBtn.onclick=()=>sortMenu.hidden?openSort():closeSort();
+sortMenu.onclick=e=>{const li=e.target.closest("li");if(li)pickSort(li.dataset.v)};
+sortMenu.onkeydown=e=>{if(e.key==="ArrowDown"){e.preventDefault();moveActive(sortActive+1)}else if(e.key==="ArrowUp"){e.preventDefault();moveActive(sortActive-1)}
+  else if(e.key==="Enter"||e.key===" "){e.preventDefault();pickSort(sortItems[sortActive].dataset.v)}else if(e.key==="Escape"||e.key==="Tab"){e.preventDefault();closeSort(true)}};
+document.addEventListener("click",e=>{if(!sortMenu.hidden&&!e.target.closest("#sortBox"))closeSort()});
 
 /* ---------- 찜 목록 & 명예의 전당 ---------- */
 const empty=(big,msg)=>`<div class="empty"><div class="big">${big}</div><p>${msg}</p><button class="txt gold" type="button" data-goto="nominees">전체 둘러보기</button></div>`;
@@ -522,7 +541,6 @@ function renderHall(){
 }
 function renderAll(){
   FILMS.forEach(f=>sync(cards[f.key],f.key));renderWatch();renderHall();fitAwards();
-  $("cnt-watch").textContent=entries().filter(e=>e.status==="want").length||"";$("cnt-hall").textContent=entries().filter(e=>e.status==="seen").length||"";
   if(sheetKey)renderSheet(sheetKey);
 }
 
