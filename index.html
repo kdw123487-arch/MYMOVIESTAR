@@ -520,47 +520,68 @@ const SCENES={
   for(let i=1;i<13;i++)d.ring(cx,cy,u*.11*i,a,i%3?1.6:3.2,.9-i*.055);cir(cx,cy,u*.05,a,.95)},
 "r:arrival":d=>{const{x,W,cy,u,a,ice}=d,st=u*.1,n=Math.ceil(W*.75/st);
   [[W*.3,a],[W*.7,ice]].forEach(([sx,c])=>{for(let k=1;k<=n;k++){x.beginPath();x.arc(sx,cy,k*st,0,7);x.globalAlpha=Math.max(0,.75-k/n*.7);x.strokeStyle=c;x.lineWidth=1.6;x.stroke()}})},
-"r:gone-girl":d=>{const{x,cir,ring,cx,cy,u,a}=d;cir(cx-u*.32,cy,u*.4,a,.92);x.setLineDash([u*.08,u*.06]);ring(cx+u*.32,cy,u*.4,a,3,.8);x.setLineDash([])},
-"r:knives-out":d=>{const{ring,ln,cx,cy,u,r,a}=d;ring(cx,cy,u*.3,a,2,.8);
-  for(let i=0;i<17;i++){const t=i/17*6.283,L=u*(.75+r()*.45);ln(cx+Math.cos(t)*u*.42,cy+Math.sin(t)*u*.42,cx+Math.cos(t)*L,cy+Math.sin(t)*L,a,3,.85)}},
-"r:spirited-away":d=>{const{x,cir,rect,ln,cx,cy,u,W,H,a,h}=d;cir(cx+u*.55,cy-u*.35,u*.3,a,.9);
-  rect(0,H*.62,W,H*.38,h,.95);for(let i=0;i<7;i++)ln(cx+u*.55-u*(.22-i*.02),H*.65+i*u*.1,cx+u*.55+u*(.22-i*.02),H*.65+i*u*.1,a,2,.5-i*.05);
-  x.setLineDash([u*.18,u*.1]);ln(0,H*.6,W,H*.6,a,3,.9);x.setLineDash([])},
-"r:princess-mononoke":d=>{const{cir,poly,cx,cy,u,W,H,a,h}=d;cir(cx,cy-u*.05,u*.6,a,.3);cir(cx,cy-u*.05,u*.3,a,.25);
-  for(let t=-u*.2;t<W;t+=u*.22){const th=u*(.35+((t*7919)%100)/100*.5);poly([[t,H],[t+u*.11,H-th],[t+u*.22,H]],h,1)}},
+"r:gone-girl":d=>{const{x,cir,ln,cx,cy,u,W,H,a,l}=d,R=u*.55,px=W*.6,sh=u*.14;
+  x.save();x.beginPath();x.rect(0,0,px,H);x.clip();cir(px,cy,R,a,.7);x.restore();
+  x.save();x.beginPath();x.rect(px,0,W,H);x.clip();cir(px,cy+sh,R,l,.45);x.restore();
+  ln(px,0,px,H,l,1.5,.3)},
+"r:knives-out":d=>{const{poly,W,H,u,a,l,r}=d,n=20;
+  for(let i=0;i<n;i++){const x0=W*(i+.2+r()*.6)/n,len=H*(.35+r()*.75),w=u*(.03+r()*.07),sk=u*(.15+r()*.25),al=.12+r()*.35,c=i%6===2?l:a;
+    poly([[x0,-4],[x0+w,-4],[x0-sk,len]],c,al)}},
+"r:spirited-away":d=>{const{x,rect,ln,W,H,u,a,l}=d,hy=H*.56,px=W*.66;
+  x.save();x.filter="blur("+Math.max(3,u*.02)+"px)";
+  rect(0,hy-u*.6,W,u*.6,a,.16);rect(px-u*.9,hy-u*.25,u*1.8,u*.25,l,.14);
+  for(let i=0;i<15;i++){const y=hy+u*.05+i*u*.05*(1+i*.1),w=u*(1.1-i*.06);rect(px-w/2,y,w,u*.03,i%3?a:l,.95-i*.05)}
+  x.restore();ln(0,hy,W,hy,l,2,.55)},
+"r:princess-mononoke":d=>{const{x,glow,hill,W,H,u,a,l}=d;
+  glow(W*.28,H*.32,u*.8,l,.3);
+  x.save();x.filter="blur("+Math.max(4,u*.025)+"px)";
+  for(let i=0;i<5;i++)hill(H*(.5+i*.1),u*(.3-i*.03),a,.14+i*.1,1+i*.25,i*1.7);
+  x.restore()},
 "r:guillermo-del-toro-s-pinocchio":d=>{const{ell,cir,cx,cy,u,a}=d;
   for(let i=1;i<13;i++)d.ring(cx,cy,u*.11*i,a,i%3?1.6:3.2,.9-i*.055);cir(cx,cy,u*.05,a,.95)},
-"r:coco":d=>{const{cir,cx,cy,u,r,a,l}=d,R=u*.95,oy=cy+u*.9;
-  for(let i=0;i<46;i++){const t=i/45*Math.PI,px=cx-Math.cos(t)*R,py=oy-Math.sin(t)*R;cir(px,py,u*(.05+r()*.04),a,.95);cir(px+(r()-.5)*u*.08,py+u*.09,u*(.03+r()*.03),a,.55)}},
-"r:inside-out":d=>{const{cir,ring,glow,cx,cy,u,a,ice}=d;
-  [[0,0,.34],[-.95,.3,.18],[-.55,-.3,.14],[.6,-.32,.17],[.98,.24,.21],[.3,.62,.12],[-.3,.55,.1]].forEach(([ox,oy,rr])=>{const px=cx+ox*u,py=cy+oy*u;glow(px,py,u*rr*2.4,a,.45);cir(px,py,u*rr,a,.9);ring(px,py,u*rr*.8,ice,1.5,.35)})},
+"r:coco":d=>{const{x,rect,cir,W,H,u,a,l}=d,n=7,sw=W/n;
+  for(let i=0;i<n;i++){const top=H*(.82-i*.115),px=i*sw;rect(px,top,sw*.94,H-top,a,.1+i*.04);
+    for(let k=0;k<6;k++)cir(px+sw*(.12+k*.15),top-u*.025,u*.016,l,.45+i*.07)}},
+"r:inside-out":d=>{const{x,cir,W,H,u,a,l}=d,R=u*.5;
+  x.save();x.filter="blur("+Math.max(3,u*.02)+"px)";x.globalCompositeOperation="lighter";
+  for(let i=0;i<5;i++)cir(W*.52+i*u*.42,H*.42+Math.sin(i*1.3)*u*.3,R*(.8+(i%3)*.15),i%2?a:l,.3);
+  x.restore()},
 "r:wall-e":d=>{const{rect,cir,glow,cx,cy,u,W,H,r,a,w}=d,s=u*.085;
   for(let t=0;t<W;t+=s*1.15){const hh=Math.floor(2+5*Math.abs(Math.sin(t/(u*.8)))+r()*3);for(let j=0;j<hh;j++)rect(t,H-(j+1)*s*1.15,s,s,a,.18+r()*.32)}
   glow(cx,cy-u*.2,u*.4,a,.5);cir(cx,cy-u*.2,u*.05,a,1)},
-"r:your-name":d=>{const{x,poly,cir,stars,glow,cx,cy,u,W,H,a,l}=d,hx=cx+u*.55,hy=cy-u*.35;stars(90,H*.6);
-  poly([[hx,hy],[hx-u*1.7,hy+u*.95],[hx-u*1.5,hy+u*.6]],a,.3);glow(hx,hy,u*.3,a,.6);cir(hx,hy,u*.06,a,1);
-  x.globalAlpha=.9;x.strokeStyle=l;x.lineWidth=3;x.beginPath();for(let t=0;t<=W;t+=8)x.lineTo(t,H*.62+Math.sin(t/(u*.3))*u*.12-t/W*u*.2);x.stroke()},
-"r:up":d=>{const{cir,cx,u,H,r,a,ice}=d;
-  for(let i=0;i<30;i++){const t=r(),py=H*(.9-t*.82),px=cx+(r()-.5)*u*(.25+t*2.2),rr=u*(.035+(1-t)*.11)*(.7+r()*.5);cir(px,py,rr,i%4?a:ice,.2+(1-t)*.65)}},
+"r:your-name":d=>{const{x,cir,glow,W,H,u,a,l,stars}=d;stars(110,H*.8,.7);
+  x.lineCap="round";x.lineWidth=2.5;
+  x.globalAlpha=.9;x.strokeStyle=a;x.beginPath();x.moveTo(-10,H*.82);x.bezierCurveTo(W*.3,H*.9,W*.4,H*.35,W*.54,H*.46);x.stroke();
+  x.globalAlpha=.9;x.strokeStyle=l;x.beginPath();x.moveTo(W+10,H*.14);x.bezierCurveTo(W*.78,H*.1,W*.7,H*.62,W*.57,H*.5);x.stroke();
+  glow(W*.54,H*.46,u*.12,a,.6);glow(W*.57,H*.5,u*.12,l,.6)},
+"r:up":d=>{const{x,ln,W,H,u,a,l,r}=d,n=24;x.lineCap="round";
+  for(let i=0;i<n;i++){const px=W*(i+.3+r()*.4)/n,len=H*(.35+r()*.65),lw=u*(.02+r()*.045),c=i%4===1?l:a,seg=10;
+    for(let k=0;k<seg;k++){const y1=H-len*k/seg,y2=H-len*(k+1)/seg;ln(px,y1,px,y2,c,lw,.8*(1-k/seg))}}},
 "r:the-godfather":d=>{const{rect,cx,u,W,H,a,l}=d,w=u*.2,st=u*.4,n=Math.ceil(W/st)+2;
   for(let i=-n;i<=n;i++){const px=cx+i*st-w/2,f=Math.max(0,1-Math.abs(px+w/2-cx)/(W*.5)),al=Math.pow(f,1.3)*.85;if(al<.02)continue;rect(px,0,w,H,a,al*.75)}},
 "r:the-shawshank-redemption":d=>{const{poly,W,H,u,a,l,r}=d,n=14;
   for(let i=0;i<n;i++){const x0=W*(i/n)+r()*u*.2,w=u*(.08+r()*.18),sk=H*.5;poly([[x0,0],[x0+w,0],[x0+w-sk,H],[x0-sk,H]],i%4?a:l,.05+r()*.12)}},
-"r:cinema-paradiso":d=>{const{x,poly,rect,cx,cy,u,W,a,h}=d;poly([[0,d.H],[cx-u*.5,cy-u*.45],[cx+u*.6,cy+u*.4]],a,.1);
-  x.save();x.translate(cx,cy);x.rotate(-.12);for(let t=-W;t<W;t+=u*.5)rect(t,-u*.18,u*.4,u*.36,a,.7);x.restore()},
+"r:cinema-paradiso":d=>{const{x,poly,rect,W,H,u,a,l,r}=d,sy=H*.3,n=22;
+  x.save();x.filter="blur("+Math.max(2,u*.012)+"px)";
+  for(let i=0;i<n;i++){const x0=W*.12+W*.9*i/n,x1=x0+W*.9/n+1,t0=(x0-W*.12)/(W*.9),t1=(x1-W*.12)/(W*.9),sp=H*.55;
+    poly([[x0,sy-sp*t0*.5],[x1,sy-sp*t1*.5],[x1,sy+sp*t1*.5+H*.2*t1],[x0,sy+sp*t0*.5+H*.2*t0]],i%7===3?l:a,.05+r()*.17)}
+  x.restore()},
 "r:life-is-beautiful":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d,y0=cy+u*.62;cir(cx,cy,u*.75,a,.9);rect(0,y0,W,H-y0,h,1);rect(cx-u*.18,y0-u*.2,u*.36,u*.2,h,1)},
-"r:back-to-the-future":d=>{const{ring,cir,ln,cx,cy,u,H,a,l}=d;ring(cx,cy-u*.1,u*.6,a,u*.04,.95);cir(cx,cy-u*.1,u*.05,a,1);
-  [-1,1].forEach(s=>{ln(cx+s*u*1.6,H,cx+s*u*.1,cy+u*.85,l,6,.9);ln(cx+s*u*1.75,H,cx+s*u*.2,cy+u*.95,l,2,.6)})},
-"r:leon-the-professional":d=>{const{ln,cir,cx,cy,u,a,h}=d,by=cy+u*.7;
-  for(let i=0;i<9;i++){const t=-Math.PI/2+(i-4)*.3,L=u*(.6+((i*37)%5)*.06),qx=cx+Math.cos(t)*L,qy=by+Math.sin(t)*L;ln(cx,by,qx,qy,a,2.5,.8);cir(qx,qy,u*.04,a,.95)}},
+"r:back-to-the-future":d=>{const{x,W,H,u,a,l}=d,px=W*.72,py=H*.5;
+  x.lineWidth=2.5;
+  for(let i=0;i<13;i++){const k=Math.pow(.8,i),w=W*.9*k,h=H*1.1*k;x.globalAlpha=.1+i*.055;x.strokeStyle=i%4===3?l:a;x.strokeRect(px-w/2,py-h/2,w,h)}
+  d.ln(0,py,px,py,l,1.5,.3)},
+"r:leon-the-professional":d=>{const{cir,ln,W,H,u,a,l}=d;
+  cir(W*.9,H*.5,u*.9,a,.3);
+  ln(W*.22,0,W*.22,H,l,2,.55);cir(W*.22,H*.72,u*.06,l,.9)},
 "r:chungking-express":d=>{const{x,rect,W,H,u,r,a,l}=d;
   x.save();x.filter="blur("+Math.max(3,u*.022)+"px)";
   let y=H*.04;while(y<H*.96){const hh=u*(.025+r()*.09);rect(-W*.1,y,W*1.2,hh,r()<.28?l:a,.3+r()*.6);y+=hh+u*(.02+r()*.07)}
   x.restore()},
 "r:roman-holiday":d=>{const{x,cir,glow,cx,cy,u,a}=d;glow(cx,cy,u*1.3,a,.5);
   x.save();x.filter="blur("+Math.max(8,u*.09)+"px)";cir(cx,cy,u*.5,a,.55);x.restore()},
-"r:pulp-fiction":d=>{const{poly,rect,glow,cx,cy,u,a,h}=d;poly([[cx-u*.4,cy],[cx+u*.4,cy],[cx+u*1,cy-u*.95],[cx-u*1,cy-u*.95]],a,.2);glow(cx,cy-u*.05,u*.9,a,.7);
-  rect(cx-u*.45,cy,u*.9,u*.5,h,1);rect(cx-u*.45,cy-u*.02,u*.9,u*.025,a,.95)}
+"r:pulp-fiction":d=>{const{rect,W,H,u,a,l,r}=d,n=9,sw=W/n,h=H*.55;
+  for(let i=0;i<n;i++){const y=(r()-.1)*(H-h);rect(i*sw+sw*.04,y,sw*.92,h,i%4===1?l:a,.2+r()*.5)}}
 };
 function paint(cv,f,W=480,H=720,pal){
   const L=look(f);cv.width=W;cv.height=H;const x=cv.getContext("2d"),[a,b,c]=pal||L.pal,Z=Math.min(W,H*.75);
