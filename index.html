@@ -449,9 +449,8 @@ function sceneKit(x,W,H,cx,cy,r,[a,b,c],pal){
   D.stars=(n,ymax,al=.6)=>{for(let i=0;i<n;i++)D.cir(r()*W,r()*ymax,.6+r()*1.5,ice,al*(.4+r()*.6))};
   return D}
 const SCENES={
-"r:spider-man-into-the-spider-verse":d=>{const{x,cir,W,H,a,l}=d,st=Math.max(30,W/34);
-  for(let yy=st/2,row=0;yy<H;yy+=st,row++)for(let xx=(row%2)*st/2;xx<W;xx+=st){const fx=xx/W,g=fx*.9+(1-yy/H)*.6,t=g-.45;if(t<=0)continue;cir(xx,yy,st*.44*(t>.5?1:.55),g>.85?a:l,.55)}
-  const vg=x.createLinearGradient(0,H*.45,0,H);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.72)");x.globalAlpha=1;x.fillStyle=vg;x.fillRect(0,H*.45,W,H*.55)},
+"r:spider-man-into-the-spider-verse":d=>{const{cir,W,H,a}=d,st=Math.max(10,W/110);
+  for(let yy=st/2;yy<H;yy+=st)for(let xx=(yy/st%2)*st/2;xx<W;xx+=st){const t=Math.max(0,(xx/W*.9+(1-yy/H)*.6)-.45);if(t>0)cir(xx,yy,Math.min(st*.48,t*st*.75),a,.45)}},
 "r:marriage-story":d=>{const{x,ring,cir,cx,cy,u,a,l}=d,R=u*.58,o=u*.36;
   x.save();x.beginPath();x.arc(cx-o,cy,R,0,7);x.clip();cir(cx+o,cy,R*.92,a,.2);x.restore();ring(cx-o,cy,R,a,2.5,.9);ring(cx+o,cy,R*.92,l,2.5,.8)},
 "r:the-irishman":d=>{const{rect,cx,u,W,H,a,l}=d,w=u*.2,st=u*.4,n=Math.ceil(W/st)+2;
