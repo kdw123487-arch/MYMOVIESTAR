@@ -454,10 +454,8 @@ const SCENES={
   const vg=x.createLinearGradient(0,H*.45,0,H);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.72)");x.globalAlpha=1;x.fillStyle=vg;x.fillRect(0,H*.45,W,H*.55)},
 "r:marriage-story":d=>{const{x,ring,cir,cx,cy,u,a,l}=d,R=u*.58,o=u*.36;
   x.save();x.beginPath();x.arc(cx-o,cy,R,0,7);x.clip();cir(cx+o,cy,R*.92,a,.2);x.restore();ring(cx-o,cy,R,a,2.5,.9);ring(cx+o,cy,R*.92,l,2.5,.8)},
-"r:the-irishman":d=>{const{poly,ln,rect,cx,cy,u,W,H,a,w,h}=d,dw=u*.2,dh=u*.36;
-  poly([[0,0],[cx-dw,cy-dh],[cx-dw,cy+dh],[0,H]],w,.55);poly([[W,0],[cx+dw,cy-dh],[cx+dw,cy+dh],[W,H]],w,.55);
-  [[0,0,-1,-1],[W,0,1,-1],[0,H,-1,1],[W,H,1,1]].forEach(([px,py,sx,sy])=>ln(px,py,cx+sx*dw,cy+sy*dh,a,1.5,.35));
-  rect(cx-dw,cy-dh,dw*2,dh*2,a,.85);rect(cx-dw*.2,cy-dh,dw*1.2,dh*2,h,.9)},
+"r:the-irishman":d=>{const{rect,cx,cy,u,W,a,l}=d,n=W>900?15:9,g=Math.min(u*.24,W/(n+1)),bw=g*.45,base=cy+u*.7;
+  for(let i=0;i<n;i++){const t=i/(n-1),hh=u*(1.35-1.15*t),px=cx+(i-(n-1)/2)*g-bw/2,last=i==n-1;rect(px,base-hh,bw,hh,last?l:a,last?1:.9-.6*t)}},
 "r:the-power-of-the-dog":d=>{const{hill,cir,cx,cy,u,H,a,w,h}=d;cir(cx+u*.9,cy-u*.35,u*.2,a,.35);
   hill(H*.58,H*.28,a,.22,.8,1);hill(H*.68,H*.22,w,.8,1.1,3);hill(H*.8,H*.12,h,1,1.6,5)},
 "r:the-trial-of-the-chicago-7":d=>{const{rect,ln,cx,cy,u,W,a,w}=d,g=Math.min(u*.3,W/8.5);
@@ -479,20 +477,23 @@ const SCENES={
 "r:roma":d=>{const{ell,ln,cx,cy,u,W,H,a,w}=d;
   for(let t=0;t<W;t+=u*.3)ln(t,H*.45,t,H,w,1,.3);for(let y=H*.45;y<H;y+=u*.22)ln(0,y,W,y,w,1,.3);
   for(let i=1;i<6;i++)ell(cx,cy+u*.15,u*.28*i,u*.05*i,a,.9-i*.14,0,2)},
-"r:all-quiet-on-the-western-front":d=>{const{rect,ln,cir,cx,cy,u,W,H,a,h}=d;
-  [0,1,2,3].forEach(i=>rect(0,H*.5+i*u*.14,W,u*.05,a,.1+i*.05));ln(0,H*.72,W,H*.72,a,2,.7);
-  ln(cx-u*.6,H*.72,cx-u*.6,H*.5,a,2.5,.8);cir(cx+u*.9,cy-u*.5,u*.06,a,.5);rect(0,H*.72,W,H*.28,h,.9)},
+"r:all-quiet-on-the-western-front":d=>{const{x,rect,ln,cx,cy,u,W,r,a}=d,cols=W>900?17:9,g=Math.min(u*.2,W/(cols+1)),sz=g*.42,rows=5,hole=[Math.floor(cols/2)+2,2];
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const px=cx+(i-(cols-1)/2)*g-sz/2,py=cy-u*.55+j*g*1.15;
+    if(i==hole[0]&&j==hole[1]){x.globalAlpha=.8;x.strokeStyle=a;x.lineWidth=1.5;x.strokeRect(px,py,sz,sz)}else rect(px,py,sz,sz,a,.2+j*.12)}
+  ln(0,cy+u*.5,W,cy+u*.5,a,1.5,.5)},
 "r:amelie":d=>{const{cir,glow,cx,cy,u,W,H,a,l}=d,st=u*.16,px=Math.round((cx+u*.3-st/2)/st)*st+st/2,py=Math.round((cy-st/2)/st)*st+st/2;
   for(let y=st/2;y<H;y+=st)for(let t=st/2;t<W;t+=st){if(Math.abs(t-px)<1&&Math.abs(y-py)<1)continue;const dd=Math.hypot(t-cx,y-cy)/(u*1.6);cir(t,y,u*.018,a,Math.max(.08,.55-dd*.35))}
   glow(px,py,u*.3,l,.55);cir(px,py,u*.055,l,1)},
-"r:the-intouchables":d=>{const{ring,cir,cx,cy,u,a}=d;ring(cx-u*.25,cy,u*.7,a,u*.05,.95);ring(cx+u*.55,cy+u*.3,u*.38,a,u*.03,.85);cir(cx+u*.55,cy+u*.3,u*.07,a,1)},
+"r:the-intouchables":d=>{const{x,cir,ring,ln,cx,cy,u,a,ice}=d,by=cy+u*.42,sy=cy-u*.55;
+  cir(cx,by,u*.42,a,.92);ln(cx,by-u*.42,cx,sy+u*.14,ice,2,.8);ring(cx,sy,u*.14,ice,3,.95);
+  x.globalAlpha=.55;x.strokeStyle=ice;x.lineWidth=1.5;x.beginPath();x.arc(cx,sy,u*.46,Math.PI*1.18,Math.PI*1.82);x.stroke()},
 "r:the-lives-of-others":d=>{const{x,cir,cx,cy,u,a,l}=d,px=cx-u*.45;cir(px,cy,u*.07,l,1);
   [.3,.55,.8,1.05,1.3].forEach((k,i)=>{x.globalAlpha=.9-i*.15;x.strokeStyle=a;x.lineWidth=2.5;x.lineCap="round";x.beginPath();x.arc(px,cy,u*k,-.7,.7);x.stroke()})},
 "r:pan-s-labyrinth":d=>{const{x,cir,cx,cy,u,a,l}=d;
   for(let i=1;i<=7;i++){const R=u*.11*i,st=i*1.7,gp=.75/i;x.globalAlpha=.9-i*.06;x.strokeStyle=a;x.lineWidth=2.5;x.lineCap="round";x.beginPath();x.arc(cx,cy,R,st+gp,st+Math.PI*2-gp);x.stroke()}
   cir(cx,cy,u*.04,l,1)},
-"r:shoplifters":d=>{const{rect,ln,cir,cx,cy,u,a,w}=d;cir(cx-u*.9,cy-u*.4,u*.17,a,.5);
-  ln(cx-u*1.1,cy-u*.15,cx+u*1.1,cy,w,2,.9);for(let i=1;i<7;i++){const t=i/7,px=cx-u*1.1+u*2.2*t,py=cy-u*.15+u*.15*t,hh=u*(.12+(i%3)*.06);rect(px-u*.05,py,u*.1,hh,a,i%2?.9:.5)}},
+"r:shoplifters":d=>{const{x,cx,cy,u,a,ice}=d,R=u*.58,parts=[[0,.9,.9,6],[.95,.55,.55,10],[1.55,1.4,.8,4],[3.0,.7,.45,8],[3.75,1.2,.7,5],[5.0,1.1,.85,7]];
+  parts.forEach(([st,len,al,lw],i)=>{x.globalAlpha=al;x.strokeStyle=i%2?ice:a;x.lineWidth=lw;x.lineCap="round";x.beginPath();x.arc(cx,cy,R,st,st+len-.08);x.stroke()})},
 "r:perfect-days":d=>{const{ell,W,H,u,r,a}=d;for(let i=0;i<70;i++)ell(r()*W,r()*H*.85,u*(.03+r()*.1),u*(.025+r()*.07),a,.08+r()*.22,r()*3)},
 "r:anatomy-of-a-fall":d=>{const{poly,ln,cir,cx,u,W,H,a}=d;
   poly([[0,H*.78],[W*.25,H*.3],[W*.5,H*.78]],a,.2);poly([[W*.4,H*.78],[W*.7,H*.22],[W,H*.78]],a,.3);
