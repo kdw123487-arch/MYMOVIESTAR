@@ -539,8 +539,6 @@ const SCENES={
   for(let t=-u*.2;t<W;t+=u*.22){const th=u*(.35+((t*7919)%100)/100*.5);poly([[t,H],[t+u*.11,H-th],[t+u*.22,H]],h,1)}},
 "r:guillermo-del-toro-s-pinocchio":d=>{const{ell,cir,cx,cy,u,a}=d;
   for(let i=1;i<13;i++)d.ring(cx,cy,u*.11*i,a,i%3?1.6:3.2,.9-i*.055);cir(cx,cy,u*.05,a,.95)},
-"r:klaus":d=>{const{x,rect,cir,cx,cy,u,W,H,r,a,ice,h}=d;for(let i=0;i<120;i++)cir(r()*W,r()*H,.8+r()*1.8,ice,.2+r()*.5);
-  [[-.55,-.25,-.3],[.1,-.5,.2],[.6,-.1,.5]].forEach(([ox,oy,rot])=>{x.save();x.translate(cx+ox*u,cy+oy*u);x.rotate(rot);x.globalAlpha=.95;x.fillStyle=a;x.fillRect(-u*.13,-u*.09,u*.26,u*.18);x.restore()});rect(0,H*.86,W,H*.14,h,1)},
 "r:coco":d=>{const{cir,cx,cy,u,r,a,l}=d,R=u*.95,oy=cy+u*.9;
   for(let i=0;i<46;i++){const t=i/45*Math.PI,px=cx-Math.cos(t)*R,py=oy-Math.sin(t)*R;cir(px,py,u*(.05+r()*.04),a,.95);cir(px+(r()-.5)*u*.08,py+u*.09,u*(.03+r()*.03),a,.55)}},
 "r:inside-out":d=>{const{cir,ring,glow,cx,cy,u,a,ice}=d;
