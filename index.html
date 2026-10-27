@@ -449,8 +449,8 @@ function sceneKit(x,W,H,cx,cy,r,[a,b,c],pal){
   D.stars=(n,ymax,al=.6)=>{for(let i=0;i<n;i++)D.cir(r()*W,r()*ymax,.6+r()*1.5,ice,al*(.4+r()*.6))};
   return D}
 const SCENES={
-"r:spider-man-into-the-spider-verse":d=>{const{x,cir,W,H,a,l}=d,st=Math.max(18,W/56),dot=(col,ox,oy,al,fl)=>{for(let yy=st/2;yy<H;yy+=st)for(let xx=(yy/st%2)*st/2;xx<W;xx+=st){const fx=fl?1-xx/W:xx/W,t=Math.max(0,(fx*.9+(1-yy/H)*.6)-.45);if(t>0)cir(xx+ox,yy+oy,st*.46*Math.ceil(Math.min(1,t*1.8)*3)/3,col,al)}};
-  dot(l,st*.3,st*.22,.3,1);dot(a,0,0,.45,0);
+"r:spider-man-into-the-spider-verse":d=>{const{x,cir,W,H,a,l}=d,st=Math.max(30,W/34);
+  for(let yy=st/2,row=0;yy<H;yy+=st,row++)for(let xx=(row%2)*st/2;xx<W;xx+=st){const fx=xx/W,g=fx*.9+(1-yy/H)*.6,t=g-.45;if(t<=0)continue;cir(xx,yy,st*.44*(t>.5?1:.55),g>.85?a:l,.55)}
   const vg=x.createLinearGradient(0,H*.45,0,H);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.72)");x.globalAlpha=1;x.fillStyle=vg;x.fillRect(0,H*.45,W,H*.55)},
 "r:marriage-story":d=>{const{x,ring,cir,cx,cy,u,a,l}=d,R=u*.58,o=u*.36;
   x.save();x.beginPath();x.arc(cx-o,cy,R,0,7);x.clip();cir(cx+o,cy,R*.92,a,.2);x.restore();ring(cx-o,cy,R,a,2.5,.9);ring(cx+o,cy,R*.92,l,2.5,.8)},
