@@ -321,7 +321,7 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 .where{display:grid;gap:14px;padding-bottom:22px;border-bottom:1px solid var(--line)}
 .where .kind{font-size:11px;letter-spacing:.24em;color:var(--faint);margin-bottom:6px}
 .plats{display:flex;flex-wrap:wrap;gap:8px}
-.plat{display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border:1px solid var(--line);border-radius:999px;color:var(--ivory);text-decoration:none;font-size:13px;transition:border-color .2s}
+.plat{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--line);border-radius:999px;color:var(--ivory);text-decoration:none;font-size:13px;transition:border-color .2s}
 .plat:hover{border-color:var(--gold)}
 .plat img{width:24px;height:24px;border-radius:6px;display:block}
 .where .note{font-size:12px;color:var(--faint);line-height:1.6}
@@ -764,7 +764,7 @@ function renderSheet(k){
     const a=f.age||d.age,cell=$("ageCell");if(a&&cell){cell.hidden=false;cell.querySelector("dd").innerHTML=ageMark(a,1)+AGE[a][1]}
     const w=d.w,box=$("where");
     const noAds=a=>(a||[]).filter(p=>!/with ads|ads|광고/i.test(p.n));
-    const row=(t,list)=>(list=noAds(list)).length?`<div><div class="kind">${t}</div><div class="plats">${list.map(p=>`<a class="plat" href="${esc(platLink(p,f,w))}" target="_blank" rel="noopener">${p.l?`<img src="${IMG}w92${p.l}" alt="" width="24" height="24" loading="lazy">`:""}${esc(p.n)}</a>`).join("")}</div></div>`:"";
+    const row=(t,list)=>(list=noAds(list)).length?`<div><div class="kind">${t}</div><div class="plats">${list.map(p=>`<a class="plat" href="${esc(platLink(p,f,w))}" target="_blank" rel="noopener">${esc(p.n)}</a>`).join("")}</div></div>`:"";
     box.innerHTML=`<h4>볼 수 있는 곳</h4>`+(w&&(noAds(w.sub).length||noAds(w.rent).length)?row("구독",w.sub)+row("대여 · 구매",w.rent.slice(0,6))+`<div class="note">국내 기준 · 정보 제공 JustWatch${w.link?` · <a href="${esc(w.link)}" target="_blank" rel="noopener">전체 보기</a>`:""}</div>`
       :`<div class="note">${d.id?"국내 스트리밍 정보가 없습니다.":"스트리밍 정보가 아직 없습니다."}</div>`);
   }
