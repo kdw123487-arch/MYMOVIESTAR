@@ -125,12 +125,11 @@ img.pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opaci
 .acts{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;gap:18px;flex-wrap:nowrap;align-items:center}
 .spacer{flex:1}
 /* card action bar: two equal halves, icon + label */
-.card .acts{display:grid;grid-template-columns:1fr 1fr;gap:0;padding-top:0;align-items:stretch}
-.card .acts.one{grid-template-columns:1fr}
-.act-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 4px;background:none;border:0;font:13px var(--f-sans);letter-spacing:.04em;color:var(--muted);cursor:pointer;transition:color .2s,background-color .2s;border-radius:0 0 6px 6px}
-.act-btn+.act-btn{border-left:1px solid var(--line)}
+.card .acts{display:flex;justify-content:flex-start;gap:20px;padding-top:12px;border-top:0;align-items:center}
+
+.act-btn{display:inline-flex;align-items:center;justify-content:flex-start;gap:6px;padding:4px 0;background:none;border:0;font:13px var(--f-sans);letter-spacing:.04em;color:var(--muted);cursor:pointer;transition:color .2s,background-color .2s;border-radius:0 0 6px 6px}
 .act-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;transition:transform .2s ease,fill .2s ease}
-.act-btn:hover{color:var(--ivory);background:rgba(212,176,106,.05)}
+.act-btn:hover{color:var(--ivory)}
 .act-btn:hover svg{transform:scale(1.1)}
 .act-btn.heart-act[aria-pressed="true"]{color:#d9707f}.act-btn.heart-act[aria-pressed="true"] svg{fill:currentColor}
 .act-btn.star-act{color:var(--gold-soft)}.act-btn.star-act:hover{color:var(--gold)}
