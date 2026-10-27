@@ -449,19 +449,19 @@ function sceneKit(x,W,H,cx,cy,r,[a,b,c],pal){
   D.stars=(n,ymax,al=.6)=>{for(let i=0;i<n;i++)D.cir(r()*W,r()*ymax,.6+r()*1.5,ice,al*(.4+r()*.6))};
   return D}
 const SCENES={
-"r:spider-man-into-the-spider-verse":d=>{const{x,rect,cir,cx,u,W,H,r,a,l,ice,h}=d,st=Math.max(10,W/110);
-  for(let yy=st/2;yy<H;yy+=st)for(let xx=(yy/st%2)*st/2;xx<W;xx+=st){const t=Math.max(0,(xx/W*.9+(1-yy/H)*.6)-.45);if(t>0)cir(xx,yy,Math.min(st*.48,t*st*.75),a,.45)}
+"r:spider-man-into-the-spider-verse":d=>{const{x,cir,W,H,a,l}=d,st=Math.max(10,W/110),dot=(col,ox,oy,al,fl)=>{for(let yy=st/2;yy<H;yy+=st)for(let xx=(yy/st%2)*st/2;xx<W;xx+=st){const fx=fl?1-xx/W:xx/W,t=Math.max(0,(fx*.9+(1-yy/H)*.6)-.45);if(t>0)cir(xx+ox,yy+oy,Math.min(st*.48,t*st*.75),col,al)}};
+  dot(l,st*.3,st*.22,.3,1);dot(a,0,0,.45,0);
   const vg=x.createLinearGradient(0,H*.45,0,H);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.72)");x.globalAlpha=1;x.fillStyle=vg;x.fillRect(0,H*.45,W,H*.55)},
-"r:marriage-story":d=>{const{ring,cir,ln,cx,cy,u,a,l,H}=d;ring(cx-u*.32,cy,u*.62,a,3,.9);ring(cx+u*.32,cy,u*.62,a,3,.9);cir(cx,cy,u*.2,a,.22);ln(cx,H*.06,cx,H*.94,l,1.5,.45)},
-"r:the-irishman":d=>{const{poly,ln,rect,cx,cy,u,W,H,a,w,h}=d,dw=u*.2,dh=u*.36;
-  poly([[0,0],[cx-dw,cy-dh],[cx-dw,cy+dh],[0,H]],w,.55);poly([[W,0],[cx+dw,cy-dh],[cx+dw,cy+dh],[W,H]],w,.55);
-  [[0,0,-1,-1],[W,0,1,-1],[0,H,-1,1],[W,H,1,1]].forEach(([px,py,sx,sy])=>ln(px,py,cx+sx*dw,cy+sy*dh,a,1.5,.35));
-  rect(cx-dw,cy-dh,dw*2,dh*2,a,.85);rect(cx-dw*.2,cy-dh,dw*1.2,dh*2,h,.9)},
+"r:marriage-story":d=>{const{x,ring,cir,cx,cy,u,a,l}=d,R=u*.58,o=u*.36;
+  x.save();x.beginPath();x.arc(cx-o,cy,R,0,7);x.clip();cir(cx+o,cy,R*.92,a,.2);x.restore();ring(cx-o,cy,R,a,2.5,.9);ring(cx+o,cy,R*.92,l,2.5,.8)},
+"r:the-irishman":d=>{const{ln,rect,glow,cx,cy,u,W,H,a,ice}=d;
+  for(let i=1;i<15;i++){const t=(i/15)**1.8,dx=u*.06+t*W*.5;[-1,1].forEach(sg=>ln(cx+sg*dx,0,cx+sg*dx,H,a,1.2,.1+.5*(1-t)))}
+  glow(cx,cy,u*.7,ice,.35);rect(cx-u*.022,0,u*.044,H,ice,.85)},
 "r:the-power-of-the-dog":d=>{const{hill,cir,cx,cy,u,H,a,w,h}=d;cir(cx+u*.9,cy-u*.35,u*.2,a,.35);
   hill(H*.58,H*.28,a,.22,.8,1);hill(H*.68,H*.22,w,.8,1.1,3);hill(H*.8,H*.12,h,1,1.6,5)},
-"r:the-trial-of-the-chicago-7":d=>{const{rect,ln,cx,cy,u,W,a,w}=d,g=Math.min(u*.3,W/8.5);
-  for(let i=0;i<7;i++){const t=i==3?.26:0,bh=u*(.7+t);rect(cx+(i-3)*g-u*.07,cy+u*.5-bh,u*.14,bh,a,i==3?.95:.55)}
-  ln(0,cy+u*.5,W,cy+u*.5,w,2.5,.9)},
+"r:the-trial-of-the-chicago-7":d=>{const{rect,ln,cx,cy,u,W,a,w}=d,g=Math.min(u*.24,W/10.5),bw=u*.055,base=cy+u*.6;
+  for(let i=0;i<8;i++){const sep=i==7,px=cx+(i-3.5)*g-bw/2+(sep?g*.55:0);rect(px,base-u*1.05,bw,u*1.05,a,sep?.25:.8)}
+  ln(cx-3.5*g-bw,base,cx+2.5*g+bw,base,w,2,.9)},
 "r:whiplash":d=>{const{x,cy,u,W,a,l,w}=d,hits=[.14,.36,.54,.68,.79,.87];
   x.lineJoin="round";x.globalAlpha=.9;x.strokeStyle=a;x.lineWidth=2;x.beginPath();x.moveTo(0,cy);
   hits.forEach((p,i)=>{const hx=W*p,amp=u*(.22+i*.09),last=i==hits.length-1;x.lineTo(hx,cy);
@@ -478,89 +478,109 @@ const SCENES={
 "r:roma":d=>{const{ell,ln,cx,cy,u,W,H,a,w}=d;
   for(let t=0;t<W;t+=u*.3)ln(t,H*.45,t,H,w,1,.3);for(let y=H*.45;y<H;y+=u*.22)ln(0,y,W,y,w,1,.3);
   for(let i=1;i<6;i++)ell(cx,cy+u*.15,u*.28*i,u*.05*i,a,.9-i*.14,0,2)},
-"r:all-quiet-on-the-western-front":d=>{const{rect,ln,cir,cx,cy,u,W,H,a,h}=d;
-  [0,1,2,3].forEach(i=>rect(0,H*.5+i*u*.14,W,u*.05,a,.1+i*.05));ln(0,H*.72,W,H*.72,a,2,.7);
-  ln(cx-u*.6,H*.72,cx-u*.6,H*.5,a,2.5,.8);cir(cx+u*.9,cy-u*.5,u*.06,a,.5);rect(0,H*.72,W,H*.28,h,.9)},
-"r:amelie":d=>{const{x,cir,rect,cx,cy,u,W,H,a,h,l}=d,y0=cy+u*.5;
-  x.globalAlpha=.95;x.fillStyle=a;x.beginPath();x.arc(cx,y0,u*.55,Math.PI,0);x.fill();rect(0,y0,W,H-y0,h,1);
-  const s=u*.2,px=cx,py=cy-u*.75;x.globalAlpha=1;x.fillStyle=l;x.beginPath();x.moveTo(px,py+s*.5);x.bezierCurveTo(px-s*1.2,py-s*.1,px-s*.6,py-s*.9,px,py-s*.35);x.bezierCurveTo(px+s*.6,py-s*.9,px+s*1.2,py-s*.1,px,py+s*.5);x.fill()},
-"r:the-intouchables":d=>{const{ring,cir,cx,cy,u,a}=d;ring(cx-u*.25,cy,u*.7,a,u*.05,.95);ring(cx+u*.55,cy+u*.3,u*.38,a,u*.03,.85);cir(cx+u*.55,cy+u*.3,u*.07,a,1)},
+"r:all-quiet-on-the-western-front":d=>{const{x,cir,glow,cx,u,W,H,a,ice}=d,seg=W/64;
+  for(let i=0;i<9;i++){const y=H*.52+i*u*.11;x.globalAlpha=.14+i*.07;x.strokeStyle=a;x.lineWidth=1.5;x.beginPath();for(let k=0;k<=64;k++)x.lineTo(k*seg,y+(k%2?1:-1)*u*.007*(i+1));x.stroke()}
+  glow(cx+u*.8,H*.2,u*.25,ice,.45);cir(cx+u*.8,H*.2,u*.022,ice,.95)},
+"r:amelie":d=>{const{cir,glow,cx,cy,u,W,H,a,l}=d,st=u*.16,px=Math.round((cx+u*.3-st/2)/st)*st+st/2,py=Math.round((cy-st/2)/st)*st+st/2;
+  for(let y=st/2;y<H;y+=st)for(let t=st/2;t<W;t+=st){if(Math.abs(t-px)<1&&Math.abs(y-py)<1)continue;const dd=Math.hypot(t-cx,y-cy)/(u*1.6);cir(t,y,u*.018,a,Math.max(.08,.55-dd*.35))}
+  glow(px,py,u*.3,l,.55);cir(px,py,u*.055,l,1)},
+"r:the-intouchables":d=>{const{rect,cir,ring,cx,cy,u,r,a,ice}=d;
+  for(let i=0;i<14;i++){const y=cy+(r()-.5)*u*1.2,L=u*(.6+r()*1.8);rect(cx-u*.45-L,y,L,1.5,a,.25)}
+  cir(cx-u*.22,cy,u*.42,a,.92);ring(cx+u*.3,cy,u*.42,ice,3,.85)},
 "r:the-lives-of-others":d=>{const{x,cir,cx,cy,u,a,l}=d,px=cx-u*.45;cir(px,cy,u*.07,l,1);
   [.3,.55,.8,1.05,1.3].forEach((k,i)=>{x.globalAlpha=.9-i*.15;x.strokeStyle=a;x.lineWidth=2.5;x.lineCap="round";x.beginPath();x.arc(px,cy,u*k,-.7,.7);x.stroke()})},
-"r:pan-s-labyrinth":d=>{const{x,cir,cx,cy,u,a,l}=d;cir(cx+u*.95,cy-u*.5,u*.17,l,.8);
-  x.globalAlpha=.9;x.strokeStyle=a;x.lineWidth=3;x.lineCap="round";x.beginPath();for(let t=.4;t<19;t+=.08){const rr=t*u*.045;x.lineTo(cx+Math.cos(t)*rr,cy+u*.1+Math.sin(t)*rr*.92)}x.stroke()},
-"r:shoplifters":d=>{const{rect,ln,cir,cx,cy,u,a,w}=d;cir(cx-u*.9,cy-u*.4,u*.17,a,.5);
-  ln(cx-u*1.1,cy-u*.15,cx+u*1.1,cy,w,2,.9);for(let i=1;i<7;i++){const t=i/7,px=cx-u*1.1+u*2.2*t,py=cy-u*.15+u*.15*t,hh=u*(.12+(i%3)*.06);rect(px-u*.05,py,u*.1,hh,a,i%2?.9:.5)}},
-"r:perfect-days":d=>{const{ell,W,H,u,r,a}=d;for(let i=0;i<70;i++)ell(r()*W,r()*H*.85,u*(.03+r()*.1),u*(.025+r()*.07),a,.08+r()*.22,r()*3)},
-"r:anatomy-of-a-fall":d=>{const{poly,ln,cir,cx,u,W,H,a}=d;
-  poly([[0,H*.78],[W*.25,H*.3],[W*.5,H*.78]],a,.2);poly([[W*.4,H*.78],[W*.7,H*.22],[W,H*.78]],a,.3);
-  ln(cx+u*.2,H*.08,cx+u*.2,H*.8,a,2.5,.9);cir(cx+u*.2,H*.8,5,a,1)},
-"r:frankenstein":d=>{const{x,ln,rect,cir,glow,cx,cy,u,W,a,l}=d;rect(cx-u*.018,0,u*.036,d.H,a,.85);glow(cx,cy,u*.6,a,.3);
-  x.setLineDash([u*.07,u*.05]);ln(0,cy+u*.1,W,cy+u*.1,l,2,.6);x.setLineDash([]);cir(cx,cy+u*.1,u*.05,a,1)},
-"r:mad-max-fury-road":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d;cir(cx,cy+u*.15,u*.75,a,.92);
-  for(let i=0;i<5;i++)rect(cx-u*.8,cy+u*.25+i*u*.13,u*1.6,u*(.02+i*.012),h,.95);rect(0,cy+u*.9,W,H,h,1)},
+"r:pan-s-labyrinth":d=>{const{x,cir,cx,cy,u,a,l}=d;
+  for(let i=1;i<=7;i++){const R=u*.11*i,st=i*1.7,gp=.75/i;x.globalAlpha=.9-i*.06;x.strokeStyle=a;x.lineWidth=2.5;x.lineCap="round";x.beginPath();x.arc(cx,cy,R,st+gp,st+Math.PI*2-gp);x.stroke()}
+  cir(cx,cy,u*.04,l,1)},
+"r:shoplifters":d=>{const{x,cir,cx,cy,u,a,ice,w}=d;
+  [[0,0,.2],[.3,.08,.15],[-.28,.1,.16],[.12,-.26,.12],[-.1,.3,.1],[.42,-.18,.08]].forEach(([ox,oy,rr],i)=>cir(cx+ox*u,cy+oy*u,u*rr,i%2?ice:a,i%2?.5:.85));
+  x.globalAlpha=.55;x.strokeStyle=w;x.lineWidth=2;x.strokeRect(cx-u*.72,cy-u*.62,u*1.44,u*1.24)},
+"r:perfect-days":d=>{const{ell,cir,glow,cx,cy,u,W,H,r,a,ice}=d,g=Math.min(u*.32,W/8.5);
+  for(let i=0;i<40;i++)ell(r()*W,r()*H*.5,u*(.03+r()*.08),u*(.02+r()*.05),ice,.05+r()*.12,r()*3);
+  for(let i=0;i<7;i++){const px=cx+(i-3)*g,rr=u*(.07+((i*5)%3)*.012);if(i==4)glow(px,cy+u*.2,u*.35,a,.5);cir(px,cy+u*.2,rr,a,i==4?1:.45)}},
+"r:anatomy-of-a-fall":d=>{const{x,poly,ln,ring,cir,cx,u,W,H,a,ice}=d,px=cx+u*.25;
+  poly([[W*.08,H*.85],[W*.36,H*.25],[W*.64,H*.85]],ice,.12);poly([[W*.45,H*.85],[W*.72,H*.35],[W,H*.85]],ice,.08);ln(0,H*.85,W,H*.85,a,1.5,.5);
+  x.setLineDash([u*.04,u*.03]);ln(px,H*.1,px,H*.8,a,2,.9);x.setLineDash([]);for(let k=0;k<6;k++){const y=H*.1+k*(H*.7/5);ln(px-u*.05,y,px+u*.05,y,a,1.5,.7)}
+  ring(px,H*.85,u*.06,a,2,.9);cir(px,H*.85,u*.018,a,1)},
+"r:frankenstein":d=>{const{x,cir,ring,glow,cx,cy,u,a,ice,l}=d,n=6;
+  for(let i=0;i<n;i++){const t0=i/n*6.283+.2,t1=t0+6.283/n-.07,m=(t0+t1)/2,o=u*(.04+((i*7)%3)*.025),ox=cx+Math.cos(m)*o,oy=cy+Math.sin(m)*o;x.globalAlpha=.85;x.fillStyle=a;x.beginPath();x.moveTo(ox,oy);x.arc(ox,oy,u*.55,t0,t1);x.closePath();x.fill()}
+  x.setLineDash([u*.03,u*.025]);ring(cx,cy,u*.66,ice,1.5,.6);x.setLineDash([]);glow(cx,cy,u*.25,l,.8);cir(cx,cy,u*.04,l,1)},
+"r:mad-max-fury-road":d=>{const{x,cir,rect,ln,cx,cy,u,W,H,a,h}=d,y0=cy+u*.55,sy=y0-u*.12,R=u*.72;
+  x.save();x.beginPath();x.rect(0,0,W,y0);x.clip();x.beginPath();x.arc(cx,sy,R,0,7);x.clip();cir(cx,sy,R,a,.95);
+  for(let i=0;i<6;i++)rect(0,sy-u*.42+i*u*.12,W,u*(.012+i*.013),h,1);x.restore();
+  ln(0,y0,W,y0,a,2,.8);const g=x.createLinearGradient(0,y0,0,H);g.addColorStop(0,"rgba(0,0,0,.1)");g.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,y0,W,H-y0)},
 "r:inception":d=>{const{x,rect,ln,cx,cy,u,W,H,a}=d,bw=u*.09,gp=u*.035,n=Math.ceil(W/(bw+gp))+1,o=(cx-bw/2)%(bw+gp)-(bw+gp);
   for(let i=0;i<n;i++){const px=o+i*(bw+gp),dx=Math.min(1,Math.abs(px+bw/2-cx)/(Math.min(W/2,u*2.2))),bh=u*(.1+.8*dx**1.6);rect(px,cy-bh,bw,bh,a,.7);rect(px,cy+u*.05,bw,bh,a,.22)}
   ln(0,cy+u*.025,W,cy+u*.025,a,1.5,.8);
   x.globalAlpha=1;[[0,1],[W,-1]].forEach(([x0,dr])=>{const ew=Math.max(0,(W-u*4)/2)+u*.6,g=x.createLinearGradient(x0,0,x0+dr*ew,0);g.addColorStop(0,"rgba(0,0,0,.82)");g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(dr>0?0:W-ew,0,ew,H)})},
-"r:no-country-for-old-men":d=>{const{ring,cir,poly,rect,cx,cy,u,W,H,a,h}=d,y0=H*.66;rect(0,y0,W,H-y0,h,1);
-  poly([[cx-u*.03,y0],[cx+u*.03,y0],[cx+u*.75,H],[cx-u*.75,H]],a,.3);
-  ring(cx,cy-u*.15,u*.4,a,3.5,.95);ring(cx,cy-u*.15,u*.32,a,1.5,.6);cir(cx,cy-u*.15,u*.4,a,.12)},
-"r:the-dark-knight":d=>{const{rect,ln,cx,cy,u,W,r,a,l}=d,half=W/2;
-  for(let i=0;i<9;i++){const y=cy-u*.62+i*u*.155;rect(0,y,cx-u*.05,u*.035,a,.75);
-    for(let t=cx+u*.05;t<W;){const k=(t-cx)/half,sw=u*(.05+r()*.28)*(1-k*.6);rect(t,y+(r()-.5)*u*.22*k,sw,u*.035,a,.75*(1-k*.75));t+=sw+u*(.02+r()*.08)*(1+k*3)}}
-  ln(cx,cy-u*.85,cx,cy+u*.85,l,2,.9)},
+"r:no-country-for-old-men":d=>{const{x,ring,ln,rect,cx,cy,u,W,H,a,h}=d,y0=H*.74,R=u*.36,py=cy-u*.12;rect(0,y0,W,H-y0,h,.6);ln(0,y0,W,y0,a,1.5,.6);
+  x.globalAlpha=.9;x.fillStyle=a;x.beginPath();x.arc(cx,py,R,-Math.PI/2,Math.PI/2);x.closePath();x.fill();ring(cx,py,R,a,2.5,.9)},
+"r:the-dark-knight":d=>{const{cir,glow,cx,cy,u,W,H,r,a,l}=d,st=u*.12,fx=cx+u*.35,fy=cy;
+  for(let y=st/2;y<H;y+=st)for(let t=st/2;t<W;t+=st){const dx=t-fx,dy=y-fy,dd=Math.hypot(dx,dy),k=Math.max(0,1-dd/(u*1.3)),push=k*k*u*.5*(.6+r()*.8),ang=Math.atan2(dy,dx)+(r()-.5)*k*1.2;
+    cir(fx+Math.cos(ang)*(dd+push),fy+Math.sin(ang)*(dd+push),u*.014*(1+k),a,.35+.4*(1-k))}
+  glow(fx,fy,u*.3,l,.6);cir(fx,fy,u*.035,l,1)},
 "r:interstellar":d=>{const{x,cir,cx,cy,u,W,a}=d;
   for(let k=-5;k<=5;k++){const y0=cy-u*.1+k*u*.16;x.globalAlpha=.85-Math.abs(k)*.12;x.strokeStyle=a;x.lineWidth=k?1.4:2.4;x.beginPath();
     for(let t=0;t<=W;t+=6){const dx=(t-cx)/(u*.55);x.lineTo(t,y0+u*.6*Math.exp(-dx*dx)*(1-Math.abs(k)*.13))}x.stroke()}
   cir(cx,cy+u*.5,u*.045,a,1)},
-"r:get-out":d=>{const{ring,cir,ln,cx,cy,u,a,h}=d;ring(cx,cy,u*.55,a,3,.7);cir(cx,cy,u*.3,a,.95);cir(cx,cy,u*.12,h,1);
-  ln(cx,cy+u*.55,cx,cy+u*1.05,a,3,.8);cir(cx,cy+u*1.1,u*.04,a,.9)},
-"r:arrival":d=>{const{ell,cir,ring,rect,cx,cy,u,W,H,r,a,h}=d;ring(cx,cy,u*.95,a,2,.4);
-  for(let i=0;i<46;i++){const t=i/46*6.283;cir(cx+Math.cos(t)*u*.95,cy+Math.sin(t)*u*.95,u*(.012+r()*.05),a,.9)}
-  ell(cx,cy,u*.26,u*.62,h,.97);ell(cx,cy,u*.26,u*.62,a,.45,0,2);rect(0,H*.82,W,H*.18,a,.1)},
-"r:gone-girl":d=>{const{x,cir,ring,cx,cy,u,a}=d;cir(cx-u*.32,cy,u*.4,a,.92);x.setLineDash([u*.08,u*.06]);ring(cx+u*.32,cy,u*.4,a,3,.8);x.setLineDash([])},
-"r:knives-out":d=>{const{ring,ln,cx,cy,u,r,a}=d;ring(cx,cy,u*.3,a,2,.8);
-  for(let i=0;i<17;i++){const t=i/17*6.283,L=u*(.75+r()*.45);ln(cx+Math.cos(t)*u*.42,cy+Math.sin(t)*u*.42,cx+Math.cos(t)*L,cy+Math.sin(t)*L,a,3,.85)}},
-"r:spirited-away":d=>{const{x,cir,rect,ln,cx,cy,u,W,H,a,h}=d;cir(cx+u*.55,cy-u*.35,u*.3,a,.9);
-  rect(0,H*.62,W,H*.38,h,.95);for(let i=0;i<7;i++)ln(cx+u*.55-u*(.22-i*.02),H*.65+i*u*.1,cx+u*.55+u*(.22-i*.02),H*.65+i*u*.1,a,2,.5-i*.05);
-  x.setLineDash([u*.18,u*.1]);ln(0,H*.6,W,H*.6,a,3,.9);x.setLineDash([])},
-"r:princess-mononoke":d=>{const{cir,poly,cx,cy,u,W,H,a,h}=d;cir(cx,cy-u*.05,u*.6,a,.3);cir(cx,cy-u*.05,u*.3,a,.25);
-  for(let t=-u*.2;t<W;t+=u*.22){const th=u*(.35+((t*7919)%100)/100*.5);poly([[t,H],[t+u*.11,H-th],[t+u*.22,H]],h,1)}},
+"r:get-out":d=>{const{ell,rect,glow,cx,cy,u,a,ice}=d;
+  for(let i=0;i<10;i++){const k=1-i/10;ell(cx,cy+u*.1,u*1.4*k,u*.9*k,a,.08+i*.07,0,1.5)}
+  glow(cx,cy-u*.02,u*.25,ice,.6);rect(cx-u*.08,cy-u*.07,u*.16,u*.1,ice,.95)},
+"r:arrival":d=>{const{cir,rect,cx,cy,u,W,H,r,a}=d;
+  for(let i=0;i<240;i++){const t=i/240*6.283,sw=Math.max(0,Math.sin(t*3+1)*.5+.5),rr=u*(.01+sw*.045*r()+.006),R=u*.7+(r()-.5)*u*.04*(1+sw*2);if(!(t>5.25&&t<5.65))cir(cx+Math.cos(t)*R,cy+Math.sin(t)*R,rr,a,.85)}
+  for(let i=0;i<6;i++){const t=r()*6.283,k=1.12+r()*.12;cir(cx+Math.cos(t)*u*.7*k,cy+Math.sin(t)*u*.7*k,u*(.01+r()*.02),a,.7)}rect(0,H*.82,W,H*.18,a,.06)},
+"r:gone-girl":d=>{const{x,cir,ring,cx,cy,u,W,a,ice}=d,g=u*.28,n=Math.floor(W/g/2);
+  for(let j=-1;j<=1;j++)for(let i=-n;i<=n;i++){const px=cx+i*g,py=cy+j*g;if(i==1&&j==0){x.setLineDash([u*.03,u*.025]);ring(px,py,u*.09,ice,2,.9);x.setLineDash([])}else cir(px,py,u*.09,a,.3+.35*(1-Math.min(1,Math.abs(i)/n)))}},
+"r:knives-out":d=>{const{poly,cir,cx,cy,u,r,a,l}=d,n=14;
+  for(let i=0;i<n;i++){const t=i/n*6.283,R0=u*(.22+r()*.06),R1=u*(.95+r()*.3),wd=u*.035,ux=Math.cos(t),uy=Math.sin(t);poly([[cx+ux*R1-uy*wd,cy+uy*R1+ux*wd],[cx+ux*R0,cy+uy*R0],[cx+ux*R1+uy*wd,cy+uy*R1-ux*wd]],a,.8)}
+  cir(cx,cy,u*.05,l,1)},
+"r:spirited-away":d=>{const{ln,cir,glow,cx,u,W,H,a,ice}=d,y0=H*.58,n=W>900?11:6;ln(0,y0,W,y0,ice,1.5,.4);
+  for(let i=0;i<8;i++)ln(0,y0+u*.08*(i+1),W,y0+u*.08*(i+1),ice,1,.12-i*.012);
+  for(let i=0;i<n;i++){const px=cx+(i-(n-1)/2)*u*.3,py=y0-u*.28-Math.sin(i/(n-1)*Math.PI)*u*.18;glow(px,py,u*.12,a,.5);cir(px,py,u*.03,a,1);ln(px,y0+u*.06,px,y0+u*.31,a,2,.25)}},
+"r:princess-mononoke":d=>{const{ln,cir,glow,cx,cy,u,W,H,r,a,ice,h}=d;glow(cx,cy-u*.1,u*.8,a,.35);cir(cx,cy-u*.1,u*.42,a,.3);
+  for(let t=0;t<W;t+=u*.045){const hh=H*(.25+r()*.45);ln(t,H,t,H-hh,h,u*.025,.9)}for(let i=0;i<14;i++)cir(r()*W,H*(.55+r()*.4),u*.012,ice,.8)},
 "r:guillermo-del-toro-s-pinocchio":d=>{const{ell,cir,cx,cy,u,a}=d;
   for(let i=1;i<13;i++)ell(cx+i*u*.012,cy+u*.08,u*.11*i,u*.11*i*.9,a,.9-i*.055,0,i%3?1.6:3.2);cir(cx,cy+u*.08,u*.05,a,.95)},
-"r:klaus":d=>{const{x,rect,cir,cx,cy,u,W,H,r,a,ice,h}=d;for(let i=0;i<120;i++)cir(r()*W,r()*H,.8+r()*1.8,ice,.2+r()*.5);
-  [[-.55,-.25,-.3],[.1,-.5,.2],[.6,-.1,.5]].forEach(([ox,oy,rot])=>{x.save();x.translate(cx+ox*u,cy+oy*u);x.rotate(rot);x.globalAlpha=.95;x.fillStyle=a;x.fillRect(-u*.13,-u*.09,u*.26,u*.18);x.restore()});rect(0,H*.86,W,H*.14,h,1)},
-"r:coco":d=>{const{cir,cx,cy,u,r,a,l}=d,R=u*.95,oy=cy+u*.9;
-  for(let i=0;i<46;i++){const t=i/45*Math.PI,px=cx-Math.cos(t)*R,py=oy-Math.sin(t)*R;cir(px,py,u*(.05+r()*.04),a,.95);cir(px+(r()-.5)*u*.08,py+u*.09,u*(.03+r()*.03),a,.55)}},
-"r:inside-out":d=>{const{cir,ring,glow,cx,cy,u,a,ice}=d;
-  [[0,0,.34],[-.95,.3,.18],[-.55,-.3,.14],[.6,-.32,.17],[.98,.24,.21],[.3,.62,.12],[-.3,.55,.1]].forEach(([ox,oy,rr])=>{const px=cx+ox*u,py=cy+oy*u;glow(px,py,u*rr*2.4,a,.45);cir(px,py,u*rr,a,.9);ring(px,py,u*rr*.8,ice,1.5,.35)})},
+"r:klaus":d=>{const{x,cir,glow,cx,cy,u,W,H,r,a,ice}=d,sp=Math.min(u,W*.28),P=[[-1.5,.45],[-.8,.15],[-.2,.35],[.4,0],[1.0,.25],[1.6,-.1]].map(([px,py])=>[cx+px*sp,cy+py*u]);
+  for(let i=0;i<120;i++)cir(r()*W,r()*H,.8+r()*1.6,ice,.15+r()*.45);
+  x.setLineDash([u*.02,u*.03]);x.globalAlpha=.6;x.strokeStyle=a;x.lineWidth=1.5;x.beginPath();P.forEach(([px,py],i)=>i?x.lineTo(px,py):x.moveTo(px,py));x.stroke();x.setLineDash([]);
+  P.forEach(([px,py])=>{glow(px,py,u*.18,a,.45);cir(px,py,u*.03,a,1)})},
+"r:coco":d=>{const{cir,cx,cy,u,a,l}=d,oy=cy+u*.95;
+  [1.05,.85,.65].forEach((R,j)=>{const n=Math.round(R*44);for(let i=0;i<=n;i++){const t=i/n*Math.PI;cir(cx-Math.cos(t)*R*u,oy-Math.sin(t)*R*u,u*(.035-j*.008),j==1?l:a,.9-j*.2)}})},
+"r:inside-out":d=>{const{cir,ring,cx,cy,u,a,ice,l}=d;
+  for(let i=0;i<5;i++){const t=i/5*6.283-Math.PI/2,px=cx+Math.cos(t)*u*.28,py=cy+Math.sin(t)*u*.28;cir(px,py,u*.38,i%2?ice:a,.2);ring(px,py,u*.38,i%2?ice:a,1.5,.5)}cir(cx,cy,u*.06,l,1)},
 "r:wall-e":d=>{const{rect,cir,glow,cx,cy,u,W,H,r,a,w}=d,s=u*.085;
   for(let t=0;t<W;t+=s*1.15){const hh=Math.floor(2+5*Math.abs(Math.sin(t/(u*.8)))+r()*3);for(let j=0;j<hh;j++)rect(t,H-(j+1)*s*1.15,s,s,a,.18+r()*.32)}
   glow(cx,cy-u*.2,u*.4,a,.5);cir(cx,cy-u*.2,u*.05,a,1)},
-"r:your-name":d=>{const{x,poly,cir,stars,glow,cx,cy,u,W,H,a,l}=d,hx=cx+u*.55,hy=cy-u*.35;stars(90,H*.6);
-  poly([[hx,hy],[hx-u*1.7,hy+u*.95],[hx-u*1.5,hy+u*.6]],a,.3);glow(hx,hy,u*.3,a,.6);cir(hx,hy,u*.06,a,1);
-  x.globalAlpha=.9;x.strokeStyle=l;x.lineWidth=3;x.beginPath();for(let t=0;t<=W;t+=8)x.lineTo(t,H*.62+Math.sin(t/(u*.3))*u*.12-t/W*u*.2);x.stroke()},
-"r:up":d=>{const{cir,cx,u,H,r,a,ice}=d;
-  for(let i=0;i<30;i++){const t=r(),py=H*(.9-t*.82),px=cx+(r()-.5)*u*(.25+t*2.2),rr=u*(.035+(1-t)*.11)*(.7+r()*.5);cir(px,py,rr,i%4?a:ice,.2+(1-t)*.65)}},
-"r:the-godfather":d=>{const{poly,cir,cx,cy,u,W,H,a}=d;
-  for(let t=-u*.3;t<W+u;t+=u*.32)poly([[t,0],[t+u*.14,0],[t+u*.14+u*.5,H],[t+u*.5,H]],a,.16);cir(cx,cy,u*.2,a,.9)},
-"r:the-shawshank-redemption":d=>{const{rect,cx,cy,u,a,h}=d,x0=cx-u*.45,y0=cy-u*.7,ww=u*.9,hh=u*1.2;
-  rect(x0,y0,ww,hh,a,.6);for(let i=0;i<5;i++)rect(x0+ww*(i+.5)/5-u*.02,y0,u*.04,hh,h,1)},
-"r:cinema-paradiso":d=>{const{x,poly,rect,cx,cy,u,W,a,h}=d;poly([[0,d.H],[cx-u*.5,cy-u*.45],[cx+u*.6,cy+u*.4]],a,.1);
-  x.save();x.translate(cx,cy);x.rotate(-.12);for(let t=-W;t<W;t+=u*.5)rect(t,-u*.18,u*.4,u*.36,a,.7);x.restore()},
-"r:life-is-beautiful":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d,y0=cy+u*.62;cir(cx,cy,u*.75,a,.9);rect(0,y0,W,H-y0,h,1);rect(cx-u*.18,y0-u*.2,u*.36,u*.2,h,1)},
-"r:back-to-the-future":d=>{const{ring,cir,ln,cx,cy,u,H,a,l}=d;ring(cx,cy-u*.1,u*.6,a,u*.04,.95);cir(cx,cy-u*.1,u*.05,a,1);
-  [-1,1].forEach(s=>{ln(cx+s*u*1.6,H,cx+s*u*.1,cy+u*.85,l,6,.9);ln(cx+s*u*1.75,H,cx+s*u*.2,cy+u*.95,l,2,.6)})},
+"r:your-name":d=>{const{x,cir,stars,cx,cy,u,W,H,a,l}=d,sp=Math.min(u*1.2,W*.42);stars(70,H*.55);
+  [[-1,.95],[1,.75]].forEach(([sg,al])=>{x.globalAlpha=al;x.strokeStyle=a;x.lineWidth=2;x.beginPath();x.moveTo(cx+sg*sp*1.5,-u*.1);x.quadraticCurveTo(cx+sg*u*.2,cy-u*.5,cx-sg*u*.3,cy+u*.05);x.stroke()});
+  x.globalAlpha=.95;x.strokeStyle=l;x.lineWidth=2;x.beginPath();x.moveTo(cx-sp,cy+u*.55);x.bezierCurveTo(cx-u*.4,cy+u*1.05,cx+u*.4,cy-u*.05,cx+sp,cy+u*.45);x.stroke();cir(cx-sp,cy+u*.55,u*.03,l,1);cir(cx+sp,cy+u*.45,u*.03,l,1)},
+"r:up":d=>{const{x,cir,cx,cy,u,W,H,r,a,ice}=d,sp=Math.min(u*1.5,W*.42),p1=[cx+sp*.6,cy-u*.35];
+  x.setLineDash([u*.015,u*.04]);x.globalAlpha=.7;x.strokeStyle=ice;x.lineWidth=2;x.lineCap="round";x.beginPath();x.moveTo(cx-sp,H*.88);x.bezierCurveTo(cx-sp*.3,H*.9,cx,cy+u*.3,p1[0],p1[1]);x.stroke();x.setLineDash([]);
+  for(let i=0;i<14;i++){const t=r()*6.283,rr=r()*u*.28;cir(p1[0]+Math.cos(t)*rr,p1[1]-u*.12+Math.sin(t)*rr*.8,u*(.04+r()*.05),i%3?a:ice,.75)}},
+"r:the-godfather":d=>{const{ln,cir,glow,cx,u,W,H,a}=d,n=W>900?9:5,g=Math.min(u*.22,W/(n+1));glow(cx,0,u*1.2,a,.25);
+  for(let i=0;i<n;i++){const px=cx+(i-(n-1)/2)*g,L=H*(.3+.35*Math.abs(Math.sin(i*1.7+.4)));ln(px,0,px,L,a,1.5,.75);cir(px,L,u*.03,a,.95)}},
+"r:the-shawshank-redemption":d=>{const{ln,glow,cx,cy,u,W,H,r,a,ice}=d,g=u*.09,gap=u*.3;glow(cx,cy,u*.7,ice,.4);
+  for(let t=g/2;t<W;t+=g){if(Math.abs(t-cx)<gap)continue;ln(t,0,t,H,a,u*.018,.55)}
+  for(let i=0;i<40;i++){const px=cx+(r()-.5)*gap*1.8,py=r()*H;ln(px,py,px-u*.03,py+u*.12,ice,1,.35)}},
+"r:cinema-paradiso":d=>{const{poly,cir,glow,u,W,H,r,a,ice}=d,sx=W*.12,sy=H*.22,tx=W*.98;
+  poly([[sx,sy],[tx,H*.02],[tx,H*.78]],ice,.08);poly([[sx,sy],[tx,H*.18],[tx,H*.6]],ice,.08);glow(sx,sy,u*.25,a,.7);cir(sx,sy,u*.03,a,1);
+  for(let i=0;i<80;i++){const t=r(),px=sx+(tx-sx)*t,py=sy+(H*.4-sy)*t+(r()-.5)*H*.6*t;cir(px,py,.6+r()*1.6,ice,.25+r()*.5)}},
+"r:life-is-beautiful":d=>{const{ln,cir,glow,cx,cy,u,W,H,a,ice,h}=d;for(let t=u*.1;t<W;t+=u*.14)ln(t,0,t,H,h,u*.02,.55);
+  glow(cx,cy,u*.9,a,.55);cir(cx,cy,u*.42,a,.45);cir(cx+u*.1,cy+u*.12,u*.12,ice,.95)},
+"r:back-to-the-future":d=>{const{ln,ring,glow,cx,cy,u,H,a,l}=d,vx=cx+u*.6,vy=cy-u*.1;
+  [-1,1].forEach(sg=>{ln(-u*.2,H*(sg<0?.8:.98),vx,vy+sg*u*.02,l,u*.025,.9);ln(-u*.2,H*(sg<0?.77:.95),vx,vy+sg*u*.02,a,2,.5)});
+  glow(vx,vy,u*.35,l,.5);ring(vx,vy,u*.18,a,2,.85);ring(vx,vy,u*.3,a,1.2,.4)},
 "r:good-will-hunting":d=>{const{x,ln,cy,u,W,a}=d;for(let i=0;i<6;i++)ln(0,d.H*.15+i*u*.28,W,d.H*.15+i*u*.28,a,1,.14);
   x.globalAlpha=.9;x.strokeStyle=a;x.lineWidth=4;x.beginPath();for(let t=0;t<=W;t+=8)x.lineTo(t,cy+u*.1+Math.sin(t/(u*.35))*u*.28*Math.sin(t/W*3.14));x.stroke()},
-"r:leon-the-professional":d=>{const{ln,cir,cx,cy,u,a,h}=d,by=cy+u*.7;
-  for(let i=0;i<9;i++){const t=-Math.PI/2+(i-4)*.3,L=u*(.6+((i*37)%5)*.06),qx=cx+Math.cos(t)*L,qy=by+Math.sin(t)*L;ln(cx,by,qx,qy,a,2.5,.8);cir(qx,qy,u*.04,a,.95)}},
-"r:chungking-express":d=>{const{cir,rect,cx,cy,u,W,H,r,a,l}=d;
-  for(let i=0;i<28;i++)cir(r()*W,r()*H*.85,u*(.08+r()*.22),i%5?a:l,.06+r()*.16);rect(0,cy+u*.55,W,3,l,.8)},
-"r:roman-holiday":d=>{const{ring,cir,ln,cx,cy,u,W,a,h}=d,y0=cy+u*.68;cir(cx,cy,u*.8,a,.9);ln(0,y0,W,y0,h,u*.05,1);  ring(cx-u*.35,y0-u*.16,u*.16,h,u*.05,1);ring(cx+u*.35,y0-u*.16,u*.16,h,u*.05,1)},
-"r:pulp-fiction":d=>{const{poly,rect,glow,cx,cy,u,a,h}=d;poly([[cx-u*.4,cy],[cx+u*.4,cy],[cx+u*1,cy-u*.95],[cx-u*1,cy-u*.95]],a,.2);glow(cx,cy-u*.05,u*.9,a,.7);
-  rect(cx-u*.45,cy,u*.9,u*.5,h,1);rect(cx-u*.45,cy-u*.02,u*.9,u*.025,a,.95)}
+"r:leon-the-professional":d=>{const{rect,glow,cx,cy,u,a,ice,l}=d;glow(cx,cy,u*.8,ice,.3);rect(cx-u*.45,cy-u*.6,u*.9,u*1.2,ice,.08);
+  rect(cx-u*.12,cy-u*.38,u*.07,u*.9,a,.95);rect(cx+u*.06,cy+u*.08,u*.07,u*.44,l,.95)},
+"r:chungking-express":d=>{const{ell,u,W,H,r,a,l,ice}=d;
+  for(let i=0;i<34;i++){const px=r()*W,py=H*(.1+r()*.75),len=u*(.2+r()*.8);ell(px,py,len,u*(.015+r()*.035),i%4?a:(i%8?l:ice),.12+r()*.35)}},
+"r:roman-holiday":d=>{const{x,cir,glow,cx,cy,u,W,a,ice}=d;glow(cx,cy,u*.9,a,.4);cir(cx,cy,u*.5,a,.55);
+  x.setLineDash([u*.02,u*.035]);x.globalAlpha=.85;x.strokeStyle=ice;x.lineWidth=2.5;x.lineCap="round";x.beginPath();for(let t=0;t<=W;t+=6){const k=t/W;x.lineTo(t,cy+u*.15+Math.sin(k*9)*u*.22*Math.sin(k*3.14))}x.stroke();x.setLineDash([])},
+"r:pulp-fiction":d=>{const{rect,glow,cx,cy,u,a,l}=d;glow(cx,cy,u*.7,a,.45);
+  [2,0,4,1,3].forEach((o,i)=>rect(cx-u*1.1+o*u*.35,cy-u*.5+i*u*.25,u,u*.08,i==2?l:a,i==2?1:.55))},
 };
 function paint(cv,f,W=480,H=720,pal){
   const L=look(f);cv.width=W;cv.height=H;const x=cv.getContext("2d"),[a,b,c]=pal||L.pal,Z=Math.min(W,H*.75);
