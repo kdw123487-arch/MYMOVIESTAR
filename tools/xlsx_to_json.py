@@ -25,7 +25,7 @@ COLUMNS = {
     "키": "key", "제목": "ko", "원제": "en", "연도": "y", "국가": "n", "장르": "g",
     "러닝타임": "rt", "감독": "dir", "출연": "cast", "수상": "aw", "한줄소개": "p",
     "줄거리": "s", "추천이유": "w", "관람포인트1": "pt1", "관람포인트2": "pt2", "관람포인트3": "pt3",
-    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef", "배경색": "bg", "포인트색": "ac", "포스터": "poster",
+    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef", "배경색": "bg", "포인트색": "ac", "배너색": "bc", "포스터": "poster",
 }
 MOTIFS = {"arcade", "snowpeaks", "sun", "waves", "bands", "rings", "split", "peaks", "arch", "rays", "grid", "dots", "trees"}
 FONTS = {"classic", "elegant", "noir", "epic", "typewriter", "mono", "bold", "scifi", "gothic", "western", "retro", "script", "hand", "comic", "light", "neon"}
@@ -102,6 +102,10 @@ def film(row, n):
         if not HEX.fullmatch(f["ac"]):
             fail(n, "포인트색은 #aabbcc 형식이어야 합니다.")
         out["ac"] = f["ac"].lower()
+    if f.get("bc"):
+        if not HEX.fullmatch(f["bc"]):
+            fail(n, "배너색은 #aabbcc 형식이어야 합니다.")
+        out["bc"] = f["bc"].lower()
     return out
 
 

@@ -571,7 +571,9 @@ function bannerPal(f){
       if(d)h=(mx===r?((g-b)/d+6)%6:mx===g?(b-r)/d+2:(r-g)/d+4)*60;return[h,d?d/(1-Math.abs(2*l-1)):0,l]},
     hsl=(h,s,l)=>`hsl(${h.toFixed(1)} ${(Math.min(1,s)*100).toFixed(1)}% ${(Math.min(1,l)*100).toFixed(1)}%)`,
     [bh,bs,bl]=toHsl(hex(f.bg)),[ah,as,al]=toHsl(hex(f.ac));
-  const p=[hsl(ah,as*.8,al*.88),hsl(bh,Math.min(.6,bs*1.25+.04),bl+.11),hsl(bh,bs,bl*.7)];
+  /* 배너색 column: a banner pattern colour of its own, separate from the point colour */
+  const [ph,ps,pl]=f.bc?toHsl(hex(f.bc)):[ah,as*.8,al*.88];
+  const p=[hsl(ph,ps,pl),hsl(bh,Math.min(.6,bs*1.25+.04),bl+.11),hsl(bh,bs,bl*.7)];
   p.wall=hsl(bh,bs*.8,bl+.07);p.hole=hsl(bh,bs,bl*.6);p.line=hsl(ah,as,al);
   p.sky=hsl(bh,bs*.75,bl+.2);p.ice=[hsl(bh,bs*.55,.34),hsl(bh,bs*.4,.5),hsl(bh,bs*.3,.68),hsl(bh,bs*.2,.86)];
   return p;
