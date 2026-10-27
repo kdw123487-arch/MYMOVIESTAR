@@ -489,8 +489,6 @@ const SCENES={
   glow(px,py,u*.3,l,.55);cir(px,py,u*.055,l,1)},
 "r:the-intouchables":d=>{const{x,W,cy,u,a,ice}=d,st=u*.1,n=Math.ceil(W*.75/st);
   [[W*.3,a],[W*.7,ice]].forEach(([sx,c])=>{for(let k=1;k<=n;k++){x.beginPath();x.arc(sx,cy,k*st,0,7);x.globalAlpha=Math.max(0,.75-k/n*.7);x.strokeStyle=c;x.lineWidth=1.6;x.stroke()}})},
-"r:the-lives-of-others":d=>{const{x,cir,cx,cy,u,a,l}=d,px=cx-u*.45;cir(px,cy,u*.07,l,1);
-  [.3,.55,.8,1.05,1.3].forEach((k,i)=>{x.globalAlpha=.9-i*.15;x.strokeStyle=a;x.lineWidth=2.5;x.lineCap="round";x.beginPath();x.arc(px,cy,u*k,-.7,.7);x.stroke()})},
 "r:pan-s-labyrinth":d=>{const{x,cir,cx,cy,u,a,l}=d;
   for(let i=1;i<=7;i++){const R=u*.11*i,st=i*1.7,gp=.75/i;x.globalAlpha=.9-i*.06;x.strokeStyle=a;x.lineWidth=2.5;x.lineCap="round";x.beginPath();x.arc(cx,cy,R,st+gp,st+Math.PI*2-gp);x.stroke()}
   cir(cx,cy,u*.04,l,1)},
@@ -565,9 +563,10 @@ const SCENES={
   x.globalAlpha=.9;x.strokeStyle=a;x.lineWidth=4;x.beginPath();for(let t=0;t<=W;t+=8)x.lineTo(t,cy+u*.1+Math.sin(t/(u*.35))*u*.28*Math.sin(t/W*3.14));x.stroke()},
 "r:leon-the-professional":d=>{const{ln,cir,cx,cy,u,a,h}=d,by=cy+u*.7;
   for(let i=0;i<9;i++){const t=-Math.PI/2+(i-4)*.3,L=u*(.6+((i*37)%5)*.06),qx=cx+Math.cos(t)*L,qy=by+Math.sin(t)*L;ln(cx,by,qx,qy,a,2.5,.8);cir(qx,qy,u*.04,a,.95)}},
-"r:chungking-express":d=>{const{ell,cir,glow,cx,cy,u,W,r,a,l}=d,R=u*.2,gap=u*.04;
-  for(let i=0;i<16;i++){const sg=i%2?1:-1,len=u*(.4+r()*1.4),y=cy+(r()-.5)*u*.7;ell(cx+sg*(R*2+gap/2+len*.5+u*.1),y,len,u*(.01+r()*.02),sg<0?a:l,.1+r()*.25)}
-  glow(cx-R-gap/2,cy,u*.5,a,.4);glow(cx+R+gap/2,cy,u*.5,l,.4);cir(cx-R-gap/2,cy,R,a,.95);cir(cx+R+gap/2,cy,R,l,.95)},
+"r:chungking-express":d=>{const{x,rect,W,H,u,r,a,l}=d;
+  x.save();x.filter="blur("+Math.max(3,u*.03)+"px)";
+  for(let i=0;i<22;i++){const y=H*(.06+.88*(i+r()*.6)/22),len=W*(.2+r()*.5),px=r()*(W-len*.6)-len*.2,hh=u*(.02+r()*.07);rect(px,y,len,hh,i%3?a:l,.4+r()*.5)}
+  x.restore()},
 "r:roman-holiday":d=>{const{x,cir,glow,cx,cy,u,W,a,ice}=d;glow(cx,cy,u*.9,a,.4);cir(cx,cy,u*.5,a,.55);
   x.setLineDash([u*.02,u*.035]);x.globalAlpha=.85;x.strokeStyle=ice;x.lineWidth=2.5;x.lineCap="round";x.beginPath();for(let t=0;t<=W;t+=6){const k=t/W;x.lineTo(t,cy+u*.15+Math.sin(k*9)*u*.22*Math.sin(k*3.14))}x.stroke();x.setLineDash([])},
 "r:pulp-fiction":d=>{const{poly,rect,glow,cx,cy,u,a,h}=d;poly([[cx-u*.4,cy],[cx+u*.4,cy],[cx+u*1,cy-u*.95],[cx-u*1,cy-u*.95]],a,.2);glow(cx,cy-u*.05,u*.9,a,.7);
