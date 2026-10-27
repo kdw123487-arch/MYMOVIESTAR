@@ -462,7 +462,7 @@ const SCENES={
 "r:the-power-of-the-dog":d=>{const{hill,cir,cx,cy,u,H,a,w,h}=d;cir(cx+u*.9,cy-u*.35,u*.2,a,.35);
   hill(H*.58,H*.28,a,.22,.8,1);hill(H*.68,H*.22,w,.8,1.1,3);hill(H*.8,H*.12,h,1,1.6,5)},
 "r:the-trial-of-the-chicago-7":d=>{const{rect,cx,u,W,H,a,l}=d,w=u*.2,st=u*.4,n=Math.ceil(W/st)+2;
-  for(let i=-n;i<=n;i++){const px=cx+i*st-w/2,f=Math.max(0,1-Math.abs(px+w/2-cx)/(W*.5)),al=Math.pow(f,1.3)*.85;if(al<.02)continue;rect(px,0,w,H,i==0?l:a,al*(i==0?1:.75))}},
+  for(let i=-n;i<=n;i++){const px=cx+i*st-w/2,f=Math.max(0,1-Math.abs(px+w/2-cx)/(W*.5)),al=Math.pow(f,1.3)*.85;if(al<.02)continue;rect(px,0,w,H,a,al*.75)}},
 "r:whiplash":d=>{const{x,cy,u,W,a,l,w}=d,hits=[.14,.36,.54,.68,.79,.87];
   x.lineJoin="round";x.globalAlpha=.9;x.strokeStyle=a;x.lineWidth=2;x.beginPath();x.moveTo(0,cy);
   hits.forEach((p,i)=>{const hx=W*p,amp=u*(.22+i*.09),last=i==hits.length-1;x.lineTo(hx,cy);
@@ -482,7 +482,6 @@ const SCENES={
 "r:all-quiet-on-the-western-front":d=>{const{x,glow,rect,cir,ln,cx,cy,u,W,H,a,l,ice}=d,hz=H*.74,sx=cx+u*.5;
   glow(sx,hz,u*1.3,l,.3);
   x.save();x.beginPath();x.rect(0,0,W,hz);x.clip();cir(sx,hz,u*.2,l,.9);
-  [[.5,1.1,.06],[.3,1.9,.04]].forEach(([yy,rx,al],i)=>{x.globalAlpha=al+.04;x.fillStyle=ice;x.beginPath();x.ellipse(cx+(i%2?-1:1)*u*.3,hz-u*yy*1.3,u*rx,u*.07,0,0,7);x.fill()});
   x.restore();
   rect(0,hz,W,H-hz,a,.2);ln(0,hz,W,hz,a,1.5,.7)},
 "r:amelie":d=>{const{cir,glow,cx,cy,u,W,H,a,l}=d,st=u*.16,px=Math.round((cx+u*.3-st/2)/st)*st+st/2,py=Math.round((cy-st/2)/st)*st+st/2;
@@ -500,8 +499,7 @@ const SCENES={
   parts.forEach(([st,len,al,lw],i)=>{x.globalAlpha=al;x.strokeStyle=i%2?ice:a;x.lineWidth=lw;x.lineCap="round";x.beginPath();x.arc(cx,cy,R,st,st+len-.08);x.stroke()})},
 "r:perfect-days":d=>{const{ell,W,H,u,r,a}=d;for(let i=0;i<70;i++)ell(r()*W,r()*H*.85,u*(.03+r()*.1),u*(.025+r()*.07),a,.08+r()*.22,r()*3)},
 "r:anatomy-of-a-fall":d=>{const{x,ln,ring,cx,u,W,H,a,ice,l}=d,px=cx+u*.9;
-  for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.18+k*.06;x.strokeStyle=k==7?a:ice;x.lineWidth=1.6;x.stroke()}
-  ln(px,H*.12,px,H*.62,l,2.5,.95);ring(px,H*.62,u*.05,l,2,.95)},
+  for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.18+k*.06;x.strokeStyle=k==7?a:ice;x.lineWidth=1.6;x.stroke()}},
 "r:frankenstein":d=>{const{x,ln,rect,cir,glow,cx,cy,u,W,a,l}=d;rect(cx-u*.018,0,u*.036,d.H,a,.85);glow(cx,cy,u*.6,a,.3);
   x.setLineDash([u*.07,u*.05]);ln(0,cy+u*.1,W,cy+u*.1,l,2,.6);x.setLineDash([]);cir(cx,cy+u*.1,u*.05,a,1)},
 "r:mad-max-fury-road":d=>{const{x,cir,rect,ln,cx,cy,u,W,H,a,h}=d,y0=cy+u*.55,sy=y0-u*.12,R=u*.72;
