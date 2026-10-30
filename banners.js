@@ -116,11 +116,15 @@ const SCENES={
   rect(0,hy-u*.6,W,u*.6,a,.16);rect(px-u*.9,hy-u*.25,u*1.8,u*.25,l,.14);
   for(let i=0;i<15;i++){const y=hy+u*.05+i*u*.05*(1+i*.1),w=u*(1.1-i*.06);rect(px-w/2,y,w,u*.03,i%3?a:l,.95-i*.05)}
   x.restore();ln(0,hy,W,hy,l,2,.55)},
-"r:princess-mononoke":d=>{const{x,glow,hill,W,H,u,a,l}=d;
-  glow(W*.28,H*.32,u*.8,l,.3);
-  x.save();x.filter="blur("+Math.max(4,u*.025)+"px)";
-  for(let i=0;i<5;i++)hill(H*(.5+i*.1),u*(.3-i*.03),a,.14+i*.1,1+i*.25,i*1.7);
-  x.restore()},
+"r:princess-mononoke":d=>{const{x,W,H,u,a}=d;
+  /* 원시림의 수관: 겹겹이 포개진 반원(청해파 문양)으로 끝없이 이어지는 숲. 아래 줄일수록 밝게. 배너색 초록 단색 */
+  const R=u*.3,dy=R*.5,rows=Math.ceil(H/dy)+2;x.lineWidth=Math.max(1,u*.006);
+  for(let j=0;j<rows;j++){const y=j*dy,off=(j%2)*R,t=j/rows;
+    for(let px=-R+off;px<W+R*2;px+=R*2){
+      for(let k=4;k>=1;k--){x.beginPath();x.arc(px,y,R*k/4,Math.PI,0);x.closePath();
+        x.globalAlpha=1;x.fillStyle="#1c1716";x.fill();x.globalAlpha=.22+t*.5;x.strokeStyle=a;x.stroke()}}}
+  {const g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,"rgba(0,0,0,.5)");g.addColorStop(.3,"rgba(0,0,0,0)");g.addColorStop(.7,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,0,W,H)}
+  x.globalAlpha=1},
 "r:guillermo-del-toro-s-pinocchio":d=>{const{ell,cir,cx,cy,u,a}=d;
   for(let i=1;i<13;i++)d.ring(cx,cy,u*.11*i,a,i%3?1.6:3.2,.9-i*.055);cir(cx,cy,u*.05,a,.95)},
 "r:coco":d=>{const{x,rect,cir,W,H,u,a,l}=d,n=7,sw=W/n;
