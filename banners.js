@@ -123,11 +123,19 @@ const SCENES={
 "r:wall-e":d=>{const{rect,cir,glow,cx,cy,u,W,H,r,a,w}=d,s=u*.085;
   for(let t=0;t<W;t+=s*1.15){const hh=Math.floor(2+5*Math.abs(Math.sin(t/(u*.8)))+r()*3);for(let j=0;j<hh;j++)rect(t,H-(j+1)*s*1.15,s,s,a,.18+r()*.32)}
   glow(cx,cy-u*.2,u*.4,a,.5);cir(cx,cy-u*.2,u*.05,a,1)},
-"r:your-name":d=>{const{x,cir,glow,W,H,u,a,l,stars}=d;stars(110,H*.8,.7);
-  x.lineCap="round";x.lineWidth=2.5;
-  x.globalAlpha=.9;x.strokeStyle=a;x.beginPath();x.moveTo(-10,H*.82);x.bezierCurveTo(W*.3,H*.9,W*.4,H*.35,W*.54,H*.46);x.stroke();
-  x.globalAlpha=.9;x.strokeStyle=l;x.beginPath();x.moveTo(W+10,H*.14);x.bezierCurveTo(W*.78,H*.1,W*.7,H*.62,W*.57,H*.5);x.stroke();
-  glow(W*.54,H*.46,u*.12,a,.6);glow(W*.57,H*.5,u*.12,l,.6)},
+"r:your-name":d=>{const{x,W,H,u,a,stars}=d;
+  /* 황혼의 하늘: 수평선 쪽만 같은 색으로 은은하게 */
+  {const g=x.createLinearGradient(0,H*.55,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,a);x.globalAlpha=.22;x.fillStyle=g;x.fillRect(0,H*.55,W,H*.45)}
+  stars(140,H*.9,.6);
+  /* 갈라지는 혜성: 가는 선 다발이 왼쪽 위에서 흘러오다 오른쪽에서 두 갈래로 */
+  const P=t=>{const m=1-t;return[m*m*m*(-W*.06)+3*m*m*t*(W*.25)+3*m*t*t*(W*.5)+t*t*t*(W*1.06),m*m*m*(H*.08)+3*m*m*t*(H*.18)+3*m*t*t*(H*.42)+t*t*t*(H*.58)]};
+  const n=11,sp=Math.max(2.2,u*.016),mid=(n-1)/2,t0=.5,D=u*.55,S=e=>e<=0?0:e>=1?1:e*e*(3-2*e);
+  const path=k=>{x.beginPath();for(let s2=0;s2<=1.0001;s2+=.01){const[px,py]=P(s2),[qx,qy]=P(Math.min(1,s2+.01)),[rx,ry]=P(Math.max(0,s2-.01)),dx=qx-rx,dy=qy-ry,L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L,
+      off=(k-mid)*sp+Math.sign(k-mid+.0001)*S((s2-t0)/(1-t0))*D*(.6+Math.abs(k-mid)/mid*.4);x.lineTo(px+nx*off,py+ny*off)}};
+  x.lineCap="round";x.strokeStyle=a;
+  x.save();x.filter="blur("+Math.max(4,u*.03)+"px)";x.lineWidth=sp*2.2;x.globalAlpha=.18;for(let k=0;k<n;k++){path(k);x.stroke()}x.restore();
+  x.lineWidth=Math.max(1,u*.005);for(let k=0;k<n;k++){x.globalAlpha=.35+.45*(1-Math.abs(k-mid)/mid);path(k);x.stroke()}
+  x.globalAlpha=1},
 "r:up":d=>{const{x,ln,W,H,u,a,l,r}=d,n=24;x.lineCap="round";
   for(let i=0;i<n;i++){const px=W*(i+.3+r()*.4)/n,len=H*(.35+r()*.65),lw=u*(.02+r()*.045),c=i%4===1?l:a,seg=10;
     for(let k=0;k<seg;k++){const y1=H-len*k/seg,y2=H-len*(k+1)/seg;ln(px,y1,px,y2,c,lw,.8*(1-k/seg))}}},
