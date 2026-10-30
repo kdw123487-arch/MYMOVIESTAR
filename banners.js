@@ -155,7 +155,12 @@ const SCENES={
   for(let i=0;i<n;i++){const x0=W*.12+W*.9*i/n,x1=x0+W*.9/n+1,t0=(x0-W*.12)/(W*.9),t1=(x1-W*.12)/(W*.9),sp=H*.55;
     poly([[x0,sy-sp*t0*.5],[x1,sy-sp*t1*.5],[x1,sy+sp*t1*.5+H*.2*t1],[x0,sy+sp*t0*.5+H*.2*t0]],i%7===3?l:a,.05+r()*.17)}
   x.restore()},
-"r:life-is-beautiful":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d,y0=cy+u*.62;cir(cx,cy,u*.75,a,.9);rect(0,y0,W,H-y0,h,1);rect(cx-u*.18,y0-u*.2,u*.36,u*.2,h,1)},
+"r:life-is-beautiful":d=>{const{x,W,H,u,l:line}=d;
+  /* 멀리 닿는 노래: 수용소에 울려 퍼진 뱃노래처럼 화면 바깥 한 점에서 같은 간격으로 퍼져 나가는 동심원 물결. 멀어질수록 옅게. 포인트 하늘색 단색 */
+  const ox=W*.08,oy=H*1.05,gap=u*.11,n=Math.ceil(Math.hypot(W,H)/gap)+1;x.strokeStyle=line;x.lineWidth=Math.max(1.5,u*.007);
+  for(let k=1;k<=n;k++){const t=k/n;x.globalAlpha=.55*(1-t)+.04;x.beginPath();x.arc(ox,oy,k*gap,0,7);x.stroke()}
+  {const g=x.createRadialGradient(ox,oy,0,ox,oy,u*1.2);g.addColorStop(0,line);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.18;x.fillStyle=g;x.fillRect(0,0,W,H)}
+  x.globalAlpha=1},
 "r:back-to-the-future":d=>{const{x,glow,W,H,u,a,l,cx,cy}=d,n=10,ch=Math.min(W,H)*.32,cw=ch*1.5,bw=Math.max(W*1.04-cw,H*1.04-ch)/2/n,fr=i=>{const w=cw+2*(n-i)*bw,h=ch+2*(n-i)*bw;return[cx-w/2,cy-h/2,w,h]};
   /* 맨 안쪽은 정사각형에 가까운 직사각형, 바깥으로 상하좌우 같은 두께의 띠를 둘러 쌓음(화면 밖은 잘림). 각 띠는 안쪽 경계로 갈수록 천천히 어두워짐 */
   for(let i=0;i<=n;i++){const R=fr(i);x.globalAlpha=.13;x.fillStyle=a;x.fillRect(...R);
