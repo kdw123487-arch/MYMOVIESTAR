@@ -92,16 +92,14 @@ const SCENES={
   for(let i=0;i<n;i++){const px=o+i*(bw+gp),dx=Math.min(1,Math.abs(px+bw/2-cx)/(Math.min(W/2,u*2.2))),bh=u*(.1+.8*dx**1.6);rect(px,cy-bh,bw,bh,a,.7);rect(px,cy+u*.05,bw,bh,a,.22)}
   ln(0,cy+u*.025,W,cy+u*.025,a,1.5,.8);
   x.globalAlpha=1;[[0,1],[W,-1]].forEach(([x0,dr])=>{const ew=Math.max(0,(W-u*4)/2)+u*.6,g=x.createLinearGradient(x0,0,x0+dr*ew,0);g.addColorStop(0,"rgba(0,0,0,.82)");g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(dr>0?0:W-ew,0,ew,H)})},
-"r:the-dark-knight":d=>{const{x,W,H,u,ice,l:line,r}=d,st=u*.16,bw=u*.05,n=Math.ceil(W/st)+2,seg=7,sh=H/seg;
-  /* 질서 → 혼돈: 왼쪽은 곧은 수직 띠, 오른쪽으로 갈수록 기울고 끊기며 흩어짐. 포인트 주황은 흩어진 조각 몇 개에만 */
-  const S=e=>e<=0?0:e>=1?1:e*e*(3-2*e),grey=ice;
-  for(let i=-1;i<n;i++){const px0=i*st,c=S((px0/W-.38)/.62);
-    for(let k=0;k<seg;k++){if(r()<c*.38)continue;
-      const cx0=px0+bw/2+(r()-.5)*st*1.8*c,cy0=k*sh+sh/2+(r()-.5)*sh*.5*c,ang=(r()-.5)*1.1*c,len=sh*(1-.35*c*r()),hot=c>.35&&r()<.09*c;
-      x.save();x.translate(cx0,cy0);x.rotate(ang);
-      if(hot){x.shadowColor=line;x.shadowBlur=u*.08;x.fillStyle=line;x.globalAlpha=.9}else{x.fillStyle=grey;x.globalAlpha=.16+.1*(1-c)}
-      x.fillRect(-bw/2,-len/2-.5,bw,len+1);x.restore()}}
-  x.globalAlpha=1},
+"r:the-dark-knight":d=>{const{x,W,H,u,ice,l:line,r}=d;
+  /* 불타는 고담의 밤: 아래에서 번지는 주황 열기, 높이가 다른 가는 수직선(도시의 결), 위로 흩어지는 불티 */
+  {const g=x.createLinearGradient(0,H*.8,0,H*.15);g.addColorStop(0,line);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.4;x.fillStyle=g;x.fillRect(0,H*.15,W,H*.85)}
+  const st=u*.075;x.strokeStyle=ice;x.lineWidth=Math.max(1,u*.004);
+  for(let px=st*.5;px<W;px+=st){const top=H*(.12+r()*.5);x.globalAlpha=.16+r()*.16;x.beginPath();x.moveTo(px,H);x.lineTo(px,top);x.stroke()}
+  x.fillStyle=line;x.shadowColor=line;x.shadowBlur=u*.03;
+  for(let i=0;i<150;i++){const t=Math.pow(r(),1.3),py=H*.85-t*H*.8,px=r()*W,rad=u*(.006+r()*.011)*(1-t*.5);x.globalAlpha=.85*(1-t)+.05;x.beginPath();x.arc(px,py,rad,0,7);x.fill()}
+  x.shadowBlur=0;x.globalAlpha=1},
 "r:interstellar":d=>{const{x,cir,cx,cy,u,W,a}=d;
   for(let k=-5;k<=5;k++){const y0=cy-u*.1+k*u*.16;x.globalAlpha=.85-Math.abs(k)*.12;x.strokeStyle=a;x.lineWidth=k?1.4:2.4;x.beginPath();
     for(let t=0;t<=W;t+=6){const dx=(t-cx)/(u*.55);x.lineTo(t,y0+u*.6*Math.exp(-dx*dx)*(1-Math.abs(k)*.13))}x.stroke()}
