@@ -57,9 +57,14 @@ const SCENES={
 "r:your-name":d=>{const{x,u,W,H,line}=d;
   /* 추락의 해부와 같은 물결선, 선 색은 포인트색(주황) */
   for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.5+k*.07;x.strokeStyle=line;x.lineWidth=2.4;x.stroke()}},
-"r:frankenstein":d=>{const{ln,W,H,u,a,l,r}=d,n=22,bh=H/n,s=u*.1;
-  for(let i=0;i<n;i++){const off=r()<.35?(r()-.5)*s*1.6:0,y=i*bh,hot=i==9||i==10;
-    for(let px=-s;px<W+s;px+=s)ln(px+off,y+bh*.15,px+off,y+bh*.85,hot?l:a,hot?2:1.2,hot?.9:.35)}},
+"r:frankenstein":d=>{const{x,W,H,u,line,r}=d,pw=u*.46,ph=u*.32,g=u*.03,cols=Math.ceil(W/(pw+g))+1,rows=Math.ceil(H/(ph+g))+1;
+  /* 균일한 사각 패널 격자. 패널마다 투명도만 조금씩 다름 */
+  const ox=-((cols*(pw+g)-W)/2),oy=-((rows*(ph+g)-H)/2);x.fillStyle=line;x.strokeStyle=line;x.lineWidth=1;
+  for(let rr=0;rr<rows;rr++)for(let cc=0;cc<cols;cc++){const px=ox+cc*(pw+g),py=oy+rr*(ph+g);
+    x.globalAlpha=.05+r()*.11;x.fillRect(px,py,pw,ph);x.globalAlpha=.22;x.strokeRect(px+.5,py+.5,pw-1,ph-1)}
+  /* 양옆 비네팅 */
+  {const v=x.createLinearGradient(0,0,W,0);v.addColorStop(0,"rgba(0,0,0,.75)");v.addColorStop(.28,"rgba(0,0,0,0)");v.addColorStop(.72,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.75)");x.globalAlpha=1;x.fillStyle=v;x.fillRect(0,0,W,H)}
+  x.globalAlpha=1},
 "r:mad-max-fury-road":d=>{const{x,cx,cy,u,W,H,a}=d,y0=cy+u*.55,sy=y0-u*.12,R=u*.72;
   /* 레트로 선셋(레퍼런스: 야자수 없는 신스웨이브 태양). 태양은 포인트색 한 가지 */
   x.save();x.beginPath();x.rect(0,0,W,y0);x.clip();
