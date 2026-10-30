@@ -145,13 +145,13 @@ const SCENES={
 "r:wall-e":d=>{const{rect,cir,glow,cx,cy,u,W,H,r,a,w}=d,s=u*.085;
   for(let t=0;t<W;t+=s*1.15){const hh=Math.floor(2+5*Math.abs(Math.sin(t/(u*.8)))+r()*3);for(let j=0;j<hh;j++)rect(t,H-(j+1)*s*1.15,s,s,a,.18+r()*.32)}
   glow(cx,cy-u*.2,u*.4,a,.5);cir(cx,cy-u*.2,u*.05,a,1)},
-"r:up":d=>{const{x,W,H,u,l:line}=d;
-  /* 구름 위 하늘: 둥근 구름 능선이 같은 크기의 반원으로 겹겹이 이어지고, 앞쪽 층일수록 밝고 크게. 층 가장자리만 빛번짐. 포인트 분홍 단색 */
-  const n=5;x.fillStyle=line;x.shadowColor=line;
-  for(let k=0;k<n;k++){const t=k/(n-1),R=u*(.14+t*.12),y0=H*(.3+t*.5),off=(k%2)*R*.8;
-    x.globalAlpha=.08+t*.12;x.shadowBlur=u*.06;x.beginPath();x.moveTo(-R*2,H);
-    for(let px=-R*2+off;px<W+R*2;px+=R*1.6)x.arc(px,y0,R,Math.PI,0);
-    x.lineTo(W+R*2,H);x.closePath();x.fill()}
+"r:up":d=>{const{x,W,H,u,l:line,r}=d;
+  /* 구름 위 하늘: 크기와 높이가 제각각인 둥근 구름 능선이 겹겹이 이어지고, 앞쪽 층일수록 밝고 크게. 층 가장자리만 빛번짐. 포인트 분홍 단색 */
+  const n=4;x.fillStyle=line;x.shadowColor=line;
+  for(let k=0;k<n;k++){const t=k/(n-1),base=u*(.2+t*.18),y0=H*(.32+t*.5);
+    x.globalAlpha=.09+t*.13;x.shadowBlur=u*.06;x.beginPath();x.moveTo(-base*2,H);
+    for(let px=-base*(1+r());px<W+base*2;){const R=base*(.55+r()*.9),dy=base*(r()-.5)*.5;x.arc(px+R,y0+dy,R,Math.PI,0);px+=R*(1.3+r()*.4)}
+    x.lineTo(W+base*2,H);x.closePath();x.fill()}
   x.shadowBlur=0;x.globalAlpha=1},
 "r:the-shawshank-redemption":d=>{const{poly,W,H,u,a,l,r}=d,n=14;
   for(let i=0;i<n;i++){const x0=W*(i/n)+r()*u*.2,w=u*(.08+r()*.18),sk=H*.5;poly([[x0,0],[x0+w,0],[x0+w-sk,H],[x0-sk,H]],i%4?a:l,.05+r()*.12)}},
