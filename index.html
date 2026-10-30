@@ -385,14 +385,12 @@ body[data-view="watch"] .mast-alt,body[data-view="hall"] .mast-alt{display:block
 .view-in-l{animation:viewInL .42s cubic-bezier(.2,.8,.2,1)}
 .mast.view-in-r,.mast.view-in-l{animation-name:mastIn}
 @keyframes mastIn{from{opacity:0}to{opacity:1}}
-/* 평점 남김: 관심 버튼 접힘 → 별 하나가 별점 다섯 칸으로 펼쳐짐 */
-.acts.rating-out .heart-act{white-space:nowrap;width:0!important;opacity:0;margin-right:-20px;overflow:hidden;transition:width .3s ease,opacity .2s ease,margin .3s ease}
-.acts.rating-out .star-act span{opacity:0;transition:opacity .2s ease}
-.acts.rating-out .star-act svg{transform:scale(1.15) rotate(72deg);fill:currentColor;color:var(--gold);transition:transform .35s ease,fill .2s}
-.rated-in .stars svg{animation:starIn .45s cubic-bezier(.3,1.4,.5,1) both}
-.rated-in .stars svg:nth-child(2){animation-delay:.06s}.rated-in .stars svg:nth-child(3){animation-delay:.12s}
-.rated-in .stars svg:nth-child(4){animation-delay:.18s}.rated-in .stars svg:nth-child(5){animation-delay:.24s}
-@keyframes starIn{from{opacity:0;transform:translateX(-14px) scale(.4) rotate(-72deg)}to{opacity:1;transform:none}}
+/* 평점 남김: 관심·평점 버튼이 흐려지며 사라지고, 별점이 왼쪽부터 차례로 서서히 나타남(투명도만) */
+.acts.rating-out .act-btn{opacity:0;transition:opacity .25s ease}
+.rated-in .stars svg{animation:starIn .35s ease both}
+.rated-in .stars svg:nth-child(2){animation-delay:.07s}.rated-in .stars svg:nth-child(3){animation-delay:.14s}
+.rated-in .stars svg:nth-child(4){animation-delay:.21s}.rated-in .stars svg:nth-child(5){animation-delay:.28s}
+@keyframes starIn{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.view-in-r,.view-in-l,.rated-in .stars svg{animation:none}}
 </style>
 </head>
@@ -536,9 +534,9 @@ const REDUCED=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function rateAnim(acts,n,key){
   const heart=acts.querySelector(".heart-act"),star=acts.querySelector(".star-act");
   if(!heart||!star){acts.classList.add("one");acts.innerHTML=`<span class="act-rated" title="내 평점 ${n}점">${stars(n)}</span>`;return}
-  heart.style.width=heart.offsetWidth+"px";void heart.offsetWidth;acts.classList.add("rating-out");
+  void heart.offsetWidth;acts.classList.add("rating-out");
   setTimeout(()=>{acts.classList.remove("rating-out");acts.classList.add("one");
-    acts.innerHTML=`<span class="act-rated rated-in" title="내 평점 ${n}점">${stars(n)}</span>`},380);
+    acts.innerHTML=`<span class="act-rated rated-in" title="내 평점 ${n}점">${stars(n)}</span>`},260);
 }
 /* award line: at most two lines — drop the less important honours (listed last) instead of cutting text */
 function fitAwards(root=document){
