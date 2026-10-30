@@ -340,20 +340,20 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 .wrap{padding-top:40px}
 .mast{padding-bottom:20px}
 .mast h1{font-size:clamp(40px,min(6.6vw,8.4vh),84px)}
-.view-head{margin:8px 0 18px}
+.view-head{margin:8px 0 30px}
 .genres{margin:0 0 16px}
 .toolbar{margin:0 0 24px;padding-bottom:10px}
 .card .body h3{word-break:keep-all}
 @media (min-width:821px) and (max-height:860px){
   /* 키가 낮은 노트북 화면: 카드 4장을 유지하면서 첫 줄 카드의 연도·연령까지 보이도록 위를 더 줄임 */
   .wrap{padding-top:12px}.mast{padding-bottom:0}.mast h1{font-size:clamp(40px,6.4vh,72px)}
-  .view-head{margin:0 0 10px}
+  .view-head{margin:0 0 18px}
   .genres{margin-bottom:4px}.toolbar{margin-bottom:14px;padding-bottom:6px}
 }
 @media (max-width:640px){
   .wrap{padding-top:24px}
   .mast{padding-bottom:12px}.mast h1{font-size:40px}
-  .view-head{margin:4px 0 12px}
+  .view-head{margin:4px 0 20px}
   .genres{margin:0 -16px 10px}
   .toolbar{margin-bottom:18px}
   .grid{gap:28px 14px}
@@ -391,7 +391,7 @@ body[data-view="watch"] .mast-alt,body[data-view="hall"] .mast-alt{display:block
         <div class="sortbox" id="sortBox">
           <button class="sort-btn" type="button" id="sortBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="정렬 기준"><span id="sortLabel">추천순</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></button>
           <ul class="sort-menu" id="sortMenu" role="listbox" aria-label="정렬 기준" tabindex="-1" hidden>
-            <li role="option" data-v="pick">추천순</li><li role="option" data-v="year">최신순</li><li role="option" data-v="title">제목순</li><li role="option" data-v="rt">짧은 러닝타임순</li>
+            <li role="option" data-v="pick">추천순</li><li role="option" data-v="year">최신순</li><li role="option" data-v="title">제목순</li>
           </ul></div>
       </div></div>
     <p class="nores" id="nomNone" hidden>검색 결과가 없어요.</p>
@@ -407,7 +407,7 @@ body[data-view="watch"] .mast-alt,body[data-view="hall"] .mast-alt{display:block
         <div class="sortbox" id="wSortBox">
           <button class="sort-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="정렬 기준"><span>담은 순</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></button>
           <ul class="sort-menu" role="listbox" aria-label="정렬 기준" tabindex="-1" hidden>
-            <li role="option" data-v="added">담은 순</li><li role="option" data-v="pick">추천순</li><li role="option" data-v="year">최신순</li><li role="option" data-v="title">제목순</li><li role="option" data-v="rt">짧은 러닝타임순</li>
+            <li role="option" data-v="added">담은 순</li><li role="option" data-v="pick">추천순</li><li role="option" data-v="year">최신순</li><li role="option" data-v="title">제목순</li>
           </ul></div>
       </div></div>
     <p class="nores" id="watchNone" hidden>검색 결과가 없어요.</p>
@@ -529,16 +529,17 @@ function buildGenres(){
   requestAnimationFrame(genreFade);
 }
 function applyList(){
+  curSort=nomSort.set(curSort);
   const g=$("nomGrid"),sorted=[...FILMS].sort((a,b)=>cmpFilm(curSort,a,b));let n=0;
   const q=curQ.trim().toLowerCase();
   sorted.forEach(f=>{const el=cards[f.key],on=(curGenre==="전체"||tagsOf(f).has(curGenre))&&matchQ(f,q);el.hidden=!on;if(on)n++;g.appendChild(el)});
   $("nomCount").textContent=`${n}편`;$("nomNone").hidden=n>0;
   $("genres").querySelectorAll(".genre").forEach(b=>b.setAttribute("aria-pressed",b.dataset.genre===curGenre));
-  nomSort.set(curSort);fitAwards($("nomGrid"));
+  fitAwards($("nomGrid"));
 }
-const SORTS={pick:()=>0,year:(a,b)=>yr(a.y)-yr(b.y),title:(a,b)=>a.ko.localeCompare(b.ko,"ko"),rt:(a,b)=>(a.rt||999)-(b.rt||999)};
-/* 정렬 방향은 기준마다 고정: 최신순, 제목 가나다순, 러닝타임 짧은 순 */
-const DIR={year:"desc",title:"asc",rt:"asc"};
+const SORTS={pick:()=>0,year:(a,b)=>yr(a.y)-yr(b.y),title:(a,b)=>a.ko.localeCompare(b.ko,"ko")};
+/* 정렬 방향은 기준마다 고정: 최신순, 제목 가나다순 */
+const DIR={year:"desc",title:"asc"};
 /* sort menu: a small listbox styled like the rest of the site (keyboard: ↑↓ Enter Esc). 전체·관심 탭이 같이 씀 */
 function makeSort(box,onPick){
   const btn=box.querySelector(".sort-btn"),menu=box.querySelector(".sort-menu"),items=[...menu.querySelectorAll("li")],label=btn.querySelector("span");
@@ -818,7 +819,7 @@ fetch(`data/films.json?v=${Math.floor(Date.now()/6e4)}`).then(r=>{if(!r.ok)throw
   FILMS=d.films.map((f,i)=>({...f,i}));BY_KEY=Object.fromEntries(FILMS.map(f=>[f.key,f]));RETIRED=d.retired||{};
   $("nomCount").textContent=`${FILMS.length}편`;
   const g=$("nomGrid");FILMS.forEach(f=>g.appendChild(card(f.key,true)));
-  {let sv=store.get("mymoviestar.sort","pick");const old={new:"year",old:"year",short:"rt"};sv=old[sv]||sv;curSort=SORTS[sv]?sv:"pick";try{localStorage.removeItem("mymoviestar.dir")}catch(e){}}buildGenres();applyList();renderAll();route();
+  {let sv=store.get("mymoviestar.sort","pick");const old={new:"year",old:"year"};sv=old[sv]||sv;curSort=SORTS[sv]?sv:"pick";try{localStorage.removeItem("mymoviestar.dir")}catch(e){}}buildGenres();applyList();renderAll();route();
 }).catch(()=>{$("nomGrid").innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="big">Intermission</div><p>영화 목록을 불러오지 못했습니다. 잠시 후 새로고침해 주세요.</p></div>`;route()});
 </script>
 </body>
