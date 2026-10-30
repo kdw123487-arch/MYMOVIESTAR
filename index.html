@@ -398,12 +398,12 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
   </section>
 
   <section id="view-watch" role="tabpanel" aria-labelledby="tab-watch" hidden>
-    <div class="view-head"><h2>찜 목록</h2></div>
+    <div class="view-head"><h2>찜</h2></div>
     <div class="grid" id="watchGrid"></div>
   </section>
 
   <section id="view-hall" role="tabpanel" aria-labelledby="tab-hall" hidden>
-    <div class="view-head"><h2>명예의 전당</h2><div class="line" id="hallStats"></div></div>
+    <div class="view-head"><h2>평점</h2><div class="line" id="hallStats"></div></div>
     <div class="grid" id="hallGrid"></div>
     <div class="data-tools"><span>기록은 이 브라우저에 저장됩니다. 휴대폰 등 다른 기기에서도 보려면 링크로 옮기세요.</span>
       <button class="txt gold" type="button" id="syncBtn">다른 기기로 옮기기</button><button class="txt" type="button" id="exportBtn">백업 내보내기</button><button class="txt" type="button" id="importBtn">백업 불러오기</button>
@@ -699,7 +699,7 @@ function card(key,keep,hall){
 }
 function sync(el,key){
   const f=info(key),e=entry(key),seen=e?.status==="seen",want=e?.status==="want";
-  el.querySelector(".state").textContent=seen?AWARDS[e.rating]:"";
+  el.querySelector(".state").textContent="";
   el.classList.toggle("is-seen",seen);
   const hall=el.dataset.hall==="1";
   el.querySelector(".slot").innerHTML=seen&&hall?`<div class="verdict">${stars(e.rating)}${e.review?`<q>${esc(e.review)}</q>`:""}</div>`
