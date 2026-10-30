@@ -68,9 +68,10 @@ const SCENES={
   /* 태양: 따로 그린 뒤 줄무늬를 '뚫어서'(배경이 비치게) 얹는다 */
   const c=document.createElement("canvas");c.width=W;c.height=H;const t=c.getContext("2d");
   t.fillStyle=a;t.beginPath();t.arc(cx,sy,R,0,7);t.fill();
-  t.globalCompositeOperation="destination-out";
+  /* 줄무늬: 태양 안에서만 어두운 띠로 또렷하게 */
+  t.globalCompositeOperation="source-atop";t.fillStyle="#0c0807";t.globalAlpha=.88;
   {const top=sy-R*.5,n=5,st=(y0-top)/n;for(let i=0;i<n;i++){const hh=st*(.1+i*.07);t.fillRect(0,top+(i+1)*st-hh,W,hh)}}
-  t.fillRect(0,y0,W,H-y0);
+  t.globalAlpha=1;t.globalCompositeOperation="destination-out";t.fillRect(0,y0,W,H-y0);
   x.globalAlpha=1;x.drawImage(c,0,0);
   /* 지평선의 낮은 언덕 실루엣 */
   x.fillStyle="#070405";
