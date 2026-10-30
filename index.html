@@ -638,6 +638,16 @@ function renderAll(){
 /* ---------- film page ---------- */
 const sheet=$("sheet");let sheetKey=null,sheetT=null,curView="nominees";
 addEventListener("scroll",()=>{if(sheetKey)sheet.classList.toggle("scrolled",scrollY>40)},{passive:true});
+/* PC 상세 페이지: 첫 화면에 출연진 줄까지 보이도록, 넘치는 만큼만 배너 높이를 줄인다(최소 240px) */
+function fitBanner(){
+  const b=sheet.querySelector(".banner");if(!b||sheet.hidden)return;b.style.height="";
+  if(innerWidth<=820)return;
+  const dt=[...sheet.querySelectorAll(".factsheet dt")].find(d=>d.textContent==="출연"),row=dt?dt.parentElement:sheet.querySelector(".factsheet");if(!row)return;
+  const tabs=document.querySelector(".tabs"),limit=(tabs?tabs.getBoundingClientRect().top:innerHeight)-16;
+  const over=row.getBoundingClientRect().bottom+scrollY-limit;
+  if(over>0)b.style.height=Math.max(240,b.offsetHeight-over)+"px";
+}
+addEventListener("resize",()=>{if(sheetKey)fitBanner()});
 function renderSheet(k){
   sheet.className="sheet fx-"+(info(k).ef||"classic")+(sheet.classList.contains("scrolled")?" scrolled":"");
   const f=info(k),e=entry(k),seen=e?.status==="seen",want=e?.status==="want",listed=!!BY_KEY[k];
@@ -657,6 +667,7 @@ function renderSheet(k){
           :`<p style="color:var(--faint)">아직 평점을 남기지 않았어요.</p><div class="acts">${listed?heartBtn(k,want):""}<button class="txt gold" type="button" data-review="${k}">평점 남기기</button></div>`}</div></section>
       </main></div>`;
   paint(sheet.querySelector(".banner canvas"),f,1600,640,bannerPal(f));decorate(sheet.querySelector(".sposter"),k,"w500");
+  requestAnimationFrame(fitBanner);
   {const d=tmOf(k);
     const a=f.age||d.age,cell=$("ageCell");if(a&&cell){cell.hidden=false;cell.querySelector("dd").innerHTML=ageMark(a,1)+AGE[a][1]}
     const w=d.w,box=$("where");
