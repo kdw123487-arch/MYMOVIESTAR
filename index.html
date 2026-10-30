@@ -582,10 +582,11 @@ const SCENES={
     poly([[x0,sy-sp*t0*.5],[x1,sy-sp*t1*.5],[x1,sy+sp*t1*.5+H*.2*t1],[x0,sy+sp*t0*.5+H*.2*t0]],i%7===3?l:a,.05+r()*.17)}
   x.restore()},
 "r:life-is-beautiful":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d,y0=cy+u*.62;cir(cx,cy,u*.75,a,.9);rect(0,y0,W,H-y0,h,1);rect(cx-u*.18,y0-u*.2,u*.36,u*.2,h,1)},
-"r:back-to-the-future":d=>{const{x,glow,W,H,u,a,l,cx,cy}=d,n=13,fr=i=>{const k=1.12-i/n*1.02;return[cx-W*k/2,cy-H*k*1.15/2,W*k,H*k*1.15]},bw=W*1.02/n/2;
-  /* 선 대신 면: 사각형 띠마다 바깥쪽은 밝고 안쪽 경계로 갈수록 어두워지는 그라데이션 → 계단식 패턴 */
+"r:back-to-the-future":d=>{const{x,glow,W,H,u,a,l,cx,cy}=d,n=7,ow=W*1.06,oh=H*1.06,bw=(oh-H*.2)/2/n,fr=i=>{const w=ow-2*i*bw,h=oh-2*i*bw;return[cx-w/2,cy-h/2,w,h]};
+  /* 띠 두께를 상하좌우 모두 같게(같은 간격으로 안쪽으로 들임). 각 띠는 안쪽 경계로 갈수록 천천히 어두워짐 */
   for(let i=0;i<n;i++){const R=fr(i);x.globalAlpha=.13;x.fillStyle=a;x.fillRect(...R);
-    if(i+1<n){const q=fr(i+1);x.save();x.beginPath();x.rect(...R);x.clip();x.filter="blur("+bw*.45+"px)";x.globalAlpha=.55;x.strokeStyle="#000";x.lineWidth=bw*.9;x.strokeRect(q[0]-bw*.45,q[1]-bw*.45,q[2]+bw*.9,q[3]+bw*.9);x.restore()}}
+    if(i+1<n){const q=fr(i+1);x.save();x.beginPath();x.rect(...R);x.clip();x.filter="blur("+bw*.4+"px)";x.globalAlpha=.3;x.strokeStyle="#000";x.lineWidth=bw*.7;x.strokeRect(q[0]-bw*.25,q[1]-bw*.25,q[2]+bw*.5,q[3]+bw*.5);x.restore()}
+    x.globalAlpha=.22;x.strokeStyle=l;x.lineWidth=1;x.strokeRect(R[0]+.5,R[1]+.5,R[2]-1,R[3]-1)}
   glow(cx,cy,u*.22,l,.2)},
 "r:leon-the-professional":d=>{const{cir,ln,W,H,u,a,l}=d;
   cir(W*.9,H*.5,u*.9,a,.3);
