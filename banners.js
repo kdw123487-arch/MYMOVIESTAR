@@ -54,7 +54,7 @@ const SCENES={
   glow(px,py,u*.3,l,.55);cir(px,py,u*.055,l,1)},
 "r:anatomy-of-a-fall":d=>{const{x,ln,ring,cx,u,W,H,a,ice,l}=d,px=cx+u*.9;
   for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.18+k*.06;x.strokeStyle=k==7?a:ice;x.lineWidth=1.6;x.stroke()}},
-"r:your-name":d=>{const{x,u,W,H,line}=d;
+"r:your-name":d=>{const{x,u,W,H,l:line}=d;
   /* 추락의 해부와 같은 물결선, 선 색은 포인트색(주황) */
   for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.5+k*.07;x.strokeStyle=line;x.lineWidth=2.4;x.stroke()}},
 "r:frankenstein":d=>{const{x,W,H,u,a:line,r}=d,pw=u*.46,ph=u*.32,g=u*.03,cols=Math.ceil(W/(pw+g))+1,rows=Math.ceil(H/(ph+g))+1;
@@ -92,10 +92,16 @@ const SCENES={
   for(let i=0;i<n;i++){const px=o+i*(bw+gp),dx=Math.min(1,Math.abs(px+bw/2-cx)/(Math.min(W/2,u*2.2))),bh=u*(.1+.8*dx**1.6);rect(px,cy-bh,bw,bh,a,.7);rect(px,cy+u*.05,bw,bh,a,.22)}
   ln(0,cy+u*.025,W,cy+u*.025,a,1.5,.8);
   x.globalAlpha=1;[[0,1],[W,-1]].forEach(([x0,dr])=>{const ew=Math.max(0,(W-u*4)/2)+u*.6,g=x.createLinearGradient(x0,0,x0+dr*ew,0);g.addColorStop(0,"rgba(0,0,0,.82)");g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(dr>0?0:W-ew,0,ew,H)})},
-"r:the-dark-knight":d=>{const{rect,ln,cx,cy,u,W,r,a,l}=d,half=W/2;
-  for(let i=0;i<9;i++){const y=cy-u*.62+i*u*.155;rect(0,y,cx-u*.05,u*.035,a,.75);
-    for(let t=cx+u*.05;t<W;){const k=(t-cx)/half,sw=u*(.05+r()*.28)*(1-k*.6);rect(t,y+(r()-.5)*u*.22*k,sw,u*.035,a,.75*(1-k*.75));t+=sw+u*(.02+r()*.08)*(1+k*3)}}
-  ln(cx,cy-u*.85,cx,cy+u*.85,l,2,.9)},
+"r:the-dark-knight":d=>{const{x,W,H,u,ice,l:line,r}=d,st=u*.16,bw=u*.05,n=Math.ceil(W/st)+2,seg=7,sh=H/seg;
+  /* 질서 → 혼돈: 왼쪽은 곧은 수직 띠, 오른쪽으로 갈수록 기울고 끊기며 흩어짐. 포인트 주황은 흩어진 조각 몇 개에만 */
+  const S=e=>e<=0?0:e>=1?1:e*e*(3-2*e),grey=ice;
+  for(let i=-1;i<n;i++){const px0=i*st,c=S((px0/W-.38)/.62);
+    for(let k=0;k<seg;k++){if(r()<c*.38)continue;
+      const cx0=px0+bw/2+(r()-.5)*st*1.8*c,cy0=k*sh+sh/2+(r()-.5)*sh*.5*c,ang=(r()-.5)*1.1*c,len=sh*(1-.35*c*r()),hot=c>.35&&r()<.09*c;
+      x.save();x.translate(cx0,cy0);x.rotate(ang);
+      if(hot){x.shadowColor=line;x.shadowBlur=u*.08;x.fillStyle=line;x.globalAlpha=.9}else{x.fillStyle=grey;x.globalAlpha=.16+.1*(1-c)}
+      x.fillRect(-bw/2,-len/2-.5,bw,len+1);x.restore()}}
+  x.globalAlpha=1},
 "r:interstellar":d=>{const{x,cir,cx,cy,u,W,a}=d;
   for(let k=-5;k<=5;k++){const y0=cy-u*.1+k*u*.16;x.globalAlpha=.85-Math.abs(k)*.12;x.strokeStyle=a;x.lineWidth=k?1.4:2.4;x.beginPath();
     for(let t=0;t<=W;t+=6){const dx=(t-cx)/(u*.55);x.lineTo(t,y0+u*.6*Math.exp(-dx*dx)*(1-Math.abs(k)*.13))}x.stroke()}
