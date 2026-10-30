@@ -117,13 +117,13 @@ const SCENES={
   for(let i=0;i<15;i++){const y=hy+u*.05+i*u*.05*(1+i*.1),w=u*(1.1-i*.06);rect(px-w/2,y,w,u*.03,i%3?a:l,.95-i*.05)}
   x.restore();ln(0,hy,W,hy,l,2,.55)},
 "r:princess-mononoke":d=>{const{x,W,H,u,a}=d;
-  /* 안개 낀 원시림: 깊이별 3층의 수직 줄기(뒤로 갈수록 가늘고 옅게), 층 사이를 가로지르는 안개 띠. 배너색 초록 단색 */
-  const mist=(y,h,al)=>{const g=x.createLinearGradient(0,y-h,0,y+h);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(.5,a);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=al;x.fillStyle=g;x.fillRect(0,y-h,W,h*2)};
-  const trunks=(st,w,al,off)=>{x.fillStyle=a;x.globalAlpha=al;for(let px=st*off;px<W+w;px+=st)x.fillRect(px-w/2,0,w,H)};
-  trunks(u*.09,u*.008,.12,.5);mist(H*.6,H*.28,.34);
-  trunks(u*.18,u*.02,.2,.25);mist(H*.8,H*.22,.36);
-  trunks(u*.36,u*.05,.32,.75);mist(H*1.02,H*.2,.4);
-  {const g=x.createLinearGradient(0,0,0,H*.35);g.addColorStop(0,"rgba(0,0,0,.55)");g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,0,W,H*.35)}
+  /* 원시림의 수관: 겹겹이 포개진 반원(청해파 문양)으로 끝없이 이어지는 숲. 아래 줄일수록 밝게. 배너색 초록 단색 */
+  const R=u*.3,dy=R*.5,rows=Math.ceil(H/dy)+2;x.lineWidth=Math.max(1,u*.006);
+  for(let j=0;j<rows;j++){const y=j*dy,off=(j%2)*R,t=j/rows;
+    for(let px=-R+off;px<W+R*2;px+=R*2){
+      for(let k=4;k>=1;k--){x.beginPath();x.arc(px,y,R*k/4,Math.PI,0);x.closePath();
+        x.globalAlpha=1;x.fillStyle="#1c1716";x.fill();x.globalAlpha=.22+t*.5;x.strokeStyle=a;x.stroke()}}}
+  {const g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,"rgba(0,0,0,.5)");g.addColorStop(.3,"rgba(0,0,0,0)");g.addColorStop(.7,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,0,W,H)}
   x.globalAlpha=1},
 "r:guillermo-del-toro-s-pinocchio":d=>{const{ell,cir,cx,cy,u,a}=d;
   for(let i=1;i<13;i++)d.ring(cx,cy,u*.11*i,a,i%3?1.6:3.2,.9-i*.055);cir(cx,cy,u*.05,a,.95)},
