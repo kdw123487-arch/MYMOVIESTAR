@@ -582,10 +582,10 @@ const SCENES={
     poly([[x0,sy-sp*t0*.5],[x1,sy-sp*t1*.5],[x1,sy+sp*t1*.5+H*.2*t1],[x0,sy+sp*t0*.5+H*.2*t0]],i%7===3?l:a,.05+r()*.17)}
   x.restore()},
 "r:life-is-beautiful":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d,y0=cy+u*.62;cir(cx,cy,u*.75,a,.9);rect(0,y0,W,H-y0,h,1);rect(cx-u*.18,y0-u*.2,u*.36,u*.2,h,1)},
-"r:back-to-the-future":d=>{const{x,glow,W,H,u,a,l,cx,cy}=d,n=10,ch=Math.min(W,H)*.2,cw=ch*1.12,bw=Math.max(W*1.04-cw,H*1.04-ch)/2/n,fr=i=>{const w=cw+2*(n-i)*bw,h=ch+2*(n-i)*bw;return[cx-w/2,cy-h/2,w,h]};
+"r:back-to-the-future":d=>{const{x,glow,W,H,u,a,l,cx,cy}=d,n=10,ch=Math.min(W,H)*.32,cw=ch*1.5,bw=Math.max(W*1.04-cw,H*1.04-ch)/2/n,fr=i=>{const w=cw+2*(n-i)*bw,h=ch+2*(n-i)*bw;return[cx-w/2,cy-h/2,w,h]};
   /* 맨 안쪽은 정사각형에 가까운 직사각형, 바깥으로 상하좌우 같은 두께의 띠를 둘러 쌓음(화면 밖은 잘림). 각 띠는 안쪽 경계로 갈수록 천천히 어두워짐 */
-  for(let i=0;i<n;i++){const R=fr(i);x.globalAlpha=.13;x.fillStyle=a;x.fillRect(...R);
-    if(i+1<n){const q=fr(i+1);x.save();x.beginPath();x.rect(...R);x.clip();x.filter="blur("+bw*.4+"px)";x.globalAlpha=.3;x.strokeStyle="#000";x.lineWidth=bw*.7;x.strokeRect(q[0]-bw*.25,q[1]-bw*.25,q[2]+bw*.5,q[3]+bw*.5);x.restore()}
+  for(let i=0;i<=n;i++){const R=fr(i);x.globalAlpha=.13;x.fillStyle=a;x.fillRect(...R);
+    if(i<n){const q=fr(i+1);x.save();x.beginPath();x.rect(...R);x.clip();x.filter="blur("+bw*.4+"px)";x.globalAlpha=.3;x.strokeStyle="#000";x.lineWidth=bw*.7;x.strokeRect(q[0]-bw*.25,q[1]-bw*.25,q[2]+bw*.5,q[3]+bw*.5);x.restore()}
     x.globalAlpha=.22;x.strokeStyle=l;x.lineWidth=1;x.strokeRect(R[0]+.5,R[1]+.5,R[2]-1,R[3]-1)}
   glow(cx,cy,u*.22,l,.2)},
 "r:leon-the-professional":d=>{const{cir,ln,W,H,u,a,l}=d;
