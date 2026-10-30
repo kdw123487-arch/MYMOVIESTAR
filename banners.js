@@ -58,25 +58,24 @@ const SCENES={
   for(let i=0;i<n;i++){const off=r()<.35?(r()-.5)*s*1.6:0,y=i*bh,hot=i==9||i==10;
     for(let px=-s;px<W+s;px+=s)ln(px+off,y+bh*.15,px+off,y+bh*.85,hot?l:a,hot?2:1.2,hot?.9:.35)}},
 "r:mad-max-fury-road":d=>{const{x,cx,cy,u,W,H,a}=d,y0=cy+u*.55,sy=y0-u*.12,R=u*.72;
-  /* 레트로 선셋(레퍼런스: 야자수 없는 신스웨이브 태양). 위는 포인트색, 아래로 갈수록 붉은 주황 그라데이션 */
-  const m=/hsl\(([\d.]+) ([\d.]+)% ([\d.]+)%\)/.exec(a),hu=m?+m[1]:50,sa=m?+m[2]:80,li=m?+m[3]:55,
-    a2=`hsl(${(hu-42+360)%360} ${Math.min(95,sa+8)}% ${Math.max(38,li-4)}%)`;
-  /* 빛번짐(지평선 위로만) */
+  /* 레트로 선셋(레퍼런스: 야자수 없는 신스웨이브 태양). 태양은 포인트색 한 가지 */
   x.save();x.beginPath();x.rect(0,0,W,y0);x.clip();
-  {const g=x.createRadialGradient(cx,sy,R*.8,cx,sy,R*2.2);g.addColorStop(0,a2);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.28;x.fillStyle=g;x.fillRect(0,0,W,y0)}
+  /* 지평선 쪽 하늘을 같은 색으로 은은하게 밝혀 언덕 실루엣이 드러나게 */
+  {const g=x.createLinearGradient(0,y0-u*1.1,0,y0);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,a);x.globalAlpha=.5;x.fillStyle=g;x.fillRect(0,y0-u*1.1,W,u*1.1)}
+  /* 빛번짐 */
+  {const g=x.createRadialGradient(cx,sy,R*.8,cx,sy,R*2.2);g.addColorStop(0,a);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.25;x.fillStyle=g;x.fillRect(0,0,W,y0)}
   x.restore();
   /* 태양: 따로 그린 뒤 줄무늬를 '뚫어서'(배경이 비치게) 얹는다 */
   const c=document.createElement("canvas");c.width=W;c.height=H;const t=c.getContext("2d");
-  const g=t.createLinearGradient(0,sy-R,0,y0);g.addColorStop(0,a);g.addColorStop(1,a2);
-  t.fillStyle=g;t.beginPath();t.arc(cx,sy,R,0,7);t.fill();
+  t.fillStyle=a;t.beginPath();t.arc(cx,sy,R,0,7);t.fill();
   t.globalCompositeOperation="destination-out";
   {const top=sy-R*.62,n=8,st=(y0-top)/n;for(let i=0;i<n;i++){const hh=st*(.12+i*.065);t.fillRect(0,top+(i+1)*st-hh,W,hh)}}
   t.fillRect(0,y0,W,H-y0);
   x.globalAlpha=1;x.drawImage(c,0,0);
   /* 지평선의 낮은 언덕 실루엣 */
   x.fillStyle="#070405";
-  [[.035,.7,1.3,.9],[.015,1,2.1,1]].forEach(([amp,al,fr,ph])=>{x.globalAlpha=al;x.beginPath();x.moveTo(0,H);
-    for(let tt=0;tt<=W;tt+=6){const k=tt/W;x.lineTo(tt,y0-u*amp*(1+Math.sin(k*fr*6.28+ph)*.8+Math.sin(k*fr*17+ph*2)*.25))}x.lineTo(W,H);x.fill()});
+  [[.16,.75,1.1,.9],[.07,1,1.9,2.3]].forEach(([amp,al,fr,ph])=>{x.globalAlpha=al;x.beginPath();x.moveTo(0,H);
+    for(let tt=0;tt<=W;tt+=6){const k=tt/W;x.lineTo(tt,y0+u*.02-u*amp*(.55+Math.sin(k*fr*6.28+ph)*.45+Math.sin(k*fr*17+ph*2)*.12))}x.lineTo(W,H);x.fill()});
   /* 비네팅: 가장자리와 아래쪽 */
   x.globalAlpha=1;{const v=x.createRadialGradient(cx,sy,R*.9,cx,sy,Math.hypot(W,H)*.62);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.65)");x.fillStyle=v;x.fillRect(0,0,W,H)}
   {const v=x.createLinearGradient(0,H*.4,0,H);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(.6,"rgba(0,0,0,.45)");v.addColorStop(1,"rgba(0,0,0,.85)");x.fillStyle=v;x.fillRect(0,H*.4,W,H*.6)}},
