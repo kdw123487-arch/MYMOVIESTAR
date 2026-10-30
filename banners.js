@@ -145,9 +145,14 @@ const SCENES={
 "r:wall-e":d=>{const{rect,cir,glow,cx,cy,u,W,H,r,a,w}=d,s=u*.085;
   for(let t=0;t<W;t+=s*1.15){const hh=Math.floor(2+5*Math.abs(Math.sin(t/(u*.8)))+r()*3);for(let j=0;j<hh;j++)rect(t,H-(j+1)*s*1.15,s,s,a,.18+r()*.32)}
   glow(cx,cy-u*.2,u*.4,a,.5);cir(cx,cy-u*.2,u*.05,a,1)},
-"r:up":d=>{const{x,ln,W,H,u,a,l,r}=d,n=24;x.lineCap="round";
-  for(let i=0;i<n;i++){const px=W*(i+.3+r()*.4)/n,len=H*(.35+r()*.65),lw=u*(.02+r()*.045),c=i%4===1?l:a,seg=10;
-    for(let k=0;k<seg;k++){const y1=H-len*k/seg,y2=H-len*(k+1)/seg;ln(px,y1,px,y2,c,lw,.8*(1-k/seg))}}},
+"r:up":d=>{const{x,W,H,u,l:line}=d;
+  /* 구름 위 하늘: 둥근 구름 능선이 같은 크기의 반원으로 겹겹이 이어지고, 앞쪽 층일수록 밝고 크게. 층 가장자리만 빛번짐. 포인트 분홍 단색 */
+  const n=5;x.fillStyle=line;x.shadowColor=line;
+  for(let k=0;k<n;k++){const t=k/(n-1),R=u*(.14+t*.12),y0=H*(.3+t*.5),off=(k%2)*R*.8;
+    x.globalAlpha=.08+t*.12;x.shadowBlur=u*.06;x.beginPath();x.moveTo(-R*2,H);
+    for(let px=-R*2+off;px<W+R*2;px+=R*1.6)x.arc(px,y0,R,Math.PI,0);
+    x.lineTo(W+R*2,H);x.closePath();x.fill()}
+  x.shadowBlur=0;x.globalAlpha=1},
 "r:the-shawshank-redemption":d=>{const{poly,W,H,u,a,l,r}=d,n=14;
   for(let i=0;i<n;i++){const x0=W*(i/n)+r()*u*.2,w=u*(.08+r()*.18),sk=H*.5;poly([[x0,0],[x0+w,0],[x0+w-sk,H],[x0-sk,H]],i%4?a:l,.05+r()*.12)}},
 "r:cinema-paradiso":d=>{const{x,poly,rect,W,H,u,a,l,r}=d,sy=H*.3,n=22;
