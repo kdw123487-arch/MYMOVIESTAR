@@ -582,15 +582,11 @@ const SCENES={
     poly([[x0,sy-sp*t0*.5],[x1,sy-sp*t1*.5],[x1,sy+sp*t1*.5+H*.2*t1],[x0,sy+sp*t0*.5+H*.2*t0]],i%7===3?l:a,.05+r()*.17)}
   x.restore()},
 "r:life-is-beautiful":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d,y0=cy+u*.62;cir(cx,cy,u*.75,a,.9);rect(0,y0,W,H-y0,h,1);rect(cx-u*.18,y0-u*.2,u*.36,u*.2,h,1)},
-"r:back-to-the-future":d=>{const{x,W,H,u,a,l,cx,cy}=d,n=14,lw=Math.max(2.5,u*.014);
-  x.lineJoin="miter";
-  const fr=i=>{const k=1.1-i/n*1.0;return[cx-W*k/2,cy-H*k*1.15/2,W*k,H*k*1.15]};
-  for(let i=0;i<n;i+=2){const A=fr(i),B=i+1<n?fr(i+1):[cx,cy,0,0];x.globalAlpha=.12;x.fillStyle=a;x.beginPath();x.rect(...A);x.rect(...B);x.fill("evenodd")}
-  x.lineWidth=lw;
-  for(let i=0;i<n;i++){x.globalAlpha=.7;x.strokeStyle=i%3===2?l:a;x.strokeRect(...fr(i))}
-  x.save();x.filter="blur("+Math.max(5,u*.04)+"px)";x.lineWidth=lw*2.5;
-  for(let i=2;i<n;i+=3){x.globalAlpha=.3;x.strokeStyle=l;x.strokeRect(...fr(i))}
-  x.restore()},
+"r:back-to-the-future":d=>{const{x,glow,W,H,u,a,l,cx,cy}=d,n=13,fr=i=>{const k=1.12-i/n*1.02;return[cx-W*k/2,cy-H*k*1.15/2,W*k,H*k*1.15]},bw=W*1.02/n/2;
+  /* 선 대신 면: 사각형 띠마다 바깥쪽은 밝고 안쪽 경계로 갈수록 어두워지는 그라데이션 → 계단식 패턴 */
+  for(let i=0;i<n;i++){const R=fr(i);x.globalAlpha=.13;x.fillStyle=a;x.fillRect(...R);
+    if(i+1<n){const q=fr(i+1);x.save();x.beginPath();x.rect(...R);x.clip();x.filter="blur("+bw*.45+"px)";x.globalAlpha=.55;x.strokeStyle="#000";x.lineWidth=bw*.9;x.strokeRect(q[0]-bw*.45,q[1]-bw*.45,q[2]+bw*.9,q[3]+bw*.9);x.restore()}}
+  glow(cx,cy,u*.22,l,.2)},
 "r:leon-the-professional":d=>{const{cir,ln,W,H,u,a,l}=d;
   cir(W*.9,H*.5,u*.9,a,.3);
   ln(W*.22,0,W*.22,H,l,2,.55);cir(W*.22,H*.72,u*.06,l,.9)},
