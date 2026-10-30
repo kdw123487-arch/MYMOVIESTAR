@@ -110,9 +110,15 @@ const SCENES={
   for(let y=gap*.6;y<H;y+=gap)for(let px=0;px<W;px+=seg){const t=px/W,keep=r()>Math.pow(t,1.3)*1.05;if(!keep)continue;
     x.globalAlpha=.8*(1-t*.75);x.beginPath();x.moveTo(px,y);x.lineTo(px+seg*(1-t*.6),y);x.stroke()}
   x.globalAlpha=1},
-"r:knives-out":d=>{const{poly,W,H,u,a,l,r}=d,n=20;
-  for(let i=0;i<n;i++){const x0=W*(i+.2+r()*.6)/n,len=H*(.35+r()*.75),w=u*(.03+r()*.07),sk=u*(.15+r()*.25),al=.12+r()*.35,c=i%6===2?l:a;
-    poly([[x0,-4],[x0+w,-4],[x0-sk,len]],c,al)}},
+"r:knives-out":d=>{const{x,W,H,u,l:line}=d;
+  /* 저택의 벽지(리전시 스트라이프): 넓은 띠와 가는 선 두 줄이 번갈아 반복되고, 포인트 금색 단색 */
+  const st=u*.34,bw=st*.36;x.fillStyle=line;
+  for(let px=st*.3;px<W+st;px+=st){x.globalAlpha=.16;x.fillRect(px,0,bw,H);
+    x.globalAlpha=.32;x.fillRect(px+bw+st*.12,0,Math.max(1.2,u*.005),H);x.fillRect(px+bw+st*.2,0,Math.max(1.2,u*.005),H);
+    x.fillRect(px-st*.2,0,Math.max(1.2,u*.005),H);x.fillRect(px-st*.12,0,Math.max(1.2,u*.005),H);
+}
+  {const gr=x.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.65);gr.addColorStop(.3,"rgba(0,0,0,0)");gr.addColorStop(1,"rgba(0,0,0,.6)");x.globalAlpha=1;x.fillStyle=gr;x.fillRect(0,0,W,H)}
+  x.globalAlpha=1},
 "r:spirited-away":d=>{const{ell,ln,cx,cy,u,W,H,a,w}=d;
   for(let t=0;t<W;t+=u*.3)ln(t,H*.45,t,H,w,1,.3);for(let y=H*.45;y<H;y+=u*.22)ln(0,y,W,y,w,1,.3);
   for(let i=1;i<6;i++)ell(cx,cy+u*.15,u*.28*i,u*.05*i,a,.9-i*.14,0,2)},
