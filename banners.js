@@ -155,7 +155,14 @@ const SCENES={
   for(let i=0;i<n;i++){const x0=W*.12+W*.9*i/n,x1=x0+W*.9/n+1,t0=(x0-W*.12)/(W*.9),t1=(x1-W*.12)/(W*.9),sp=H*.55;
     poly([[x0,sy-sp*t0*.5],[x1,sy-sp*t1*.5],[x1,sy+sp*t1*.5+H*.2*t1],[x0,sy+sp*t0*.5+H*.2*t0]],i%7===3?l:a,.05+r()*.17)}
   x.restore()},
-"r:life-is-beautiful":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d,y0=cy+u*.62;cir(cx,cy,u*.75,a,.9);rect(0,y0,W,H-y0,h,1);rect(cx-u*.18,y0-u*.2,u*.36,u*.2,h,1)},
+"r:life-is-beautiful":d=>{const{x,W,H,u,l:line,r}=d;
+  /* 상상이 현실을 넘어섬: 아래는 줄이 딱 맞는 점 격자(통제된 현실), 위로 갈수록 점이 격자에서 풀려나 흩어지고 밝아져 별빛이 됨. 포인트 하늘색 단색 */
+  const st=u*.09,cols=Math.ceil(W/st)+1,rows=Math.ceil(H/st)+1,ox=(W-(cols-1)*st)/2,oy=(H-(rows-1)*st)/2;
+  x.fillStyle=line;x.shadowColor=line;
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const t=Math.pow(Math.max(0,1-(j/(rows-1))/.6),1.4),
+    px=ox+i*st+(r()-.5)*st*1.6*t,py=oy+j*st+(r()-.5)*st*1.6*t,rad=u*(.008+t*.006*(.5+r()));
+    x.globalAlpha=.22+t*(.35+r()*.4);x.shadowBlur=t>.45?u*.03*t:0;x.beginPath();x.arc(px,py,rad,0,7);x.fill()}
+  x.shadowBlur=0;x.globalAlpha=1},
 "r:back-to-the-future":d=>{const{x,glow,W,H,u,a,l,cx,cy}=d,n=10,ch=Math.min(W,H)*.32,cw=ch*1.5,bw=Math.max(W*1.04-cw,H*1.04-ch)/2/n,fr=i=>{const w=cw+2*(n-i)*bw,h=ch+2*(n-i)*bw;return[cx-w/2,cy-h/2,w,h]};
   /* 맨 안쪽은 정사각형에 가까운 직사각형, 바깥으로 상하좌우 같은 두께의 띠를 둘러 쌓음(화면 밖은 잘림). 각 띠는 안쪽 경계로 갈수록 천천히 어두워짐 */
   for(let i=0;i<=n;i++){const R=fr(i);x.globalAlpha=.13;x.fillStyle=a;x.fillRect(...R);
