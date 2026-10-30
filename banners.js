@@ -64,7 +64,10 @@ const SCENES={
   cir(cx,sy,R*1.32,a,.1);x.restore();
   x.save();x.beginPath();x.rect(0,0,W,y0);x.clip();x.beginPath();x.arc(cx,sy,R,0,7);x.clip();cir(cx,sy,R,a,.95);
   /* 태양 속 줄무늬(선명하게) */
-  for(let i=0;i<6;i++)rect(0,sy-u*.42+i*u*.12,W,u*(.012+i*.013),h,1);x.restore();
+  for(let i=0;i<6;i++)rect(0,sy-u*.42+i*u*.12,W,u*(.012+i*.013),h,1);
+  /* 태양 안 비네팅: 가운데는 밝게, 가장자리로 갈수록 어둡게 */
+  {const v=x.createRadialGradient(cx,sy-R*.15,R*.25,cx,sy,R);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.45)");x.globalAlpha=1;x.fillStyle=v;x.fillRect(cx-R,sy-R,R*2,R*2)}
+  x.restore();
   const g=x.createLinearGradient(0,y0,0,H);g.addColorStop(0,"rgba(0,0,0,.1)");g.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,y0,W,H-y0);
   /* 비네팅: 태양을 중심으로 가장자리가 어두워짐 */
   {const v=x.createRadialGradient(cx,sy,R*.9,cx,sy,Math.hypot(W,H)*.62);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.72)");x.globalAlpha=1;x.fillStyle=v;x.fillRect(0,0,W,H)}},
