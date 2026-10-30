@@ -27,7 +27,9 @@ COLUMNS = {
     "줄거리": "s", "추천이유": "w", "관람포인트1": "pt1", "관람포인트2": "pt2", "관람포인트3": "pt3",
     "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef", "배경색": "bg", "포인트색": "ac", "배너색": "bc", "포스터": "poster",
 }
-MOTIFS = {"comic", "arcade", "snowpeaks", "sun", "waves", "bands", "rings", "split", "peaks", "arch", "rays", "grid", "dots", "trees"}
+# 기본 문양. "전용 배너"는 banners.js에 그 작품 전용 배너가 있다는 표시라 JSON에 넣지 않는다.
+MOTIFS = {"waves", "peaks", "arcade", "grid", "dots"}
+OWN_BANNER = "전용 배너"
 FONTS = {"classic", "elegant", "noir", "epic", "typewriter", "mono", "bold", "scifi", "gothic", "western", "retro", "script", "hand", "comic", "light", "neon"}
 AGES = {"전체": "ALL", "ALL": "ALL", "12": "12", "15": "15", "18": "18", "19": "18", "청불": "18", "청소년관람불가": "18"}
 HEX = re.compile(r"#[0-9a-fA-F]{6}")
@@ -81,14 +83,9 @@ def film(row, n):
         if not a:
             fail(n, f"관람등급은 전체/12/15/18 중 하나여야 합니다 ({f['age']}).")
         out["age"] = a
-    if f.get("pal"):
-        pal = [c.strip() for c in f["pal"].split(",")]
-        if len(pal) != 3 or not all(HEX.fullmatch(c) for c in pal):
-            fail(n, "색상은 '#aabbcc, #aabbcc, #aabbcc' 형식이어야 합니다.")
-        out["pal"] = pal
-    if f.get("m"):
+    if f.get("m") and f["m"] != OWN_BANNER:
         if f["m"] not in MOTIFS:
-            fail(n, f"문양은 {', '.join(sorted(MOTIFS))} 중 하나여야 합니다.")
+            fail(n, f"문양은 {OWN_BANNER}, {', '.join(sorted(MOTIFS))} 중 하나여야 합니다.")
         out["m"] = f["m"]
     if f.get("ef"):
         if f["ef"] not in FONTS:
@@ -213,7 +210,7 @@ def enrich(f):
                 if p["provider_id"] in seen or re.search(r"(?i)with ads|\bads\b|광고", name):
                     continue
                 seen.add(p["provider_id"])
-                out.append({"n": name, "l": p.get("logo_path")})
+                out.append({"n": name})
         return out
     tm = {"id": m["id"], "p": poster, "age": korean_age(m),
           "w": {"link": kr.get("link", ""), "sub": plats("flatrate"), "rent": plats("rent", "buy")[:6]},
@@ -265,10 +262,13 @@ def main():
                 f["tm"] = old[f["key"]]
         print("TMDB_KEY가 없어 TMDB 정보는 기존 값을 그대로 썼습니다.")
 
-    for f in films:                                  # 포스터 column: a poster chosen for its colours wins
+    for f in films:                                  # 포스터 column: a hand-picked poster wins
         chosen = f.pop("poster", "")
         if chosen and f.get("tm"):
             f["tm"]["p"] = chosen
+        for kind in ("sub", "rent"):                 # platform logos are not shown on the site
+            for p in ((f.get("tm") or {}).get("w") or {}).get(kind) or []:
+                p.pop("l", None)
     OUT.write_text(json.dumps({"films": films, "retired": retired}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     if KEY:
         lines = [f"# TMDB 확인 결과 ({date.today().isoformat()})", "",
