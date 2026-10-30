@@ -57,9 +57,21 @@ const SCENES={
 "r:your-name":d=>{const{x,u,W,H,line}=d;
   /* 추락의 해부와 같은 물결선, 선 색은 포인트색(주황) */
   for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.5+k*.07;x.strokeStyle=line;x.lineWidth=2.4;x.stroke()}},
-"r:frankenstein":d=>{const{ln,W,H,u,a,l,r}=d,n=22,bh=H/n,s=u*.1;
-  for(let i=0;i<n;i++){const off=r()<.35?(r()-.5)*s*1.6:0,y=i*bh,hot=i==9||i==10;
-    for(let px=-s;px<W+s;px+=s)ln(px+off,y+bh*.15,px+off,y+bh*.85,hot?l:a,hot?2:1.2,hot?.9:.35)}},
+"r:frankenstein":d=>{const{x,W,H,u,line,r}=d,pw=u*.46,ph=u*.32,g=u*.03,cols=Math.ceil(W/(pw+g))+1,rows=Math.ceil(H/(ph+g))+1;
+  /* 조각보: 반듯한 사각 패널 격자인데 몇 칸만 어긋나고(기괴함), 경계 일부에 바늘땀 눈금(인위성) */
+  const ox=-((cols*(pw+g)-W)/2),oy=-((rows*(ph+g)-H)/2);x.fillStyle=line;x.strokeStyle=line;
+  for(let rr=0;rr<rows;rr++)for(let cc=0;cc<cols;cc++){
+    let px=ox+cc*(pw+g),py=oy+rr*(ph+g),w=pw,h=ph;
+    if(r()<.14){px+=(r()-.5)*g*7;py+=(r()-.5)*g*5;const k=.82+r()*.3;w*=k;h*=k}
+    x.globalAlpha=.05+r()*.11;x.fillRect(px,py,w,h);
+    x.globalAlpha=.22;x.lineWidth=1;x.strokeRect(px+.5,py+.5,w-1,h-1);
+    /* 오른쪽 경계를 가로지르는 바늘땀 */
+    if(r()<.28){x.globalAlpha=.65;x.lineWidth=Math.max(1.2,u*.006);const sx=px+w+g/2,st=u*.045;
+      for(let yy=py+st*.6;yy<py+h-st*.3;yy+=st){x.beginPath();x.moveTo(sx-g*.9,yy);x.lineTo(sx+g*.9,yy);x.stroke()}}
+    /* 아래 경계를 가로지르는 바늘땀 */
+    if(r()<.18){x.globalAlpha=.65;x.lineWidth=Math.max(1.2,u*.006);const sy=py+h+g/2,st=u*.045;
+      for(let xx=px+st*.6;xx<px+w-st*.3;xx+=st){x.beginPath();x.moveTo(xx,sy-g*.9);x.lineTo(xx,sy+g*.9);x.stroke()}}}
+  x.globalAlpha=1},
 "r:mad-max-fury-road":d=>{const{x,cx,cy,u,W,H,a}=d,y0=cy+u*.55,sy=y0-u*.12,R=u*.72;
   /* 레트로 선셋(레퍼런스: 야자수 없는 신스웨이브 태양). 태양은 포인트색 한 가지 */
   x.save();x.beginPath();x.rect(0,0,W,y0);x.clip();
