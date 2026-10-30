@@ -150,6 +150,8 @@ img.pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opaci
 .act-btn.star-act{color:var(--gold-soft)}.act-btn.star-act:hover{color:var(--gold)}
 .act-btn.star-act.done{color:var(--gold)}.act-btn.star-act.done svg{fill:currentColor}
 .act-btn.pop svg{animation:pop .35s ease}
+.act-btn.star-act svg{width:20px;height:20px;margin:-1.5px}
+.act-rated{display:inline-flex;align-items:center;min-height:25px}.act-rated .stars svg{width:16px;height:16px}
 .stars{display:inline-flex;gap:3px;color:var(--gold);white-space:nowrap;vertical-align:middle}
 .stars svg{width:14px;height:14px;fill:currentColor;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
 .stars .off{color:rgba(212,176,106,.22)}
@@ -677,8 +679,8 @@ const STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4
 const HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.9 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg>';
 const heartBtn=(k,on)=>`<button class="heart" type="button" data-toggle-want="${k}" aria-pressed="${!!on}" aria-label="${on?"찜 해제":"찜하기"}" title="${on?"찜 해제":"찜하기"}">${HEART}</button>`;
 const cards={};
-function card(key,keep){
-  const f=info(key),el=document.createElement("article");el.className="card";el.dataset.key=key;
+function card(key,keep,hall){
+  const f=info(key),el=document.createElement("article");el.className="card";el.dataset.key=key;if(hall)el.dataset.hall="1";
   el.innerHTML=`<a class="poster" href="#film/${encodeURIComponent(key)}" tabindex="-1" aria-hidden="true"><canvas></canvas><span class="state"></span><span class="ptitle">${esc(f.en||f.ko)}</span></a>
     <div class="body"><h3><a class="open" href="#film/${encodeURIComponent(key)}">${esc(f.ko)}</a></h3><div class="sub"><span>${[f.y,f.n].filter(Boolean).map(esc).join(" · ")}</span><span class="age-slot"></span></div>
     ${f.aw?`<div class="award" data-aw="${esc(f.aw)}" title="${esc(f.aw)}">${esc(f.aw)}</div>`:""}<div class="slot"></div><div class="acts"></div></div>`;
@@ -689,10 +691,11 @@ function sync(el,key){
   const f=info(key),e=entry(key),seen=e?.status==="seen",want=e?.status==="want";
   el.querySelector(".state").textContent=seen?AWARDS[e.rating]:"";
   el.classList.toggle("is-seen",seen);
-  el.querySelector(".slot").innerHTML=seen?`<div class="verdict">${stars(e.rating)}${e.review?`<q>${esc(e.review)}</q>`:""}</div>`
+  const hall=el.dataset.hall==="1";
+  el.querySelector(".slot").innerHTML=seen&&hall?`<div class="verdict">${stars(e.rating)}${e.review?`<q>${esc(e.review)}</q>`:""}</div>`
     :f.p?`<p class="plot" title="${esc(f.p)}">${esc(f.p)}</p>`:"";
   const acts=el.querySelector(".acts");acts.classList.toggle("one",seen);
-  acts.innerHTML=seen?`<button class="act-btn star-act done" type="button" data-edit="${key}">${STAR}<span>평점 수정</span></button>`
+  acts.innerHTML=seen?(hall?`<button class="act-btn star-act done" type="button" data-edit="${key}">${STAR}<span>평점 수정</span></button>`:`<span class="act-rated" title="내 평점 ${e.rating}점">${stars(e.rating)}</span>`)
     :`<button class="act-btn heart-act" type="button" data-toggle-want="${key}" aria-pressed="${!!want}" aria-label="${want?"찜 해제":"찜하기"}">${HEART}<span>찜</span></button><button class="act-btn star-act" type="button" data-review="${key}">${STAR}<span>평점</span></button>`;
 }
 /* award line: at most two lines — drop the less important honours (listed last) instead of cutting text */
@@ -747,7 +750,7 @@ const empty=(big,msg)=>`<div class="empty"><div class="big">${big}</div><p>${msg
 function fillGrid(id,list,big,msg){
   const g=$(id);g.replaceChildren();g.style.display=list.length?"":"block";
   if(!list.length){g.innerHTML=empty(big,msg);return}
-  list.forEach(e=>g.appendChild(card(e.key)));fitAwards(g);
+  list.forEach(e=>g.appendChild(card(e.key,0,id==="hallGrid")));fitAwards(g);
 }
 function renderWatch(){fillGrid("watchGrid",entries().filter(e=>e.status==="want").sort((a,b)=>(b.added||0)-(a.added||0)),"Empty Seats","아직 찜한 작품이 없어요. 하트를 눌러 담아 보세요.")}
 function renderHall(){
@@ -778,7 +781,7 @@ function renderSheet(k){
         ${f.w?`<section class="sec"><h3>Why it's nominated</h3><p>${esc(f.w)}</p></section>`:""}
         ${f.pt?`<section class="sec"><h3>What to watch for</h3><ol class="points">${f.pt.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>`:""}
         <section class="sec"><h3>My rating</h3><div class="mybox">${seen
-          ?`<div><span class="aw">${AWARDS[e.rating]}</span> ${stars(e.rating)}</div>${e.review?`<blockquote>${esc(e.review)}</blockquote>`:""}<div class="acts"><button class="txt gold" type="button" data-edit="${k}">평점 수정</button></div>`
+          ?`<div><span class="aw">${AWARDS[e.rating]}</span> ${stars(e.rating)}</div>${e.review?`<blockquote>${esc(e.review)}</blockquote>`:""}<p class="rate-note">평점 수정은 평점 탭에서 할 수 있어요.</p>`
           :`<p style="color:var(--faint)">아직 평점을 남기지 않았어요.</p><div class="acts">${listed?heartBtn(k,want):""}<button class="txt gold" type="button" data-review="${k}">평점 남기기</button></div>`}</div></section>
       </main></div>`;
   paint(sheet.querySelector(".banner canvas"),f,1600,640,bannerPal(f));paint(sheet.querySelector(".sposter canvas"),f,480,720,bannerPal(f));decorate(sheet.querySelector(".sposter"),k,"w500");
@@ -887,7 +890,10 @@ function ballot(k,status){
   paint(panel.querySelector(".rf-poster canvas"),f,480,720,bannerPal(f));decorate(panel.querySelector(".rf-poster"),k,"w342");
   const form=$("bf"),ta=form.review;
   ta.oninput=()=>$("cnt").textContent=`${ta.value.length} / 100`;
-  form.querySelectorAll(".rate label").forEach(l=>{l.onmouseenter=()=>$("rateNote").textContent=NOTE[l.htmlFor.slice(1)];
+  form.querySelectorAll(".rate label").forEach(l=>{
+    /* 탭으로 별을 고를 때 라디오에 포커스가 가면 iOS가 키보드 입력 바(폼 도우미)를 띄워서, 포커스 없이 값만 바꾼다 */
+    l.onclick=ev=>{ev.preventDefault();const i=$(l.htmlFor);if(!i.checked){i.checked=true;i.dispatchEvent(new Event("change",{bubbles:true}))}if(document.activeElement&&document.activeElement!==document.body)document.activeElement.blur()};
+    l.onmouseenter=()=>$("rateNote").textContent=NOTE[l.htmlFor.slice(1)];
     l.onmouseleave=()=>$("rateNote").textContent=form.rating.value?NOTE[form.rating.value]:"별을 눌러 평가해 주세요"});
   form.onchange=ev=>{if(ev.target.name==="rating")$("rateNote").textContent=NOTE[ev.target.value]};
   form.onsubmit=ev=>{ev.preventDefault();const s="seen",r=+(form.rating.value||0);
