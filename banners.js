@@ -133,10 +133,10 @@ const SCENES={
 "r:inside-out":d=>{const{x,W,H,u,l:line,r}=d;
   /* 기억 저장소: 화면을 채운 같은 크기의 기억 구슬 격자(원주만), 대부분은 옅고 몇 개만 원주가 밝게 빛남. 포인트 노랑 단색 */
   const R=u*.04,st=u*.14,cols=Math.ceil(W/st)+1,rows=Math.ceil(H/st)+1,ox=(W-(cols-1)*st)/2,oy=(H-(rows-1)*st)/2;
-  x.fillStyle=line;x.strokeStyle=line;x.lineWidth=Math.max(1,u*.004);
+  x.fillStyle=line;x.strokeStyle=line;x.lineWidth=Math.max(2,u*.009);
   for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const px=ox+i*st,py=oy+j*st,on=r()<.05,k=r();
     x.beginPath();x.arc(px,py,R,0,7);
-    if(on){x.shadowColor=line;x.shadowBlur=u*.03;x.globalAlpha=.6+k*.3;x.stroke();x.shadowBlur=0}
+    if(on){x.shadowColor=line;x.shadowBlur=u*.09;x.globalAlpha=.7+k*.3;x.stroke();x.stroke();x.shadowBlur=0}
     else{x.globalAlpha=.1+k*.12;x.stroke()}}
   {const g=x.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.7);g.addColorStop(.4,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,0,W,H)}
   x.globalAlpha=1},
