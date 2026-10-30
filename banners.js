@@ -155,14 +155,12 @@ const SCENES={
   for(let i=0;i<n;i++){const x0=W*.12+W*.9*i/n,x1=x0+W*.9/n+1,t0=(x0-W*.12)/(W*.9),t1=(x1-W*.12)/(W*.9),sp=H*.55;
     poly([[x0,sy-sp*t0*.5],[x1,sy-sp*t1*.5],[x1,sy+sp*t1*.5+H*.2*t1],[x0,sy+sp*t0*.5+H*.2*t0]],i%7===3?l:a,.05+r()*.17)}
   x.restore()},
-"r:life-is-beautiful":d=>{const{x,W,H,u,l:line,r}=d;
-  /* 상상이 현실을 넘어섬: 아래는 줄이 딱 맞는 점 격자(통제된 현실), 위로 갈수록 점이 격자에서 풀려나 흩어지고 밝아져 별빛이 됨. 포인트 하늘색 단색 */
-  const st=u*.09,cols=Math.ceil(W/st)+1,rows=Math.ceil(H/st)+1,ox=(W-(cols-1)*st)/2,oy=(H-(rows-1)*st)/2;
-  x.fillStyle=line;x.shadowColor=line;
-  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const t=Math.pow(Math.max(0,1-(j/(rows-1))/.6),1.4),
-    px=ox+i*st+(r()-.5)*st*1.6*t,py=oy+j*st+(r()-.5)*st*1.6*t,rad=u*(.008+t*.006*(.5+r()));
-    x.globalAlpha=.22+t*(.35+r()*.4);x.shadowBlur=t>.45?u*.03*t:0;x.beginPath();x.arc(px,py,rad,0,7);x.fill()}
-  x.shadowBlur=0;x.globalAlpha=1},
+"r:life-is-beautiful":d=>{const{x,W,H,u,l:line}=d;
+  /* 멀리 닿는 노래: 수용소에 울려 퍼진 뱃노래처럼 화면 바깥 한 점에서 같은 간격으로 퍼져 나가는 동심원 물결. 멀어질수록 옅게. 포인트 하늘색 단색 */
+  const ox=W*.08,oy=H*1.05,gap=u*.11,n=Math.ceil(Math.hypot(W,H)/gap)+1;x.strokeStyle=line;x.lineWidth=Math.max(1.5,u*.007);
+  for(let k=1;k<=n;k++){const t=k/n;x.globalAlpha=.55*(1-t)+.04;x.beginPath();x.arc(ox,oy,k*gap,0,7);x.stroke()}
+  {const g=x.createRadialGradient(ox,oy,0,ox,oy,u*1.2);g.addColorStop(0,line);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.18;x.fillStyle=g;x.fillRect(0,0,W,H)}
+  x.globalAlpha=1},
 "r:back-to-the-future":d=>{const{x,glow,W,H,u,a,l,cx,cy}=d,n=10,ch=Math.min(W,H)*.32,cw=ch*1.5,bw=Math.max(W*1.04-cw,H*1.04-ch)/2/n,fr=i=>{const w=cw+2*(n-i)*bw,h=ch+2*(n-i)*bw;return[cx-w/2,cy-h/2,w,h]};
   /* 맨 안쪽은 정사각형에 가까운 직사각형, 바깥으로 상하좌우 같은 두께의 띠를 둘러 쌓음(화면 밖은 잘림). 각 띠는 안쪽 경계로 갈수록 천천히 어두워짐 */
   for(let i=0;i<=n;i++){const R=fr(i);x.globalAlpha=.13;x.fillStyle=a;x.fillRect(...R);
