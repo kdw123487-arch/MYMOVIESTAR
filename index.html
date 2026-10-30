@@ -567,10 +567,12 @@ const SCENES={
     poly([[x0,sy-sp*t0*.5],[x1,sy-sp*t1*.5],[x1,sy+sp*t1*.5+H*.2*t1],[x0,sy+sp*t0*.5+H*.2*t0]],i%7===3?l:a,.05+r()*.17)}
   x.restore()},
 "r:life-is-beautiful":d=>{const{cir,rect,cx,cy,u,W,H,a,h}=d,y0=cy+u*.62;cir(cx,cy,u*.75,a,.9);rect(0,y0,W,H-y0,h,1);rect(cx-u*.18,y0-u*.2,u*.36,u*.2,h,1)},
-"r:back-to-the-future":d=>{const{x,W,H,u,a,l}=d,px=W*.72,py=H*.5;
-  x.lineWidth=2.5;
-  for(let i=0;i<13;i++){const k=Math.pow(.8,i),w=W*.9*k,h=H*1.1*k;x.globalAlpha=.1+i*.055;x.strokeStyle=i%4===3?l:a;x.strokeRect(px-w/2,py-h/2,w,h)}
-  d.ln(0,py,px,py,l,1.5,.3)},
+"r:back-to-the-future":d=>{const{x,glow,W,H,u,a,l,cx,cy}=d;
+  glow(cx,cy,u*1.1,l,.35);
+  x.lineJoin="miter";
+  for(let i=0;i<14;i++){const k=Math.pow(.78,i),w=W*.95*k,h=H*1.15*k;x.globalAlpha=Math.min(1,.28+i*.06);x.strokeStyle=i%3===2?l:a;x.lineWidth=Math.max(2,u*.012*(1+i*.15));x.strokeRect(cx-w/2,cy-h/2,w,h)}
+  const g=u*.04;d.rect(cx-g/2,cy-g/2,g,g,l,1);
+  for(let i=0;i<4;i++){const sx=i%2?1:-1,sy=i<2?1:-1;d.ln(cx+sx*W*.5,cy+sy*H*.5,cx+sx*u*.16,cy+sy*u*.1,l,1.5,.3)}},
 "r:leon-the-professional":d=>{const{cir,ln,W,H,u,a,l}=d;
   cir(W*.9,H*.5,u*.9,a,.3);
   ln(W*.22,0,W*.22,H,l,2,.55);cir(W*.22,H*.72,u*.06,l,.9)},
