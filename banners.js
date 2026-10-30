@@ -116,11 +116,15 @@ const SCENES={
   rect(0,hy-u*.6,W,u*.6,a,.16);rect(px-u*.9,hy-u*.25,u*1.8,u*.25,l,.14);
   for(let i=0;i<15;i++){const y=hy+u*.05+i*u*.05*(1+i*.1),w=u*(1.1-i*.06);rect(px-w/2,y,w,u*.03,i%3?a:l,.95-i*.05)}
   x.restore();ln(0,hy,W,hy,l,2,.55)},
-"r:princess-mononoke":d=>{const{x,glow,hill,W,H,u,a,l}=d;
-  glow(W*.28,H*.32,u*.8,l,.3);
-  x.save();x.filter="blur("+Math.max(4,u*.025)+"px)";
-  for(let i=0;i<5;i++)hill(H*(.5+i*.1),u*(.3-i*.03),a,.14+i*.1,1+i*.25,i*1.7);
-  x.restore()},
+"r:princess-mononoke":d=>{const{x,W,H,u,a}=d;
+  /* 안개 낀 원시림: 깊이별 3층의 수직 줄기(뒤로 갈수록 가늘고 옅게), 층 사이를 가로지르는 안개 띠. 배너색 초록 단색 */
+  const mist=(y,h,al)=>{const g=x.createLinearGradient(0,y-h,0,y+h);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(.5,a);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=al;x.fillStyle=g;x.fillRect(0,y-h,W,h*2)};
+  const trunks=(st,w,al,off)=>{x.fillStyle=a;x.globalAlpha=al;for(let px=st*off;px<W+w;px+=st)x.fillRect(px-w/2,0,w,H)};
+  trunks(u*.09,u*.008,.12,.5);mist(H*.6,H*.28,.34);
+  trunks(u*.18,u*.02,.2,.25);mist(H*.8,H*.22,.36);
+  trunks(u*.36,u*.05,.32,.75);mist(H*1.02,H*.2,.4);
+  {const g=x.createLinearGradient(0,0,0,H*.35);g.addColorStop(0,"rgba(0,0,0,.55)");g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,0,W,H*.35)}
+  x.globalAlpha=1},
 "r:guillermo-del-toro-s-pinocchio":d=>{const{ell,cir,cx,cy,u,a}=d;
   for(let i=1;i<13;i++)d.ring(cx,cy,u*.11*i,a,i%3?1.6:3.2,.9-i*.055);cir(cx,cy,u*.05,a,.95)},
 "r:coco":d=>{const{x,rect,cir,W,H,u,a,l}=d,n=7,sw=W/n;
