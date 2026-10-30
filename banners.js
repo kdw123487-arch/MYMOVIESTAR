@@ -63,7 +63,7 @@ const SCENES={
   for(let rr=0;rr<rows;rr++)for(let cc=0;cc<cols;cc++){const px=ox+cc*(pw+g),py=oy+rr*(ph+g);
     x.globalAlpha=.05+r()*.11;x.fillRect(px,py,pw,ph);x.globalAlpha=.22;x.strokeRect(px+.5,py+.5,pw-1,ph-1)}
   /* 양옆 비네팅 */
-  {const v=x.createLinearGradient(0,0,W,0);v.addColorStop(0,"rgba(0,0,0,.75)");v.addColorStop(.28,"rgba(0,0,0,0)");v.addColorStop(.72,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.75)");x.globalAlpha=1;x.fillStyle=v;x.fillRect(0,0,W,H)}
+  {const v=x.createLinearGradient(0,0,W,0);v.addColorStop(0,"rgba(0,0,0,.5)");v.addColorStop(.28,"rgba(0,0,0,0)");v.addColorStop(.72,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=v;x.fillRect(0,0,W,H)}
   x.globalAlpha=1},
 "r:mad-max-fury-road":d=>{const{x,cx,cy,u,W,H,a}=d,y0=cy+u*.55,sy=y0-u*.12,R=u*.72;
   /* 레트로 선셋(레퍼런스: 야자수 없는 신스웨이브 태양). 태양은 포인트색 한 가지 */
