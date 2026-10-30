@@ -123,11 +123,6 @@ const SCENES={
 "r:wall-e":d=>{const{rect,cir,glow,cx,cy,u,W,H,r,a,w}=d,s=u*.085;
   for(let t=0;t<W;t+=s*1.15){const hh=Math.floor(2+5*Math.abs(Math.sin(t/(u*.8)))+r()*3);for(let j=0;j<hh;j++)rect(t,H-(j+1)*s*1.15,s,s,a,.18+r()*.32)}
   glow(cx,cy-u*.2,u*.4,a,.5);cir(cx,cy-u*.2,u*.05,a,1)},
-"r:your-name":d=>{const{x,cir,glow,W,H,u,a,l,stars}=d;stars(110,H*.8,.7);
-  x.lineCap="round";x.lineWidth=2.5;
-  x.globalAlpha=.9;x.strokeStyle=a;x.beginPath();x.moveTo(-10,H*.82);x.bezierCurveTo(W*.3,H*.9,W*.4,H*.35,W*.54,H*.46);x.stroke();
-  x.globalAlpha=.9;x.strokeStyle=l;x.beginPath();x.moveTo(W+10,H*.14);x.bezierCurveTo(W*.78,H*.1,W*.7,H*.62,W*.57,H*.5);x.stroke();
-  glow(W*.54,H*.46,u*.12,a,.6);glow(W*.57,H*.5,u*.12,l,.6)},
 "r:up":d=>{const{x,ln,W,H,u,a,l,r}=d,n=24;x.lineCap="round";
   for(let i=0;i<n;i++){const px=W*(i+.3+r()*.4)/n,len=H*(.35+r()*.65),lw=u*(.02+r()*.045),c=i%4===1?l:a,seg=10;
     for(let k=0;k<seg;k++){const y1=H-len*k/seg,y2=H-len*(k+1)/seg;ln(px,y1,px,y2,c,lw,.8*(1-k/seg))}}},
@@ -163,6 +158,7 @@ SCENES["r:shoplifters"]=SCENES["r:the-power-of-the-dog"];
 SCENES["r:the-intouchables"]=SCENES["r:roma"];
 SCENES["r:no-country-for-old-men"]=SCENES["r:all-quiet-on-the-western-front"];
 SCENES["r:pan-s-labyrinth"]=SCENES["r:get-out"]=SCENES["r:guillermo-del-toro-s-pinocchio"];
+SCENES["r:your-name"]=SCENES["r:anatomy-of-a-fall"];
 function paint(cv,f,W=480,H=720,pal){
   const L=look(f);cv.width=W;cv.height=H;const x=cv.getContext("2d"),[a,b,c]=pal||L.pal;
   let s=L.seed*9301+49297;const r=()=>((s=(s*9301+49297)%233280)/233280);
