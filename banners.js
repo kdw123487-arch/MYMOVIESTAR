@@ -110,9 +110,21 @@ const SCENES={
   for(let y=gap*.6;y<H;y+=gap)for(let px=0;px<W;px+=seg){const t=px/W,keep=r()>Math.pow(t,1.3)*1.05;if(!keep)continue;
     x.globalAlpha=.8*(1-t*.75);x.beginPath();x.moveTo(px,y);x.lineTo(px+seg*(1-t*.6),y);x.stroke()}
   x.globalAlpha=1},
-"r:knives-out":d=>{const{poly,W,H,u,a,l,r}=d,n=20;
-  for(let i=0;i<n;i++){const x0=W*(i+.2+r()*.6)/n,len=H*(.35+r()*.75),w=u*(.03+r()*.07),sk=u*(.15+r()*.25),al=.12+r()*.35,c=i%6===2?l:a;
-    poly([[x0,-4],[x0+w,-4],[x0-sk,len]],c,al)}},
+"r:knives-out":d=>{const{x,W,H,u,l:line}=d;
+  /* 케이블 니트: 랜섬의 스웨터. 굵은 두 가닥이 번갈아 위아래로 엇갈리며 꼬이는 꽈배기 기둥이 같은 간격으로 반복되고, 기둥 사이는 작은 V자 겉뜨기 코가 줄지어 있음. 포인트 금색 단색 */
+  const st=u*.5,cw=st*.24,p=cw*2.4,lw=cw*.62,o=document.createElement("canvas");o.width=W;o.height=H;const g=o.getContext("2d");
+  g.lineCap="butt";g.strokeStyle="#000";
+  const strand=(cx,s,y0,y1)=>{g.beginPath();for(let y=y0;y<=y1;y+=2){g.lineTo(cx+Math.sin(y/p*Math.PI+s*Math.PI)*cw,y)}g.stroke()};
+  for(let cx=st*.5;cx<W+st;cx+=st)for(let n=-1;n*p<H+p;n++){const y0=(n-.5)*p,y1=(n+.5)*p,over=n%2?1:0,under=1-over;
+    g.globalCompositeOperation="source-over";g.lineWidth=lw;strand(cx,under,y0-3,y1+3);
+    g.globalCompositeOperation="destination-out";g.lineWidth=lw+cw*.32;strand(cx,over,y0+p*.12,y1-p*.12);
+    g.globalCompositeOperation="source-over";g.lineWidth=lw;strand(cx,over,y0-3,y1+3)}
+  g.globalCompositeOperation="source-over";g.lineWidth=Math.max(1.5,u*.008);g.lineCap="round";g.lineJoin="round";
+  const vs=cw*.5;for(let cx=st;cx<W+st;cx+=st)for(const dx of[-vs*.7,vs*.7])for(let y=vs*.5;y<H+vs;y+=vs*1.1){g.beginPath();g.moveTo(cx+dx-vs*.38,y-vs*.4);g.lineTo(cx+dx,y);g.lineTo(cx+dx+vs*.38,y-vs*.4);g.stroke()}
+  g.globalCompositeOperation="source-in";g.fillStyle=line;g.fillRect(0,0,W,H);
+  x.globalAlpha=.3;x.drawImage(o,0,0);
+  {const gr=x.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.65);gr.addColorStop(.3,"rgba(0,0,0,0)");gr.addColorStop(1,"rgba(0,0,0,.6)");x.globalAlpha=1;x.fillStyle=gr;x.fillRect(0,0,W,H)}
+  x.globalAlpha=1},
 "r:spirited-away":d=>{const{ell,ln,cx,cy,u,W,H,a,w}=d;
   for(let t=0;t<W;t+=u*.3)ln(t,H*.45,t,H,w,1,.3);for(let y=H*.45;y<H;y+=u*.22)ln(0,y,W,y,w,1,.3);
   for(let i=1;i<6;i++)ell(cx,cy+u*.15,u*.28*i,u*.05*i,a,.9-i*.14,0,2)},
