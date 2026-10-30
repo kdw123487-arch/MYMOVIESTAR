@@ -57,7 +57,7 @@ const SCENES={
 "r:your-name":d=>{const{x,u,W,H,line}=d;
   /* 추락의 해부와 같은 물결선, 선 색은 포인트색(주황) */
   for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.5+k*.07;x.strokeStyle=line;x.lineWidth=2.4;x.stroke()}},
-"r:frankenstein":d=>{const{x,W,H,u,line,r}=d,pw=u*.46,ph=u*.32,g=u*.03,cols=Math.ceil(W/(pw+g))+1,rows=Math.ceil(H/(ph+g))+1;
+"r:frankenstein":d=>{const{x,W,H,u,a:line,r}=d,pw=u*.46,ph=u*.32,g=u*.03,cols=Math.ceil(W/(pw+g))+1,rows=Math.ceil(H/(ph+g))+1;
   /* 균일한 사각 패널 격자. 패널마다 투명도만 조금씩 다름 */
   const ox=-((cols*(pw+g)-W)/2),oy=-((rows*(ph+g)-H)/2);x.fillStyle=line;x.strokeStyle=line;x.lineWidth=1;
   for(let rr=0;rr<rows;rr++)for(let cc=0;cc<cols;cc++){const px=ox+cc*(pw+g),py=oy+rr*(ph+g);
