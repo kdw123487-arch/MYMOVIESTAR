@@ -398,7 +398,7 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
   </section>
 
   <section id="view-watch" role="tabpanel" aria-labelledby="tab-watch" hidden>
-    <div class="view-head"><h2>찜</h2></div>
+    <div class="view-head"><h2>관심</h2></div>
     <div class="grid" id="watchGrid"></div>
   </section>
 
@@ -419,7 +419,7 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 
 <nav class="tabs" role="tablist" aria-label="메뉴">
   <button class="tab" role="tab" id="tab-nominees" aria-controls="view-nominees" data-view="nominees"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span class="t">전체</span></button>
-  <button class="tab" role="tab" id="tab-watch" aria-controls="view-watch" data-view="watch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.9 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg><span class="t">찜</span></button>
+  <button class="tab" role="tab" id="tab-watch" aria-controls="view-watch" data-view="watch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.9 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg><span class="t">관심</span></button>
   <button class="tab" role="tab" id="tab-hall" aria-controls="view-hall" data-view="hall"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z"/></svg><span class="t">평점</span></button>
 </nav>
 <div class="sheet" id="sheet" hidden role="region" aria-labelledby="sTitle"></div>
@@ -684,10 +684,10 @@ const PLAT=[[/netflix/i,q=>"https://www.netflix.com/search?q="+q],[/watcha/i,q=>
   [/apple tv/i,q=>"https://tv.apple.com/kr/search?term="+q],[/google play/i,q=>"https://play.google.com/store/search?c=movies&q="+q]];
 function platLink(p,f,w){const m=PLAT.find(([re])=>re.test(p.n));return m?m[1](encodeURIComponent(f.ko)):(w.link||"https://www.justwatch.com/kr")}
 
-/* ---------- cards (same plate in 전체, 찜 목록 and 명예의 전당) ---------- */
+/* ---------- cards (same plate in 전체, 관심 목록 and 명예의 전당) ---------- */
 const STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z"/></svg>';
 const HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.9 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg>';
-const heartBtn=(k,on)=>`<button class="heart" type="button" data-toggle-want="${k}" aria-pressed="${!!on}" aria-label="${on?"찜 해제":"찜하기"}" title="${on?"찜 해제":"찜하기"}">${HEART}</button>`;
+const heartBtn=(k,on)=>`<button class="heart" type="button" data-toggle-want="${k}" aria-pressed="${!!on}" aria-label="${on?"관심 해제":"관심 등록"}" title="${on?"관심 해제":"관심 등록"}">${HEART}</button>`;
 const cards={};
 function card(key,keep,hall){
   const f=info(key),el=document.createElement("article");el.className="card";el.dataset.key=key;if(hall)el.dataset.hall="1";
@@ -706,7 +706,7 @@ function sync(el,key){
     :f.p?`<p class="plot" title="${esc(f.p)}">${esc(f.p)}</p>`:"";
   const acts=el.querySelector(".acts");acts.classList.toggle("one",seen);
   acts.innerHTML=seen?(hall?`<button class="act-btn edit-act" type="button" data-edit="${key}">평점 수정</button>`:`<span class="act-rated" title="내 평점 ${e.rating}점">${stars(e.rating)}</span>`)
-    :`<button class="act-btn heart-act" type="button" data-toggle-want="${key}" aria-pressed="${!!want}" aria-label="${want?"찜 해제":"찜하기"}">${HEART}<span>찜</span></button><button class="act-btn star-act" type="button" data-review="${key}">${STAR}<span>평점</span></button>`;
+    :`<button class="act-btn heart-act" type="button" data-toggle-want="${key}" aria-pressed="${!!want}" aria-label="${want?"관심 해제":"관심 등록"}">${HEART}<span>관심</span></button><button class="act-btn star-act" type="button" data-review="${key}">${STAR}<span>평점</span></button>`;
 }
 /* award line: at most two lines — drop the less important honours (listed last) instead of cutting text */
 function fitAwards(root=document){
@@ -755,14 +755,14 @@ sortMenu.onkeydown=e=>{if(e.key==="ArrowDown"){e.preventDefault();moveActive(sor
   else if(e.key==="Enter"||e.key===" "){e.preventDefault();pickSort(sortItems[sortActive].dataset.v)}else if(e.key==="Escape"||e.key==="Tab"){e.preventDefault();closeSort(true)}};
 document.addEventListener("click",e=>{if(!sortMenu.hidden&&!e.target.closest("#sortBox"))closeSort()});
 
-/* ---------- 찜 목록 & 명예의 전당 ---------- */
+/* ---------- 관심 목록 & 명예의 전당 ---------- */
 const empty=(big,msg)=>`<div class="empty"><div class="big">${big}</div><p>${msg}</p><button class="txt gold" type="button" data-goto="nominees">전체 둘러보기</button></div>`;
 function fillGrid(id,list,big,msg){
   const g=$(id);g.replaceChildren();g.style.display=list.length?"":"block";
   if(!list.length){g.innerHTML=empty(big,msg);return}
   list.forEach(e=>g.appendChild(card(e.key,0,id==="hallGrid")));fitAwards(g);
 }
-function renderWatch(){fillGrid("watchGrid",entries().filter(e=>e.status==="want").sort((a,b)=>(b.added||0)-(a.added||0)),"Empty Seats","아직 찜한 작품이 없어요. 하트를 눌러 담아 보세요.")}
+function renderWatch(){fillGrid("watchGrid",entries().filter(e=>e.status==="want").sort((a,b)=>(b.added||0)-(a.added||0)),"Empty Seats","아직 관심 작품이 없어요. 하트를 눌러 담아 보세요.")}
 function renderHall(){
   const seen=entries().filter(e=>e.status==="seen").sort((a,b)=>b.rating-a.rating||(b.updated||0)-(a.updated||0));
   $("hallStats").textContent=seen.length?`헌액 ${seen.length}편 · 평균 ${(seen.reduce((s,e)=>s+e.rating,0)/seen.length).toFixed(1)}`:"";
@@ -910,13 +910,13 @@ function ballot(k,status){
     if(s==="seen"&&!r){$("ferr").textContent="별점을 골라 주세요.";return}
     const rec={...(e||{added:Date.now()}),key:k,ko:f.ko,en:f.en,y:f.y,n:f.n,status:s,review:ta.value.trim().slice(0,100),updated:Date.now()};
     if(s==="seen")rec.rating=r;else delete rec.rating;delete rec.date;
-    DB.items[k]=rec;save();closePanel();renderAll();toast(s==="seen"?`〈${f.ko}〉 별점 ${r}점을 남겼어요`:`〈${f.ko}〉 찜 목록에 담았어요`)};
+    DB.items[k]=rec;save();closePanel();renderAll();toast(s==="seen"?`〈${f.ko}〉 별점 ${r}점을 남겼어요`:`〈${f.ko}〉 관심 목록에 담았어요`)};
   (form.querySelector("[name=rating]:checked")||form.querySelector("[name=rating]")).focus();
 }
 function toggleWant(k){
   const f=info(k),e=entry(k);
-  if(e?.status==="want"){delete DB.items[k];toast(`〈${f.ko}〉 찜 목록에서 뺐어요`)}
-  else{DB.items[k]={...(e||{}),key:k,ko:f.ko,en:f.en,y:f.y,n:f.n,status:"want",added:Date.now(),updated:Date.now()};toast(`〈${f.ko}〉 찜 목록에 담았어요`)}
+  if(e?.status==="want"){delete DB.items[k];toast(`〈${f.ko}〉 관심 목록에서 뺐어요`)}
+  else{DB.items[k]={...(e||{}),key:k,ko:f.ko,en:f.en,y:f.y,n:f.n,status:"want",added:Date.now(),updated:Date.now()};toast(`〈${f.ko}〉 관심 목록에 담았어요`)}
   save();renderAll();
 }
 function removeEntry(k){
@@ -956,7 +956,7 @@ $("syncBtn").onclick=async()=>{
   const url=location.href.split("#")[0]+"#sync="+await packSync();
   const seen=entries().filter(e=>e.status==="seen").length;
   openPanel(`<h3 id="dlgTitle">다른 기기로 옮기기</h3>
-    <p>이 링크를 휴대폰이나 다른 컴퓨터에서 열면 지금 기록(평점 ${seen}편 · 찜 ${n-seen}편)이 그 기기에 합쳐집니다. 카카오톡 '나와의 채팅' 등으로 보내 두면 편해요.</p>
+    <p>이 링크를 휴대폰이나 다른 컴퓨터에서 열면 지금 기록(평점 ${seen}편 · 관심 ${n-seen}편)이 그 기기에 합쳐집니다. 카카오톡 '나와의 채팅' 등으로 보내 두면 편해요.</p>
     <input class="linkbox" id="syncLink" readonly value="${esc(url)}" aria-label="옮기기 링크">
     <div class="pactions">${navigator.share?`<button class="btn-gold" type="button" id="syncShare">공유</button>`:""}<button class="${navigator.share?"txt gold":"btn-gold"}" type="button" id="syncCopy">링크 복사</button><button class="txt" type="button" data-close>닫기</button></div>`);
   $("syncLink").onfocus=e=>e.target.select();
