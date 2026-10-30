@@ -92,14 +92,12 @@ const SCENES={
   for(let i=0;i<n;i++){const px=o+i*(bw+gp),dx=Math.min(1,Math.abs(px+bw/2-cx)/(Math.min(W/2,u*2.2))),bh=u*(.1+.8*dx**1.6);rect(px,cy-bh,bw,bh,a,.7);rect(px,cy+u*.05,bw,bh,a,.22)}
   ln(0,cy+u*.025,W,cy+u*.025,a,1.5,.8);
   x.globalAlpha=1;[[0,1],[W,-1]].forEach(([x0,dr])=>{const ew=Math.max(0,(W-u*4)/2)+u*.6,g=x.createLinearGradient(x0,0,x0+dr*ew,0);g.addColorStop(0,"rgba(0,0,0,.82)");g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(dr>0?0:W-ew,0,ew,H)})},
-"r:the-dark-knight":d=>{const{x,W,H,u,ice,l:line,r}=d;
-  /* 불타는 고담의 밤: 아래에서 번지는 주황 열기, 높이가 다른 가는 수직선(도시의 결), 위로 흩어지는 불티 */
+"r:the-dark-knight":d=>{const{x,W,H,u,l:line,r}=d;
+  /* 불타는 고담의 밤: 아래에서 번지는 주황 열기, 높이가 다른 가는 수직선(도시의 결)은 포인트색 */
   {const g=x.createLinearGradient(0,H*.8,0,H*.15);g.addColorStop(0,line);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.4;x.fillStyle=g;x.fillRect(0,H*.15,W,H*.85)}
-  const st=u*.075;x.strokeStyle=ice;x.lineWidth=Math.max(1,u*.004);
-  for(let px=st*.5;px<W;px+=st){const top=H*(.12+r()*.5);x.globalAlpha=.16+r()*.16;x.beginPath();x.moveTo(px,H);x.lineTo(px,top);x.stroke()}
-  x.fillStyle=line;x.shadowColor=line;x.shadowBlur=u*.03;
-  for(let i=0;i<150;i++){const t=Math.pow(r(),1.3),py=H*.85-t*H*.8,px=r()*W,rad=u*(.006+r()*.011)*(1-t*.5);x.globalAlpha=.85*(1-t)+.05;x.beginPath();x.arc(px,py,rad,0,7);x.fill()}
-  x.shadowBlur=0;x.globalAlpha=1},
+  const st=u*.075;x.strokeStyle=line;x.lineWidth=Math.max(1,u*.004);
+  for(let px=st*.5;px<W;px+=st){const top=H*(.12+r()*.5);x.globalAlpha=.32+r()*.26;x.beginPath();x.moveTo(px,H);x.lineTo(px,top);x.stroke()}
+  x.globalAlpha=1},
 "r:interstellar":d=>{const{x,cir,cx,cy,u,W,a}=d;
   for(let k=-5;k<=5;k++){const y0=cy-u*.1+k*u*.16;x.globalAlpha=.85-Math.abs(k)*.12;x.strokeStyle=a;x.lineWidth=k?1.4:2.4;x.beginPath();
     for(let t=0;t<=W;t+=6){const dx=(t-cx)/(u*.55);x.lineTo(t,y0+u*.6*Math.exp(-dx*dx)*(1-Math.abs(k)*.13))}x.stroke()}
