@@ -59,12 +59,12 @@ const SCENES={
     for(let px=-s;px<W+s;px+=s)ln(px+off,y+bh*.15,px+off,y+bh*.85,hot?l:a,hot?2:1.2,hot?.9:.35)}},
 "r:mad-max-fury-road":d=>{const{x,cir,rect,ln,cx,cy,u,W,H,a,h}=d,y0=cy+u*.55,sy=y0-u*.12,R=u*.72;
   /* 태양 빛번짐(지평선 위로만) */
-  x.save();x.beginPath();x.rect(0,0,W,y0);x.clip();{const g=x.createRadialGradient(cx,sy,R*.9,cx,sy,R*2.1);g.addColorStop(0,a);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.32;x.fillStyle=g;x.fillRect(0,0,W,y0)}x.filter="blur("+Math.max(6,u*.06)+"px)";cir(cx,sy,R*1.06,a,.4);x.restore();
+  x.save();x.beginPath();x.rect(0,0,W,y0);x.clip();{const g=x.createRadialGradient(cx,sy,R*.9,cx,sy,R*2.1);g.addColorStop(0,a);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.32;x.fillStyle=g;x.fillRect(0,0,W,y0)}x.filter="blur("+Math.max(6,u*.06)+"px)";cir(cx,sy,R*1.06,a,.4);x.filter="none";
+  /* 태양을 감싸는 옅은 원 */
+  cir(cx,sy,R*1.32,a,.1);x.restore();
   x.save();x.beginPath();x.rect(0,0,W,y0);x.clip();x.beginPath();x.arc(cx,sy,R,0,7);x.clip();cir(cx,sy,R,a,.95);
-  /* 태양 속 줄무늬 → 그라데이션 띠: 띠마다 가운데가 가장 어둡고 위아래로 부드럽게 사라짐, 아래로 갈수록 진하고 굵게 */
-  for(let i=0;i<6;i++){const yc=sy-u*.42+i*u*.12+u*(.006+i*.0065),hh=u*(.03+i*.018),g=x.createLinearGradient(0,yc-hh,0,yc+hh);
-    g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(.5,h);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.55+i*.08;x.fillStyle=g;x.fillRect(0,yc-hh,W,hh*2)}
-  x.restore();
+  /* 태양 속 줄무늬: 살짝 페더 */
+  x.filter="blur("+Math.max(1.5,u*.012)+"px)";for(let i=0;i<6;i++)rect(0,sy-u*.42+i*u*.12,W,u*(.012+i*.013),h,1);x.restore();
   ln(0,y0,W,y0,a,2,.8);const g=x.createLinearGradient(0,y0,0,H);g.addColorStop(0,"rgba(0,0,0,.1)");g.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,y0,W,H-y0)},
 "r:inception":d=>{const{x,rect,ln,cx,cy,u,W,H,a}=d,bw=u*.09,gp=u*.035,n=Math.ceil(W/(bw+gp))+1,o=(cx-bw/2)%(bw+gp)-(bw+gp);
   for(let i=0;i<n;i++){const px=o+i*(bw+gp),dx=Math.min(1,Math.abs(px+bw/2-cx)/(Math.min(W/2,u*2.2))),bh=u*(.1+.8*dx**1.6);rect(px,cy-bh,bw,bh,a,.7);rect(px,cy+u*.05,bw,bh,a,.22)}
