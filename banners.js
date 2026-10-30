@@ -131,12 +131,12 @@ const SCENES={
   for(let i=0;i<n;i++){const top=H*(.82-i*.115),px=i*sw;rect(px,top,sw*.94,H-top,a,.1+i*.04);
     for(let k=0;k<6;k++)cir(px+sw*(.12+k*.15),top-u*.025,u*.016,l,.45+i*.07)}},
 "r:inside-out":d=>{const{x,W,H,u,l:line,r}=d;
-  /* 기억 저장소: 화면을 채운 같은 크기의 기억 구슬 격자, 대부분은 옅고 몇 개만 떠오른 기억처럼 빛남. 포인트 노랑 단색 */
+  /* 기억 저장소: 화면을 채운 같은 크기의 기억 구슬 격자(원주만), 대부분은 옅고 몇 개만 원주가 밝게 빛남. 포인트 노랑 단색 */
   const R=u*.04,st=u*.14,cols=Math.ceil(W/st)+1,rows=Math.ceil(H/st)+1,ox=(W-(cols-1)*st)/2,oy=(H-(rows-1)*st)/2;
   x.fillStyle=line;x.strokeStyle=line;x.lineWidth=Math.max(1,u*.004);
   for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const px=ox+i*st,py=oy+j*st,on=r()<.05,k=r();
     x.beginPath();x.arc(px,py,R,0,7);
-    if(on){x.shadowColor=line;x.shadowBlur=u*.08;x.globalAlpha=.45+k*.4;x.fill();x.shadowBlur=0}
+    if(on){x.shadowColor=line;x.shadowBlur=u*.03;x.globalAlpha=.6+k*.3;x.stroke();x.shadowBlur=0}
     else{x.globalAlpha=.1+k*.12;x.stroke()}}
   {const g=x.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.7);g.addColorStop(.4,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,0,W,H)}
   x.globalAlpha=1},
