@@ -54,6 +54,9 @@ const SCENES={
   glow(px,py,u*.3,l,.55);cir(px,py,u*.055,l,1)},
 "r:anatomy-of-a-fall":d=>{const{x,ln,ring,cx,u,W,H,a,ice,l}=d,px=cx+u*.9;
   for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.18+k*.06;x.strokeStyle=k==7?a:ice;x.lineWidth=1.6;x.stroke()}},
+"r:your-name":d=>{const{x,u,W,H,line}=d;
+  /* 추락의 해부와 같은 물결선, 선 색은 포인트색(주황) */
+  for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.5+k*.07;x.strokeStyle=line;x.lineWidth=2.4;x.stroke()}},
 "r:frankenstein":d=>{const{ln,W,H,u,a,l,r}=d,n=22,bh=H/n,s=u*.1;
   for(let i=0;i<n;i++){const off=r()<.35?(r()-.5)*s*1.6:0,y=i*bh,hot=i==9||i==10;
     for(let px=-s;px<W+s;px+=s)ln(px+off,y+bh*.15,px+off,y+bh*.85,hot?l:a,hot?2:1.2,hot?.9:.35)}},
@@ -158,7 +161,6 @@ SCENES["r:shoplifters"]=SCENES["r:the-power-of-the-dog"];
 SCENES["r:the-intouchables"]=SCENES["r:roma"];
 SCENES["r:no-country-for-old-men"]=SCENES["r:all-quiet-on-the-western-front"];
 SCENES["r:pan-s-labyrinth"]=SCENES["r:get-out"]=SCENES["r:guillermo-del-toro-s-pinocchio"];
-SCENES["r:your-name"]=SCENES["r:anatomy-of-a-fall"];
 function paint(cv,f,W=480,H=720,pal){
   const L=look(f);cv.width=W;cv.height=H;const x=cv.getContext("2d"),[a,b,c]=pal||L.pal;
   let s=L.seed*9301+49297;const r=()=>((s=(s*9301+49297)%233280)/233280);
