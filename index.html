@@ -33,7 +33,11 @@
 [hidden]{display:none!important}
 html{scrollbar-gutter:stable;scrollbar-color:rgba(212,176,106,.28) rgb(var(--bg))}
 body{caret-color:transparent}
-input,textarea,[contenteditable]{caret-color:auto}
+textarea,input[type=search],input[type=text],[contenteditable]{caret-color:auto}
+/* 창(별점·확인 등) 안의 글씨를 눌러도 입력 커서(세로 바)가 생기거나 글씨가 선택되지 않게. 감상평 입력칸만 예외 */
+.stage,.stage *{caret-color:transparent!important}
+.stage{-webkit-user-select:none;user-select:none}
+.stage textarea,.stage .linkbox{caret-color:auto!important;-webkit-user-select:text;user-select:text}
 body{margin:0;background:var(--velvet);color:var(--ivory);font-family:var(--f-sans);font-size:16px;line-height:1.7;
   background-image:radial-gradient(ellipse 50% 460px at 50% -60px,rgba(255,226,170,.14),transparent 70%);
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
