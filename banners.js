@@ -69,7 +69,7 @@ const SCENES={
   const c=document.createElement("canvas");c.width=W;c.height=H;const t=c.getContext("2d");
   t.fillStyle=a;t.beginPath();t.arc(cx,sy,R,0,7);t.fill();
   t.globalCompositeOperation="destination-out";
-  {const top=sy-R*.62,n=8,st=(y0-top)/n;for(let i=0;i<n;i++){const hh=st*(.12+i*.065);t.fillRect(0,top+(i+1)*st-hh,W,hh)}}
+  {const top=sy-R*.5,n=5,st=(y0-top)/n;for(let i=0;i<n;i++){const hh=st*(.1+i*.07);t.fillRect(0,top+(i+1)*st-hh,W,hh)}}
   t.fillRect(0,y0,W,H-y0);
   x.globalAlpha=1;x.drawImage(c,0,0);
   /* 지평선의 낮은 언덕 실루엣 */
