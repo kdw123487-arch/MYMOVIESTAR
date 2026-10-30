@@ -130,10 +130,18 @@ const SCENES={
 "r:coco":d=>{const{x,rect,cir,W,H,u,a,l}=d,n=7,sw=W/n;
   for(let i=0;i<n;i++){const top=H*(.82-i*.115),px=i*sw;rect(px,top,sw*.94,H-top,a,.1+i*.04);
     for(let k=0;k<6;k++)cir(px+sw*(.12+k*.15),top-u*.025,u*.016,l,.45+i*.07)}},
-"r:inside-out":d=>{const{x,cir,W,H,u,a,l}=d,R=u*.5;
-  x.save();x.filter="blur("+Math.max(3,u*.02)+"px)";x.globalCompositeOperation="lighter";
-  for(let i=0;i<5;i++)cir(W*.52+i*u*.42,H*.42+Math.sin(i*1.3)*u*.3,R*(.8+(i%3)*.15),i%2?a:l,.3);
-  x.restore()},
+"r:inside-out":d=>{const{x,W,H,u,l:line,r}=d;
+  /* 기억 저장소: 화면을 채운 같은 크기의 기억 구슬 격자(원주만), 대부분은 옅고 몇 개만 원주가 밝게 빛남. 포인트 노랑 단색 */
+  const R=u*.04,st=u*.14,cols=Math.ceil(W/st)+1,rows=Math.ceil(H/st)+1,ox=(W-(cols-1)*st)/2,oy=(H-(rows-1)*st)/2;
+  x.fillStyle=line;x.strokeStyle=line;x.lineWidth=Math.max(2,u*.009);
+  /* 켜질 원은 서로 3칸 이상 떨어지게 골라 화면에 고르게 흩어지도록 */
+  const lit=[];for(let t=0;t<cols*rows*.3&&lit.length<cols*rows*.05;t++){const i=Math.floor(r()*cols),j=Math.floor(r()*rows);if(lit.every(p=>Math.max(Math.abs(p[0]-i),Math.abs(p[1]-j))>=3))lit.push([i,j])}
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const px=ox+i*st,py=oy+j*st,on=lit.some(p=>p[0]===i&&p[1]===j),k=r();
+    x.beginPath();x.arc(px,py,R,0,7);
+    if(on){x.shadowColor=line;x.shadowBlur=u*.09;x.globalAlpha=.7+k*.3;x.stroke();x.stroke();x.shadowBlur=0}
+    else{x.globalAlpha=.1+k*.12;x.stroke()}}
+  {const g=x.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.7);g.addColorStop(.4,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,0,W,H)}
+  x.globalAlpha=1},
 "r:wall-e":d=>{const{rect,cir,glow,cx,cy,u,W,H,r,a,w}=d,s=u*.085;
   for(let t=0;t<W;t+=s*1.15){const hh=Math.floor(2+5*Math.abs(Math.sin(t/(u*.8)))+r()*3);for(let j=0;j<hh;j++)rect(t,H-(j+1)*s*1.15,s,s,a,.18+r()*.32)}
   glow(cx,cy-u*.2,u*.4,a,.5);cir(cx,cy-u*.2,u*.05,a,1)},
