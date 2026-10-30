@@ -83,11 +83,6 @@ html.film .tab[aria-selected="true"]{color:var(--faint)}
 .search input{width:150px;background:none;border:0;outline:0;color:var(--ivory);font:13px var(--f-sans);letter-spacing:.03em;padding:2px 0;-webkit-appearance:none;appearance:none}
 .search input::placeholder{color:var(--faint)}
 .search input::-webkit-search-cancel-button{-webkit-appearance:none}
-.dir-btn{display:grid;place-items:center;width:28px;height:28px;margin-left:-14px;background:none;border:0;border-radius:50%;color:var(--gold);cursor:pointer}
-.dir-btn[hidden]{display:none}
-.dir-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
-.dir-btn[data-dir="asc"] svg{transform:rotate(180deg)}
-.dir-btn:hover{background:rgba(212,176,106,.1)}
 .nores{text-align:center;color:var(--faint);font-size:14px;margin:60px 0}
 .sortbox{position:relative}
 .sort-btn{display:inline-flex;align-items:center;gap:10px;font:13px var(--f-sans);letter-spacing:.04em;color:var(--ivory);background:transparent;border:0;border-bottom:1px solid var(--line);padding:5px 2px;cursor:pointer;transition:border-color .2s}
@@ -387,9 +382,8 @@ body[data-view="watch"] .mast,body[data-view="hall"] .mast{display:none}
         <div class="sortbox" id="sortBox">
           <button class="sort-btn" type="button" id="sortBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="정렬 기준"><span id="sortLabel">추천순</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></button>
           <ul class="sort-menu" id="sortMenu" role="listbox" aria-label="정렬 기준" tabindex="-1" hidden>
-            <li role="option" data-v="pick">추천순</li><li role="option" data-v="year">개봉연도</li><li role="option" data-v="title">제목</li><li role="option" data-v="rt">러닝타임</li>
+            <li role="option" data-v="pick">추천순</li><li role="option" data-v="year">최신순</li><li role="option" data-v="title">제목순</li><li role="option" data-v="rt">짧은 러닝타임순</li>
           </ul></div>
-        <button class="dir-btn" type="button" id="dirBtn" hidden><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2v8M2.8 6.8 6 10l3.2-3.2"/></svg></button>
       </div></div>
     <p class="nores" id="nomNone" hidden>검색 결과가 없어요.</p>
     <div class="grid" id="nomGrid"></div>
@@ -503,7 +497,7 @@ let fitT;addEventListener("resize",()=>{clearTimeout(fitT);fitT=setTimeout(fitAw
 /* genres: tags from the 장르 column; rare ones fold into a close, common one */
 const GENRE_ALIAS={"미스터리":"스릴러","공포":"스릴러","호러":"스릴러","모험":"액션","뮤지컬":"로맨스","법정":"드라마","실화":"드라마","전기":"드라마","전쟁":"드라마","음악":"드라마","고딕":"판타지","웨스턴":"드라마"};
 const tagsOf=f=>new Set(String(f.g||"").split("·").map(t=>t.trim()).filter(Boolean).map(t=>GENRE_ALIAS[t]||t));
-let curGenre="전체",curSort="pick",curDir="desc",curQ="";
+let curGenre="전체",curSort="pick",curQ="";
 function buildGenres(){
   const count={};FILMS.forEach(f=>tagsOf(f).forEach(t=>count[t]=(count[t]||0)+1));
   const list=["전체",...Object.keys(count).filter(t=>count[t]>=3).sort((a,b)=>count[b]-count[a])];
@@ -511,7 +505,7 @@ function buildGenres(){
   requestAnimationFrame(genreFade);
 }
 function applyList(){
-  const g=$("nomGrid"),sg=curDir==="desc"?-1:1,sorted=[...FILMS].sort((a,b)=>SORTS[curSort](a,b)*sg||a.i-b.i);let n=0;
+  const g=$("nomGrid"),sg=DIR[curSort]==="desc"?-1:1,sorted=[...FILMS].sort((a,b)=>SORTS[curSort](a,b)*sg||a.i-b.i);let n=0;
   const q=curQ.trim().toLowerCase();
   sorted.forEach(f=>{const el=cards[f.key],on=(curGenre==="전체"||tagsOf(f).has(curGenre))&&(!q||[f.ko,f.en,f.dir,f.cast,f.g,f.y].join(" ").toLowerCase().includes(q));el.hidden=!on;if(on)n++;g.appendChild(el)});
   $("nomCount").textContent=`${n}편`;$("nomNone").hidden=n>0;
@@ -519,17 +513,17 @@ function applyList(){
   syncSort();fitAwards($("nomGrid"));
 }
 const SORTS={pick:()=>0,year:(a,b)=>yr(a.y)-yr(b.y),title:(a,b)=>a.ko.localeCompare(b.ko,"ko"),rt:(a,b)=>(a.rt||999)-(b.rt||999)};
-const DEFDIR={year:"desc",title:"asc",rt:"asc"};
+/* 정렬 방향은 기준마다 고정: 최신순, 제목 가나다순, 러닝타임 짧은 순 */
+const DIR={year:"desc",title:"asc",rt:"asc"};
 /* sort menu: a small listbox styled like the rest of the site (keyboard: ↑↓ Enter Esc) */
 const sortBtn=$("sortBtn"),sortMenu=$("sortMenu"),sortItems=[...sortMenu.querySelectorAll("li")];let sortActive=0;
-function syncSort(){const db=$("dirBtn");db.hidden=curSort==="pick";db.dataset.dir=curDir;const lb=curSort==="year"?(curDir==="desc"?"최신순":"오래된 순"):curSort==="title"?(curDir==="asc"?"가나다 순":"가나다 역순"):curSort==="rt"?(curDir==="asc"?"짧은 순":"긴 순"):"";db.setAttribute("aria-label",lb?`${lb} (눌러서 순서 바꾸기)`:"");db.title=lb;sortItems.forEach(li=>li.setAttribute("aria-selected",li.dataset.v===curSort));$("sortLabel").textContent=sortItems.find(li=>li.dataset.v===curSort).textContent}
+function syncSort(){sortItems.forEach(li=>li.setAttribute("aria-selected",li.dataset.v===curSort));$("sortLabel").textContent=sortItems.find(li=>li.dataset.v===curSort).textContent}
 function moveActive(i){sortActive=(i+sortItems.length)%sortItems.length;sortItems.forEach((li,j)=>li.classList.toggle("active",j===sortActive))}
 function fitSort(){sortMenu.style.left="";sortMenu.style.right="0";const r=sortMenu.getBoundingClientRect(),vw=document.documentElement.clientWidth,m=12;let dx=0;if(r.right>vw-m)dx=vw-m-r.right;if(r.left+dx<m)dx=m-r.left;if(dx){sortMenu.style.right="auto";sortMenu.style.left=(sortMenu.offsetLeft+dx)+"px"}}
 function openSort(){sortMenu.hidden=false;fitSort();sortBtn.setAttribute("aria-expanded","true");moveActive(sortItems.findIndex(li=>li.dataset.v===curSort));sortMenu.focus()}
 function closeSort(focus){sortMenu.hidden=true;sortBtn.setAttribute("aria-expanded","false");if(focus)sortBtn.focus()}
-function saveSort(){store.set("mymoviestar.sort",curSort);store.set("mymoviestar.dir",curDir)}
-function pickSort(v){v=SORTS[v]?v:"pick";if(v!==curSort)curDir=DEFDIR[v]||curDir;curSort=v;saveSort();closeSort(true);applyList()}
-$("dirBtn").onclick=()=>{curDir=curDir==="desc"?"asc":"desc";saveSort();applyList()};
+function saveSort(){store.set("mymoviestar.sort",curSort)}
+function pickSort(v){v=SORTS[v]?v:"pick";curSort=v;saveSort();closeSort(true);applyList()}
 $("q").oninput=e=>{curQ=e.target.value;applyList()};
 sortBtn.onclick=()=>sortMenu.hidden?openSort():closeSort();
 sortMenu.onclick=e=>{const li=e.target.closest("li");if(li)pickSort(li.dataset.v)};
@@ -774,7 +768,7 @@ fetch(`data/films.json?v=${Math.floor(Date.now()/6e4)}`).then(r=>{if(!r.ok)throw
   FILMS=d.films.map((f,i)=>({...f,i}));BY_KEY=Object.fromEntries(FILMS.map(f=>[f.key,f]));RETIRED=d.retired||{};
   $("nomCount").textContent=`${FILMS.length}편`;
   const g=$("nomGrid");FILMS.forEach(f=>g.appendChild(card(f.key,true)));
-  {let sv=store.get("mymoviestar.sort","pick");const old={new:["year","desc"],old:["year","asc"],short:["rt","asc"]};if(old[sv]){curDir=old[sv][1];sv=old[sv][0]}else curDir=store.get("mymoviestar.dir",DEFDIR[sv]||"desc");curSort=SORTS[sv]?sv:"pick";if(curDir!=="asc"&&curDir!=="desc")curDir="desc"}buildGenres();applyList();renderAll();route();
+  {let sv=store.get("mymoviestar.sort","pick");const old={new:"year",old:"year",short:"rt"};sv=old[sv]||sv;curSort=SORTS[sv]?sv:"pick";try{localStorage.removeItem("mymoviestar.dir")}catch(e){}}buildGenres();applyList();renderAll();route();
 }).catch(()=>{$("nomGrid").innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="big">Intermission</div><p>영화 목록을 불러오지 못했습니다. 잠시 후 새로고침해 주세요.</p></div>`;route()});
 </script>
 </body>
