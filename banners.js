@@ -104,10 +104,12 @@ const SCENES={
   cir(cx,cy+u*.5,u*.045,a,1)},
 "r:arrival":d=>{const{x,W,cy,u,a,ice}=d,st=u*.1,n=Math.ceil(W*.75/st);
   [[W*.3,a],[W*.7,ice]].forEach(([sx,c])=>{for(let k=1;k<=n;k++){x.beginPath();x.arc(sx,cy,k*st,0,7);x.globalAlpha=Math.max(0,.75-k/n*.7);x.strokeStyle=c;x.lineWidth=1.6;x.stroke()}})},
-"r:gone-girl":d=>{const{x,cir,ln,cx,cy,u,W,H,a,l}=d,R=u*.55,px=W*.6,sh=u*.14;
-  x.save();x.beginPath();x.rect(0,0,px,H);x.clip();cir(px,cy,R,a,.7);x.restore();
-  x.save();x.beginPath();x.rect(px,0,W,H);x.clip();cir(px,cy+sh,R,l,.45);x.restore();
-  ln(px,0,px,H,l,1.5,.3)},
+"r:gone-girl":d=>{const{x,W,H,u,l:line,r}=d;
+  /* 사라짐(Gone): 같은 간격의 가로줄(일기장의 줄)이 오른쪽으로 갈수록 조각나며 지워져 사라짐. 포인트 금빛 단색 */
+  const gap=u*.1,seg=u*.075;x.strokeStyle=line;x.lineWidth=Math.max(2,u*.009);x.lineCap="round";
+  for(let y=gap*.6;y<H;y+=gap)for(let px=0;px<W;px+=seg){const t=px/W,keep=r()>Math.pow(t,1.3)*1.05;if(!keep)continue;
+    x.globalAlpha=.8*(1-t*.75);x.beginPath();x.moveTo(px,y);x.lineTo(px+seg*(1-t*.6),y);x.stroke()}
+  x.globalAlpha=1},
 "r:knives-out":d=>{const{poly,W,H,u,a,l,r}=d,n=20;
   for(let i=0;i<n;i++){const x0=W*(i+.2+r()*.6)/n,len=H*(.35+r()*.75),w=u*(.03+r()*.07),sk=u*(.15+r()*.25),al=.12+r()*.35,c=i%6===2?l:a;
     poly([[x0,-4],[x0+w,-4],[x0-sk,len]],c,al)}},
