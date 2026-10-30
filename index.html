@@ -372,6 +372,22 @@ body[data-view="watch"] .mast-alt,body[data-view="hall"] .mast-alt{display:block
 #hallBar .tools{min-height:29px}
 .genres-slot .genre{visibility:hidden;cursor:default}
 .genres-slot .line{position:absolute;inset:0;display:grid;place-items:center;font-size:12.5px;color:var(--faint);letter-spacing:.04em}
+/* 탭 전환 */
+@keyframes viewInR{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes viewInL{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.view-in-r{animation:viewInR .42s cubic-bezier(.2,.8,.2,1)}
+.view-in-l{animation:viewInL .42s cubic-bezier(.2,.8,.2,1)}
+.mast.view-in-r,.mast.view-in-l{animation-name:mastIn}
+@keyframes mastIn{from{opacity:0}to{opacity:1}}
+/* 평점 남김: 관심 버튼 접힘 → 별 하나가 별점 다섯 칸으로 펼쳐짐 */
+.acts.rating-out .heart-act{white-space:nowrap;width:0!important;opacity:0;margin-right:-20px;overflow:hidden;transition:width .3s ease,opacity .2s ease,margin .3s ease}
+.acts.rating-out .star-act span{opacity:0;transition:opacity .2s ease}
+.acts.rating-out .star-act svg{transform:scale(1.15) rotate(72deg);fill:currentColor;color:var(--gold);transition:transform .35s ease,fill .2s}
+.rated-in .stars svg{animation:starIn .45s cubic-bezier(.3,1.4,.5,1) both}
+.rated-in .stars svg:nth-child(2){animation-delay:.06s}.rated-in .stars svg:nth-child(3){animation-delay:.12s}
+.rated-in .stars svg:nth-child(4){animation-delay:.18s}.rated-in .stars svg:nth-child(5){animation-delay:.24s}
+@keyframes starIn{from{opacity:0;transform:translateX(-14px) scale(.4) rotate(-72deg)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.view-in-r,.view-in-l,.rated-in .stars svg{animation:none}}
 </style>
 </head>
 <body>
@@ -503,9 +519,20 @@ function sync(el,key){
   const hall=el.dataset.hall==="1";
   el.querySelector(".slot").innerHTML=seen&&hall?`<div class="verdict">${stars(e.rating)}${e.review?`<q>${esc(e.review)}</q>`:""}</div>`
     :f.p?`<p class="plot" title="${esc(f.p)}">${esc(f.p)}</p>`:"";
-  const acts=el.querySelector(".acts");acts.classList.toggle("one",seen);
+  const acts=el.querySelector(".acts"),was=el.dataset.st,now=seen?"seen":"open";el.dataset.st=now;
+  /* 방금 평점을 남긴 카드: 관심 버튼이 접혀 사라지고, 평점 별이 그 자리에서 별점으로 펼쳐짐 */
+  if(was==="open"&&now==="seen"&&!hall&&el.isConnected&&!REDUCED()){rateAnim(acts,e.rating,key);return}
+  acts.classList.toggle("one",seen);
   acts.innerHTML=seen?(hall?`<button class="act-btn edit-act" type="button" data-edit="${key}">평점 수정</button>`:`<span class="act-rated" title="내 평점 ${e.rating}점">${stars(e.rating)}</span>`)
     :`<button class="act-btn heart-act" type="button" data-toggle-want="${key}" aria-pressed="${!!want}" aria-label="${want?"관심 해제":"관심 등록"}">${HEART}<span>관심</span></button><button class="act-btn star-act" type="button" data-review="${key}">${STAR}<span>평점</span></button>`;
+}
+const REDUCED=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
+function rateAnim(acts,n,key){
+  const heart=acts.querySelector(".heart-act"),star=acts.querySelector(".star-act");
+  if(!heart||!star){acts.classList.add("one");acts.innerHTML=`<span class="act-rated" title="내 평점 ${n}점">${stars(n)}</span>`;return}
+  heart.style.width=heart.offsetWidth+"px";void heart.offsetWidth;acts.classList.add("rating-out");
+  setTimeout(()=>{acts.classList.remove("rating-out");acts.classList.add("one");
+    acts.innerHTML=`<span class="act-rated rated-in" title="내 평점 ${n}점">${stars(n)}</span>`},380);
 }
 /* award line: at most two lines — drop the less important honours (listed last) instead of cutting text */
 function fitAwards(root=document){
@@ -685,9 +712,12 @@ const leaveSheet=()=>{history.replaceState(null,"","#"+curView);route()};
 /* ---------- tabs & routing ---------- */
 const VIEWS=["nominees","watch","hall"];
 function show(v,push){
-  if(!VIEWS.includes(v))v="nominees";curView=v;document.body.dataset.view=v;$("mastAlt").textContent=v==="watch"?"관심 목록":v==="hall"?"평점 목록":"";
+  if(!VIEWS.includes(v))v="nominees";const prev=curView;curView=v;document.body.dataset.view=v;$("mastAlt").textContent=v==="watch"?"관심 목록":v==="hall"?"평점 목록":"";
   VIEWS.forEach(k=>{$("view-"+k).hidden=k!==v;const t=$("tab-"+k);t.setAttribute("aria-selected",k===v);t.tabIndex=k===v?0:-1});
   if(push)history.replaceState(null,"","#"+v);
+  /* 탭 전환: 새 탭이 탭 순서 방향에서 살짝 밀려 들어오며 나타남 */
+  if(prev!==v&&!REDUCED()){const dir=VIEWS.indexOf(v)>VIEWS.indexOf(prev)?"r":"l";
+    [$("view-"+v),document.querySelector(".mast")].forEach(el=>{el.classList.remove("view-in-r","view-in-l");void el.offsetWidth;el.classList.add("view-in-"+dir)})}
   fitAwards($("view-"+v));
 }
 function route(){
