@@ -113,11 +113,9 @@ const SCENES={
 "r:knives-out":d=>{const{poly,W,H,u,a,l,r}=d,n=20;
   for(let i=0;i<n;i++){const x0=W*(i+.2+r()*.6)/n,len=H*(.35+r()*.75),w=u*(.03+r()*.07),sk=u*(.15+r()*.25),al=.12+r()*.35,c=i%6===2?l:a;
     poly([[x0,-4],[x0+w,-4],[x0-sk,len]],c,al)}},
-"r:spirited-away":d=>{const{x,rect,ln,W,H,u,a,l}=d,hy=H*.56,px=W*.66;
-  x.save();x.filter="blur("+Math.max(3,u*.02)+"px)";
-  rect(0,hy-u*.6,W,u*.6,a,.16);rect(px-u*.9,hy-u*.25,u*1.8,u*.25,l,.14);
-  for(let i=0;i<15;i++){const y=hy+u*.05+i*u*.05*(1+i*.1),w=u*(1.1-i*.06);rect(px-w/2,y,w,u*.03,i%3?a:l,.95-i*.05)}
-  x.restore();ln(0,hy,W,hy,l,2,.55)},
+"r:spirited-away":d=>{const{ell,ln,cx,cy,u,W,H,a,w}=d;
+  for(let t=0;t<W;t+=u*.3)ln(t,H*.45,t,H,w,1,.3);for(let y=H*.45;y<H;y+=u*.22)ln(0,y,W,y,w,1,.3);
+  for(let i=1;i<6;i++)ell(cx,cy+u*.15,u*.28*i,u*.05*i,a,.9-i*.14,0,2)},
 "r:princess-mononoke":d=>{const{x,W,H,u,a}=d;
   /* 원시림의 수관: 겹겹이 포개진 반원(청해파 문양)으로 끝없이 이어지는 숲. 아래 줄일수록 밝게. 배너색 초록 단색 */
   const R=u*.3,dy=R*.5,rows=Math.ceil(H/dy)+2;x.lineWidth=Math.max(1,u*.006);
