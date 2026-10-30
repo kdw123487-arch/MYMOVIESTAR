@@ -58,9 +58,18 @@ const SCENES={
   for(let i=0;i<n;i++){const off=r()<.35?(r()-.5)*s*1.6:0,y=i*bh,hot=i==9||i==10;
     for(let px=-s;px<W+s;px+=s)ln(px+off,y+bh*.15,px+off,y+bh*.85,hot?l:a,hot?2:1.2,hot?.9:.35)}},
 "r:mad-max-fury-road":d=>{const{x,cir,rect,ln,cx,cy,u,W,H,a,h}=d,y0=cy+u*.55,sy=y0-u*.12,R=u*.72;
+  /* 태양 빛번짐(지평선 위로만) */
+  x.save();x.beginPath();x.rect(0,0,W,y0);x.clip();{const g=x.createRadialGradient(cx,sy,R*.9,cx,sy,R*2.1);g.addColorStop(0,a);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.32;x.fillStyle=g;x.fillRect(0,0,W,y0)}x.filter="blur("+Math.max(6,u*.06)+"px)";cir(cx,sy,R*1.06,a,.4);x.filter="none";
+  /* 태양을 감싸는 옅은 원 */
+  cir(cx,sy,R*1.32,a,.1);x.restore();
   x.save();x.beginPath();x.rect(0,0,W,y0);x.clip();x.beginPath();x.arc(cx,sy,R,0,7);x.clip();cir(cx,sy,R,a,.95);
+  /* 태양 속 줄무늬(선명하게) */
   for(let i=0;i<6;i++)rect(0,sy-u*.42+i*u*.12,W,u*(.012+i*.013),h,1);x.restore();
-  ln(0,y0,W,y0,a,2,.8);const g=x.createLinearGradient(0,y0,0,H);g.addColorStop(0,"rgba(0,0,0,.1)");g.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,y0,W,H-y0)},
+  const g=x.createLinearGradient(0,y0,0,H);g.addColorStop(0,"rgba(0,0,0,.1)");g.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,y0,W,H-y0);
+  /* 비네팅: 태양을 중심으로 가장자리가 어두워짐 */
+  {const v=x.createRadialGradient(cx,sy,R*.9,cx,sy,Math.hypot(W,H)*.62);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.72)");x.globalAlpha=1;x.fillStyle=v;x.fillRect(0,0,W,H)}
+  /* 아래쪽으로 배너 전체가 검게 잠기는 비네팅 */
+  {const v=x.createLinearGradient(0,H*.4,0,H);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(.6,"rgba(0,0,0,.45)");v.addColorStop(1,"rgba(0,0,0,.85)");x.fillStyle=v;x.fillRect(0,H*.4,W,H*.6)}},
 "r:inception":d=>{const{x,rect,ln,cx,cy,u,W,H,a}=d,bw=u*.09,gp=u*.035,n=Math.ceil(W/(bw+gp))+1,o=(cx-bw/2)%(bw+gp)-(bw+gp);
   for(let i=0;i<n;i++){const px=o+i*(bw+gp),dx=Math.min(1,Math.abs(px+bw/2-cx)/(Math.min(W/2,u*2.2))),bh=u*(.1+.8*dx**1.6);rect(px,cy-bh,bw,bh,a,.7);rect(px,cy+u*.05,bw,bh,a,.22)}
   ln(0,cy+u*.025,W,cy+u*.025,a,1.5,.8);
