@@ -104,10 +104,16 @@ const SCENES={
   cir(cx,cy+u*.5,u*.045,a,1)},
 "r:arrival":d=>{const{x,W,cy,u,a,ice}=d,st=u*.1,n=Math.ceil(W*.75/st);
   [[W*.3,a],[W*.7,ice]].forEach(([sx,c])=>{for(let k=1;k<=n;k++){x.beginPath();x.arc(sx,cy,k*st,0,7);x.globalAlpha=Math.max(0,.75-k/n*.7);x.strokeStyle=c;x.lineWidth=1.6;x.stroke()}})},
-"r:gone-girl":d=>{const{x,cir,ln,cx,cy,u,W,H,a,l}=d,R=u*.55,px=W*.6,sh=u*.14;
-  x.save();x.beginPath();x.rect(0,0,px,H);x.clip();cir(px,cy,R,a,.7);x.restore();
-  x.save();x.beginPath();x.rect(px,0,W,H);x.clip();cir(px,cy+sh,R,l,.45);x.restore();
-  ln(px,0,px,H,l,1.5,.3)},
+"r:gone-girl":d=>{const{x,W,H,u,l:line}=d;
+  /* 겉과 속: 새벽 강 위의 달과, 같아야 하는데 미세하게 어긋난 물속의 달. 반사는 가로 띠로 끊기고 옆으로 밀림. 수면은 같은 간격의 가는 물결선. 포인트 금빛 단색 */
+  const hy=H*.42,mx=W*.58,R=u*.12,my=hy-u*.22,ry=hy+(hy-my),sh=u*.06,gap=u*.036;
+  {const g=x.createLinearGradient(0,hy-u*.25,0,hy+u*.25);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(.5,line);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.12;x.fillStyle=g;x.fillRect(0,hy-u*.25,W,u*.5)}
+  x.save();x.fillStyle=line;x.shadowColor=line;x.shadowBlur=u*.12;x.globalAlpha=.9;x.beginPath();x.arc(mx,my,R,0,7);x.fill();x.restore();
+  x.save();x.beginPath();x.rect(0,hy,W,H);x.clip();x.fillStyle=line;
+  for(let k=0,y=ry-R;y<ry+R;y+=gap,k++){x.save();x.beginPath();x.rect(0,y,W,gap*.55);x.clip();x.globalAlpha=.5;x.beginPath();x.arc(mx+sh*(1+k%2*.4),ry,R,0,7);x.fill();x.restore()}
+  x.strokeStyle=line;x.lineWidth=Math.max(1,u*.004);
+  for(let y=hy+gap;y<H;y+=gap){x.globalAlpha=.13;x.beginPath();x.moveTo(0,y);x.lineTo(W,y);x.stroke()}
+  x.restore();x.globalAlpha=1},
 "r:knives-out":d=>{const{poly,W,H,u,a,l,r}=d,n=20;
   for(let i=0;i<n;i++){const x0=W*(i+.2+r()*.6)/n,len=H*(.35+r()*.75),w=u*(.03+r()*.07),sk=u*(.15+r()*.25),al=.12+r()*.35,c=i%6===2?l:a;
     poly([[x0,-4],[x0+w,-4],[x0-sk,len]],c,al)}},
