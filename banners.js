@@ -134,7 +134,9 @@ const SCENES={
   /* 기억 저장소: 화면을 채운 같은 크기의 기억 구슬 격자(원주만), 대부분은 옅고 몇 개만 원주가 밝게 빛남. 포인트 노랑 단색 */
   const R=u*.04,st=u*.14,cols=Math.ceil(W/st)+1,rows=Math.ceil(H/st)+1,ox=(W-(cols-1)*st)/2,oy=(H-(rows-1)*st)/2;
   x.fillStyle=line;x.strokeStyle=line;x.lineWidth=Math.max(2,u*.009);
-  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const px=ox+i*st,py=oy+j*st,on=r()<.05,k=r();
+  /* 켜질 원은 서로 3칸 이상 떨어지게 골라 화면에 고르게 흩어지도록 */
+  const lit=[];for(let t=0;t<cols*rows*.3&&lit.length<cols*rows*.05;t++){const i=Math.floor(r()*cols),j=Math.floor(r()*rows);if(lit.every(p=>Math.max(Math.abs(p[0]-i),Math.abs(p[1]-j))>=3))lit.push([i,j])}
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const px=ox+i*st,py=oy+j*st,on=lit.some(p=>p[0]===i&&p[1]===j),k=r();
     x.beginPath();x.arc(px,py,R,0,7);
     if(on){x.shadowColor=line;x.shadowBlur=u*.09;x.globalAlpha=.7+k*.3;x.stroke();x.stroke();x.shadowBlur=0}
     else{x.globalAlpha=.1+k*.12;x.stroke()}}
