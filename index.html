@@ -365,6 +365,10 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 .genres.fade-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent)}
 .genres.fade-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px);mask-image:linear-gradient(90deg,transparent,#000 48px)}
 .genres.fade-l.fade-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent)}
+/* 로고는 전체 탭에서만. 관심·평점 탭은 그 자리에 목록 이름 */
+body[data-view="watch"] .mast,body[data-view="hall"] .mast{display:none}
+.view-head .list-title{margin:0;font-size:clamp(26px,3.4vw,36px);font-weight:700;letter-spacing:.02em;line-height:1.2}
+#view-watch>.view-head,#view-hall>.view-head{margin:clamp(14px,3vw,40px) 0 32px;min-height:clamp(40px,min(6.6vw,8.4vh),84px);align-content:center}
 </style>
 </head>
 <body>
@@ -392,12 +396,12 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
   </section>
 
   <section id="view-watch" role="tabpanel" aria-labelledby="tab-watch" hidden>
-    <div class="view-head"><h2 class="sr">관심</h2></div>
+    <div class="view-head"><h2 class="list-title">관심 목록</h2></div>
     <div class="grid" id="watchGrid"></div>
   </section>
 
   <section id="view-hall" role="tabpanel" aria-labelledby="tab-hall" hidden>
-    <div class="view-head"><h2 class="sr">평점</h2><div class="line" id="hallStats"></div></div>
+    <div class="view-head"><h2 class="list-title">평점 목록</h2><div class="line" id="hallStats"></div></div>
     <div class="grid" id="hallGrid"></div>
     <div class="data-tools"><span>기록은 이 브라우저에 저장됩니다. 휴대폰 등 다른 기기에서도 보려면 링크로 옮기세요.</span>
       <button class="txt gold" type="button" id="syncBtn">다른 기기로 옮기기</button><button class="txt" type="button" id="exportBtn">백업 내보내기</button><button class="txt" type="button" id="importBtn">백업 불러오기</button>
@@ -636,7 +640,7 @@ const leaveSheet=()=>{history.replaceState(null,"","#"+curView);route()};
 /* ---------- tabs & routing ---------- */
 const VIEWS=["nominees","watch","hall"];
 function show(v,push){
-  if(!VIEWS.includes(v))v="nominees";curView=v;
+  if(!VIEWS.includes(v))v="nominees";curView=v;document.body.dataset.view=v;
   VIEWS.forEach(k=>{$("view-"+k).hidden=k!==v;const t=$("tab-"+k);t.setAttribute("aria-selected",k===v);t.tabIndex=k===v?0:-1});
   if(push)history.replaceState(null,"","#"+v);
   fitAwards($("view-"+v));
