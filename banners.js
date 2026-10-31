@@ -133,9 +133,14 @@ const SCENES={
   x.globalAlpha=1},
 "r:guillermo-del-toro-s-pinocchio":d=>{const{ell,cir,cx,cy,u,a}=d;
   for(let i=1;i<13;i++)d.ring(cx,cy,u*.11*i,a,i%3?1.6:3.2,.9-i*.055);cir(cx,cy,u*.05,a,.95)},
-"r:coco":d=>{const{x,rect,cir,W,H,u,a,l}=d,n=7,sw=W/n;
-  for(let i=0;i<n;i++){const top=H*(.82-i*.115),px=i*sw;rect(px,top,sw*.94,H-top,a,.1+i*.04);
-    for(let k=0;k<6;k++)cir(px+sw*(.12+k*.15),top-u*.025,u*.016,l,.45+i*.07)}},
+"r:coco":d=>{const{x,W,H,u,l:line,r}=d;
+  /* 금잔화 꽃잎 다리: 왼쪽 아래에서 오른쪽 위로 완만한 아치를 따라 작은 점(꽃잎) 수천 개가 모여 띠를 이루고, 띠에서 멀어질수록 듬성해짐. 포인트 주황 단색 */
+  const P=t=>{const a=Math.PI*(1-t);return[W*.5+Math.cos(a)*W*.62,H*1.15-Math.sin(a)*H*.95]};
+  x.fillStyle=line;x.shadowColor=line;
+  for(let n=0;n<3200;n++){const t=r(),[px,py]=P(t),g=(r()+r()+r()-1.5)/1.5,off=g*u*.28,dx=(r()-.5)*u*.04;
+    const ex=px+dx,ey=py+off,k=1-Math.min(1,Math.abs(g));x.globalAlpha=.08+k*.55;x.shadowBlur=k>.8?u*.02:0;
+    x.beginPath();x.arc(ex,ey,u*(.005+k*.006),0,7);x.fill()}
+  x.shadowBlur=0;x.globalAlpha=1},
 "r:inside-out":d=>{const{x,W,H,u,l:line,r}=d;
   /* 기억 저장소: 화면을 채운 같은 크기의 기억 구슬 격자(원주만), 대부분은 옅고 몇 개만 원주가 밝게 빛남. 포인트 노랑 단색 */
   const R=u*.04,st=u*.14,cols=Math.ceil(W/st)+1,rows=Math.ceil(H/st)+1,ox=(W-(cols-1)*st)/2,oy=(H-(rows-1)*st)/2;
