@@ -266,6 +266,17 @@ const SCENES={
   V(d)},
 "r:bohemian-rhapsody":d=>{const{rect,cx,u,W,H,a,l}=d,w=u*.2,st=u*.4,n=Math.ceil(W/st)+2;
   for(let i=-n;i<=n;i++){const px=cx+i*st-w/2,f=Math.max(0,1-Math.abs(px+w/2-cx)/(W*.5)),al=Math.pow(f,1.3)*.85;if(al<.02)continue;rect(px,0,w,H,a,al*.75)}},
+"r:the-grand-budapest-hotel":d=>{const{x,W,H,u,l:line}=d;
+  /* 로비의 할리퀸 타일: 같은 크기의 마름모가 화면을 빈틈없이 채우고, 칸마다 진하기만 번갈아. 파스텔 호텔 로비 바닥. 포인트 분홍 단색 */
+  const w=u*.22,h=u*.32;x.fillStyle=line;
+  for(let j=0,y=-h/2;y<H+h;y+=h/2,j++)for(let i=0,px=(j%2)*w/2-w;px<W+w;px+=w,i++){x.globalAlpha=(i+j)%2?.1:.24;x.beginPath();x.moveTo(px,y-h/2);x.lineTo(px+w/2,y);x.lineTo(px,y+h/2);x.lineTo(px-w/2,y);x.closePath();x.fill()}
+  V(d)},
+"r:blade-runner-2049":d=>{const{x,W,H,u,l:line}=d;
+  /* 모래 폭풍의 입자: 같은 간격의 점 격자(하프톤)가 아래쪽 짙은 주황 안개 속에서 커지고 위로 갈수록 작아져 사라짐. 포인트 주황 단색 */
+  {const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,line);x.globalAlpha=.3;x.fillStyle=g;x.fillRect(0,0,W,H)}
+  const st=u*.055;x.fillStyle=line;
+  for(let j=0,y=st/2;y<H;y+=st,j++)for(let px=st/2+(j%2)*st/2;px<W;px+=st){const t=Math.pow(y/H,1.3);x.globalAlpha=.25+t*.35;x.beginPath();x.arc(px,y,st*.45*t+st*.05,0,7);x.fill()}
+  V(d)}
 };
 /* 같은 배너를 쓰는 작품: 원본 하나만 두고 가리킨다(원본을 고치면 함께 바뀜) */
 SCENES["r:the-irishman"]=SCENES["r:the-godfather"]=SCENES["r:the-trial-of-the-chicago-7"];
