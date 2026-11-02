@@ -21,6 +21,8 @@ function sceneKit(x,W,H,cx,cy,r,[a,b,c],pal){
   D.glow=(px,py,rr,col,al=.4)=>{for(let i=0;i<8;i++)D.cir(px,py,rr*(1-i/8),col,al/6)};
   D.stars=(n,ymax,al=.6)=>{for(let i=0;i<n;i++)D.cir(r()*W,r()*ymax,.6+r()*1.5,ice,al*(.4+r()*.6))};
   return D}
+/* 새 배너 공통 마무리: 가장자리를 은은하게 어둡게(비네팅) */
+function V(d){const{x,W,H}=d;x.shadowBlur=0;x.filter="none";const gr=x.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.65);gr.addColorStop(.3,"rgba(0,0,0,0)");gr.addColorStop(1,"rgba(0,0,0,.55)");x.globalAlpha=1;x.fillStyle=gr;x.fillRect(0,0,W,H)}
 const SCENES={
 "r:spider-man-into-the-spider-verse":d=>{const{cir,W,H,a}=d,st=Math.max(10,W/110);
   for(let yy=st/2;yy<H;yy+=st)for(let xx=(yy/st%2)*st/2;xx<W;xx+=st){const t=Math.max(0,(xx/W*.9+(1-yy/H)*.6)-.45);if(t>0)cir(xx,yy,Math.min(st*.48,t*st*.75),a,.45)}},
@@ -196,7 +198,74 @@ const SCENES={
 "r:roman-holiday":d=>{const{x,cir,glow,cx,cy,u,a}=d;glow(cx,cy,u*1.3,a,.5);
   x.save();x.filter="blur("+Math.max(8,u*.09)+"px)";cir(cx,cy,u*.5,a,.55);x.restore()},
 "r:pulp-fiction":d=>{const{rect,W,H,u,a,l,r}=d,n=9,sw=W/n,h=H*.55;
-  for(let i=0;i<n;i++){const y=(r()-.1)*(H-h);rect(i*sw+sw*.04,y,sw*.92,h,i%4===1?l:a,.2+r()*.5)}}
+  for(let i=0;i<n;i++){const y=(r()-.1)*(H-h);rect(i*sw+sw*.04,y,sw*.92,h,i%4===1?l:a,.2+r()*.5)}},
+"r:eternal-sunshine-of-the-spotless-mind":d=>{const{x,W,H,u,l:line,r}=d;
+  /* 지워지는 기억: 같은 간격의 원 격자. 왼쪽은 또렷하게 남아 있고 오른쪽으로 갈수록 테두리만 남거나 사라짐. 포인트 주황 단색 */
+  const st=u*.13,R=st*.3;x.fillStyle=line;x.strokeStyle=line;x.lineWidth=Math.max(1.2,u*.005);
+  for(let j=0,y=st/2;y<H+st;y+=st,j++)for(let px=st/2+(j%2)*st/2;px<W+st;px+=st){const t=px/W,k=r();
+    if(k<t*.9)continue;x.beginPath();x.arc(px,y,R,0,7);if(k<t*1.4){x.globalAlpha=.3;x.stroke()}else{x.globalAlpha=.5-t*.25;x.fill()}}
+  V(d)},
+"r:past-lives":d=>{const{x,W,H,u,l:line}=d;
+  /* 인연: 두 가닥의 가는 선이 화면을 가로지르며 가까워졌다 멀어지기를 반복. 같은 간격으로 여러 쌍. 포인트 금빛 단색 */
+  x.strokeStyle=line;x.lineWidth=Math.max(1.2,u*.005);const gap=u*.2;
+  for(let k=0,y0=gap*.5;y0<H+gap;y0+=gap,k++)for(const s of[1,-1]){x.globalAlpha=.62;x.beginPath();
+    for(let px=0;px<=W;px+=4){const ph=px/W*Math.PI*3+k*.7;x.lineTo(px,y0+s*gap*.28*Math.cos(ph))}x.stroke()}
+  V(d)},
+"r:moonlight":d=>{const{x,ln,ring,cx,u,W,H,a,ice,l}=d,px=cx+u*.9;
+  for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.18+k*.06;x.strokeStyle=k==7?a:ice;x.lineWidth=1.6;x.stroke()}},
+"r:her":d=>{const{x,W,H,u,l:line}=d;
+  /* 목소리: 사만다의 목소리를 같은 간격의 세로 막대 파형으로. 가운데 선을 기준으로 위아래 대칭, 높이만 물결치듯 달라짐. 포인트 주홍 단색 */
+  const st=u*.05,bw=st*.45,cy=H*.45;x.fillStyle=line;
+  for(let i=0,px=st/2;px<W;px+=st,i++){const t=px/W,h=H*.06+H*.3*Math.abs(Math.sin(t*Math.PI*3.2))*(.55+.45*Math.sin(i*.7));
+    x.globalAlpha=.4;x.beginPath();x.roundRect(px-bw/2,cy-h/2,bw,h,bw/2);x.fill()}
+  V(d)},
+"r:before-sunrise":d=>{const{x,glow,rect,cir,ln,cx,cy,u,W,H,a,l,ice}=d,hz=H*.74,sx=cx;
+  glow(sx,hz,u*1.3,l,.3);
+  x.save();x.beginPath();x.rect(0,0,W,hz);x.clip();cir(sx,hz,u*.2,l,.9);
+  x.restore();
+  rect(0,hz,W,H-hz,a,.2);ln(0,hz,W,hz,a,1.5,.7)},
+"r:titanic":d=>{const{x,W,H,u,l:line}=d;
+  /* 노을 진 대서양: 같은 간격의 가로 물결선이 바다를 채우고, 수평선 근처일수록 노을을 받아 밝음. 위는 비워 둔 하늘. 포인트 금빛 단색 */
+  const hy=H*.32,gap=u*.045;x.strokeStyle=line;x.lineWidth=Math.max(1,u*.005);
+  {const g=x.createLinearGradient(0,hy-u*.3,0,hy+u*.1);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,line);x.globalAlpha=.25;x.fillStyle=g;x.fillRect(0,hy-u*.3,W,u*.4)}
+  for(let k=0,y=hy;y<H;y+=gap*(1+k*.08),k++){x.globalAlpha=Math.max(.06,.5-k*.04);x.beginPath();for(let px=0;px<=W;px+=6)x.lineTo(px,y+Math.sin(px/(u*.25)+k)*u*.008*(1+k*.2));x.stroke()}
+  V(d)},
+"r:forrest-gump":d=>{const{x,W,H,u,l:line}=d;
+  /* 끝없이 달린 길: 수평선의 한 점으로 모여드는 같은 각도 간격의 선들(길), 지평선 아래만. 포인트 크림 단색 */
+  const vx=W*.62,vy=H*.38,n=28;x.strokeStyle=line;x.lineWidth=Math.max(1.2,u*.005);
+  for(let k=0;k<=n;k++){const a=Math.PI*(.04+.92*k/n);x.globalAlpha=.12+.28*Math.sin(Math.PI*k/n);x.beginPath();x.moveTo(vx,vy);x.lineTo(vx+Math.cos(a)*W*2,vy+Math.sin(a)*W*2);x.stroke()}
+  {const g=x.createLinearGradient(0,vy-u*.25,0,vy+u*.05);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,line);x.globalAlpha=.18;x.fillStyle=g;x.fillRect(0,vy-u*.25,W,u*.3)}
+  V(d)},
+"r:about-time":d=>{const{poly,W,H,u,a,l,r}=d,n=14;
+  for(let i=0;i<n;i++){const x0=W*(i/n)+r()*u*.2,w=u*(.08+r()*.18),sk=H*.5;poly([[x0,0],[x0+w,0],[x0+w-sk,H],[x0-sk,H]],i%4?a:l,.05+r()*.12)}},
+"r:the-notebook":d=>{const{ell,ln,cx,cy,u,W,H,a,w}=d;
+  for(let t=0;t<W;t+=u*.3)ln(t,H*.45,t,H,w,1,.3);for(let y=H*.45;y<H;y+=u*.22)ln(0,y,W,y,w,1,.3);
+  for(let i=1;i<6;i++)ell(cx,cy+u*.15,u*.28*i,u*.05*i,a,.9-i*.14,0,2)},
+"r:the-truman-show":d=>{const{x,W,H,u,a:line,r}=d,pw=u*.46,ph=u*.32,g=u*.03,cols=Math.ceil(W/(pw+g))+1,rows=Math.ceil(H/(ph+g))+1;
+  /* 균일한 사각 패널 격자. 패널마다 투명도만 조금씩 다름 */
+  const ox=-((cols*(pw+g)-W)/2),oy=-((rows*(ph+g)-H)/2);x.fillStyle=line;x.strokeStyle=line;x.lineWidth=1;
+  for(let rr=0;rr<rows;rr++)for(let cc=0;cc<cols;cc++){const px=ox+cc*(pw+g),py=oy+rr*(ph+g);
+    x.globalAlpha=.05+r()*.11;x.fillRect(px,py,pw,ph);x.globalAlpha=.22;x.strokeRect(px+.5,py+.5,pw-1,ph-1)}
+  /* 양옆 비네팅 */
+  {const v=x.createLinearGradient(0,0,W,0);v.addColorStop(0,"rgba(0,0,0,.5)");v.addColorStop(.28,"rgba(0,0,0,0)");v.addColorStop(.72,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=v;x.fillRect(0,0,W,H)}
+  x.globalAlpha=1},
+"r:dead-poets-society":d=>{const{x,W,H,u,l:line}=d;
+  /* 저택의 벽지(리전시 스트라이프): 넓은 띠와 가는 선 두 줄이 번갈아 반복되고, 포인트 금색 단색 */
+  const st=u*.34,bw=st*.36;x.fillStyle=line;
+  for(let px=st*.3;px<W+st;px+=st){x.globalAlpha=.16;x.fillRect(px,0,bw,H);
+    x.globalAlpha=.32;x.fillRect(px+bw+st*.12,0,Math.max(1.2,u*.005),H);x.fillRect(px+bw+st*.2,0,Math.max(1.2,u*.005),H);
+    x.fillRect(px-st*.2,0,Math.max(1.2,u*.005),H);x.fillRect(px-st*.12,0,Math.max(1.2,u*.005),H);
+}
+  {const gr=x.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.65);gr.addColorStop(.3,"rgba(0,0,0,0)");gr.addColorStop(1,"rgba(0,0,0,.6)");x.globalAlpha=1;x.fillStyle=gr;x.fillRect(0,0,W,H)}
+  x.globalAlpha=1},
+"r:the-matrix":d=>{const{x,W,H,u,l:line,r}=d;
+  /* 흘러내리는 코드: 같은 간격의 세로 줄마다 짧은 조각이 이어져 흘러내리고, 줄 끝 조각만 밝게. 포인트 초록 단색 */
+  x.fillStyle=line;const st=u*.045,sh=u*.022;
+  for(let px=st/2;px<W;px+=st){const head=r()*H*1.2,len=H*(.25+r()*.6);
+    for(let y=head-len;y<head;y+=sh*1.3){if(y<0||r()<.15)continue;const t=1-(head-y)/len;x.globalAlpha=t>.97?.85:.06+t*.4;x.fillRect(px-st*.18,y,st*.36,sh)}}
+  V(d)},
+"r:bohemian-rhapsody":d=>{const{rect,cx,u,W,H,a,l}=d,w=u*.2,st=u*.4,n=Math.ceil(W/st)+2;
+  for(let i=-n;i<=n;i++){const px=cx+i*st-w/2,f=Math.max(0,1-Math.abs(px+w/2-cx)/(W*.5)),al=Math.pow(f,1.3)*.85;if(al<.02)continue;rect(px,0,w,H,a,al*.75)}},
 };
 /* 같은 배너를 쓰는 작품: 원본 하나만 두고 가리킨다(원본을 고치면 함께 바뀜) */
 SCENES["r:the-irishman"]=SCENES["r:the-godfather"]=SCENES["r:the-trial-of-the-chicago-7"];
