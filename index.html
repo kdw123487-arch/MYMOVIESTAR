@@ -246,6 +246,10 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 .sheet.scrolled .sheet-bar{background:rgba(var(--bg),.96);box-shadow:0 1px 0 var(--line)}
 .home-btn{display:inline-grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:rgba(0,0,0,.22);color:var(--ivory);cursor:pointer;transition:background-color .2s}
 .home-btn:hover{background:rgba(0,0,0,.4)}
+/* 상세 페이지 이전·다음 작품: 들어온 탭의 정렬·검색 순서를 따른다 */
+.sheet-nav{margin-left:auto;display:flex;align-items:center;gap:2px}
+.sheet-nav .home-btn:disabled{opacity:.3;cursor:default;background:rgba(0,0,0,.22)}
+.sheet-nav .pos{min-width:52px;text-align:center;font:500 12.5px/1 var(--f-sans);letter-spacing:.04em;color:var(--muted);font-variant-numeric:tabular-nums}
 .home-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
 .banner{position:relative;margin-top:-56px;width:100%;height:min(40vw,66vh);overflow:hidden;background:#000}
 .banner canvas{display:block;width:100%;height:100%;object-fit:cover}
@@ -652,7 +656,7 @@ function renderSheet(k){
   sheet.className="sheet fx-"+(info(k).ef||"classic")+(sheet.classList.contains("scrolled")?" scrolled":"");
   const f=info(k),e=entry(k),seen=e?.status==="seen",want=e?.status==="want",listed=!!BY_KEY[k];
   const fx=(t,v,full)=>v?`<div${full?' class="full"':""}><dt>${t}</dt><dd>${v}</dd></div>`:"";
-  sheet.innerHTML=`<div class="sheet-bar"><button class="home-btn" type="button" data-leave aria-label="홈으로" title="홈으로"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h4.5v-5.5h4V20h4.5V9.5"/></svg></button></div>
+  sheet.innerHTML=`<div class="sheet-bar"><button class="home-btn" type="button" data-leave aria-label="홈으로" title="홈으로"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h4.5v-5.5h4V20h4.5V9.5"/></svg></button>${navBar(k)}</div>
     <header class="banner"><canvas aria-hidden="true"></canvas><div class="cap"><h2 id="sTitle" tabindex="-1">${esc(f.ko)}</h2>${f.en&&f.en!==f.ko?`<div class="en${f.ef&&f.ef!=="classic"?" ef-"+f.ef:""}" lang="en">${esc(f.en)}</div>`:""}</div></header>
     <div class="sbody">
       <aside class="side"><div class="sposter" aria-hidden="true"><canvas></canvas></div>
@@ -677,6 +681,21 @@ function renderSheet(k){
       :`<div class="note">${d.id?"국내 스트리밍 정보가 없습니다.":"스트리밍 정보가 아직 없습니다."}</div>`);
   }
 }
+/* 이전·다음 작품: 지금 보고 있는 탭(전체·관심·평점)에 보이는 순서 그대로. 목록에 없는 작품이면 전체 탭 순서 */
+function navKeys(k){
+  const grid={nominees:"nomGrid",watch:"watchGrid",hall:"hallGrid"}[curView]||"nomGrid";
+  const pick=id=>[...document.querySelectorAll(`#${id} .card:not([hidden])`)].map(c=>c.dataset.key);
+  let list=pick(grid);if(!list.includes(k))list=pick("nomGrid");if(!list.includes(k))list=[...FILMS].sort((a,b)=>cmpFilm(curSort,a,b)).map(f=>f.key);
+  return list}
+const ARROW=d=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
+function navBar(k){
+  const list=navKeys(k),i=list.indexOf(k);if(i<0||list.length<2)return"";
+  const btn=(st,lab,path,off)=>`<button class="home-btn" type="button" data-step="${st}" aria-label="${lab}" title="${lab}"${off?" disabled":""}>${ARROW(path)}</button>`;
+  return`<div class="sheet-nav">${btn(-1,"이전 작품","M14.5 5.5 8 12l6.5 6.5",i===0)}<span class="pos" aria-live="polite">${i+1} / ${list.length}</span>${btn(1,"다음 작품","M9.5 5.5 16 12l-6.5 6.5",i===list.length-1)}</div>`}
+function goStep(st,refocus){
+  if(!sheetKey)return;const list=navKeys(sheetKey),nk=list[list.indexOf(sheetKey)+st];if(!nk)return;
+  history.replaceState(null,"","#film/"+encodeURIComponent(nk));route();
+  if(refocus){const b=sheet.querySelector(`[data-step="${st}"]`);(b&&!b.disabled?b:sheet.querySelector(`[data-step="${-st}"]`))?.focus({preventScroll:true})}}
 /* per-film English title fonts, loaded only when a film page needs one */
 const EF={elegant:"Cormorant+Garamond:ital,wght@1,500;1,600",noir:"Playfair+Display:ital,wght@1,700",epic:"Cinzel:wght@600",typewriter:"Special+Elite",mono:"Courier+Prime:wght@400;700",
   bold:"Bebas+Neue",scifi:"Orbitron:wght@500",gothic:"UnifrakturMaguntia",western:"Rye",retro:"Abril+Fatface",script:"Great+Vibes",hand:"Caveat:wght@600;700",comic:"Bangers",light:"Josefin+Sans:wght@300;400",neon:"Monoton"};
@@ -753,7 +772,9 @@ function openPanel(html,center){lastFocus=document.activeElement;panel.className
 function closePanel(){stage.hidden=true;document.documentElement.style.overflow="";lastFocus?.isConnected&&lastFocus.focus()}
 stage.addEventListener("click",e=>{if(e.target===stage)closePanel()});
 document.addEventListener("keydown",e=>{
-  if(stage.hidden){if(e.key==="Escape"&&sheetKey)leaveSheet();return}
+  if(stage.hidden){if(e.key==="Escape"&&sheetKey)leaveSheet();
+    else if(sheetKey&&/^Arrow(Left|Right)$/.test(e.key)&&!e.altKey&&!e.metaKey&&!e.ctrlKey&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||""))goStep(e.key==="ArrowRight"?1:-1);
+    return}
   if(e.key==="Escape")closePanel();
   if(e.key==="Tab"){const f=[...panel.querySelectorAll("button,input,textarea,a[href]")].filter(n=>n.offsetParent);if(!f.length)return;
     const a=f[0],z=f.at(-1);if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}
@@ -817,6 +838,7 @@ document.addEventListener("click",ev=>{
   if(d.remove)removeEntry(d.remove);
   if("close" in d){closePanel();return}
   if(d.review)ballot(d.review);else if(d.edit)ballot(d.edit);
+  if(d.step){goStep(+d.step,1);return}
   else if(d.goto)show(d.goto,true);else if("leave" in d)leaveSheet();
 });
 
