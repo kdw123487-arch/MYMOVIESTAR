@@ -388,7 +388,9 @@ body[data-view="watch"] .mast-alt,body[data-view="hall"] .mast-alt{display:block
 .view-in-r{animation:viewInR .42s cubic-bezier(.2,.8,.2,1)}
 .view-in-l{animation:viewInL .42s cubic-bezier(.2,.8,.2,1)}
 /* 상세 페이지 이전·다음: 글과 포스터는 넘기는 방향에서 살짝 밀려 들어오고, 배너 그림은 부드럽게 나타남(배경색은 html.film 전환으로 서서히) */
-.step-fade{animation:fadeIn .55s ease}
+.step-fade{animation:fadeIn .5s cubic-bezier(.2,.8,.2,1)}
+.step-r{animation:viewInR .5s cubic-bezier(.2,.8,.2,1)}.step-l{animation:viewInL .5s cubic-bezier(.2,.8,.2,1)}
+html.film.stepping,html.film.stepping body{transition:background-color .5s cubic-bezier(.2,.8,.2,1)}
 .mast.view-in-r,.mast.view-in-l{animation-name:mastIn}
 @keyframes mastIn{from{opacity:0}to{opacity:1}}
 /* 평점 남김: 관심·평점 버튼이 흐려지며 사라지고, 별점이 왼쪽부터 차례로 서서히 나타남(투명도만) */
@@ -397,7 +399,7 @@ body[data-view="watch"] .mast-alt,body[data-view="hall"] .mast-alt{display:block
 .rated-in .stars svg:nth-child(2){animation-delay:.07s}.rated-in .stars svg:nth-child(3){animation-delay:.14s}
 .rated-in .stars svg:nth-child(4){animation-delay:.21s}.rated-in .stars svg:nth-child(5){animation-delay:.28s}
 @keyframes starIn{from{opacity:0}to{opacity:1}}
-@media (prefers-reduced-motion:reduce){.view-in-r,.view-in-l,.step-fade,.rated-in .stars svg{animation:none}}
+@media (prefers-reduced-motion:reduce){.view-in-r,.view-in-l,.step-fade,.step-r,.step-l,.rated-in .stars svg{animation:none}}
 </style>
 </head>
 <body>
@@ -696,7 +698,7 @@ function navBar(k){
   return`<div class="sheet-nav">${btn(-1,"이전 작품","M14.5 5.5 8 12l6.5 6.5",i===0)}<span class="pos" aria-live="polite">${i+1} / ${list.length}</span>${btn(1,"다음 작품","M9.5 5.5 16 12l-6.5 6.5",i===list.length-1)}</div>`}
 function goStep(st,refocus){
   if(!sheetKey)return;const list=navKeys(sheetKey),nk=list[list.indexOf(sheetKey)+st];if(!nk)return;
-  stepDir=st;history.replaceState(null,"","#film/"+encodeURIComponent(nk));route();
+  stepDir=st;if(!REDUCED()){const root=document.documentElement;root.classList.add("stepping");clearTimeout(goStep.t);goStep.t=setTimeout(()=>root.classList.remove("stepping"),560)}history.replaceState(null,"","#film/"+encodeURIComponent(nk));route();
   if(refocus){const b=sheet.querySelector(`[data-step="${st}"]`);(b&&!b.disabled?b:sheet.querySelector(`[data-step="${-st}"]`))?.focus({preventScroll:true})}}
 /* per-film English title fonts, loaded only when a film page needs one */
 const EF={elegant:"Cormorant+Garamond:ital,wght@1,500;1,600",noir:"Playfair+Display:ital,wght@1,700",epic:"Cinzel:wght@600",typewriter:"Special+Elite",mono:"Courier+Prime:wght@400;700",
@@ -735,7 +737,7 @@ function openSheet(k){
   if(sheet.hidden){homeY=scrollY;$("home").hidden=true;sheet.hidden=false;document.documentElement.classList.add("film")}
   if(was!==k){scrollTo(0,0);sheet.classList.remove("scrolled");$("sTitle").focus({preventScroll:true})}
   if(stepDir&&was&&was!==k&&!REDUCED()){const dir=stepDir>0?"r":"l";
-    sheet.querySelectorAll(".banner .cap,.sbody").forEach(el=>el.classList.add("view-in-"+dir));sheet.querySelector(".banner canvas")?.classList.add("step-fade")}
+    sheet.querySelectorAll(".banner .cap,.sbody").forEach(el=>el.classList.add("step-"+dir));sheet.querySelector(".banner canvas")?.classList.add("step-fade")}
   stepDir=0;
 }
 function closeSheet(){
