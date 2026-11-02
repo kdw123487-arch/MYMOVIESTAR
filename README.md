@@ -15,6 +15,7 @@
 | `data/tmdb_report.md` | 자동 변환 때마다 남는 확인 결과(TMDB에서 못 찾은 작품, 관람등급이 없는 작품 등). |
 | `tools/xlsx_to_json.py` | 엑셀 → JSON 변환기. TMDB에서 포스터·한국 관람등급·국내 스트리밍 정보를 받아 함께 넣습니다. |
 | `.github/workflows/build-data.yml` | 변환기를 자동으로 돌리는 GitHub Action. |
+| `posters/` | 직접 고른 포스터 이미지. 엑셀 '포스터' 칸에 `posters/파일명.jpg`라고 적으면 TMDB 대신 이 파일을 씁니다. |
 | `favicon.svg`, `og.png`, `tmdb-logo.svg` | 아이콘, 공유 미리보기 이미지, TMDB 로고. |
 
 > 예전에 포스터 매칭·색 분석에 쓰던 도구(`tools/match_posters.py`, `tools/poster_colors.py`와 그 Action)는 작업이 끝나 삭제했습니다. 필요하면 git 기록에서 되살릴 수 있습니다.
