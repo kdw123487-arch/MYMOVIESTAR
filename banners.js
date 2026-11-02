@@ -55,7 +55,7 @@ const SCENES={
   for(let y=st/2;y<H;y+=st)for(let t=st/2;t<W;t+=st){if(Math.abs(t-px)<1&&Math.abs(y-py)<1)continue;const dd=Math.hypot(t-cx,y-cy)/(u*1.6);cir(t,y,u*.018,a,Math.max(.08,.55-dd*.35))}
   glow(px,py,u*.3,l,.55);cir(px,py,u*.055,l,1)},
 "r:anatomy-of-a-fall":d=>{const{x,ln,ring,cx,u,W,H,a,ice,l}=d,px=cx+u*.9;
-  for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.18+k*.06;x.strokeStyle=k==7?a:ice;x.lineWidth=1.6;x.stroke()}},
+  for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.3+k*.07;x.strokeStyle=l;x.lineWidth=2;x.stroke()}},
 "r:your-name":d=>{const{x,u,W,H,l:line}=d;
   /* 추락의 해부와 같은 물결선, 선 색은 포인트색(주황) */
   for(let k=0;k<8;k++){const y0=H*(.3+k*.07),amp=u*(.05+k*.012);x.beginPath();for(let t=0;t<=W;t+=6)x.lineTo(t,y0+Math.sin(t/(u*(.9+k*.15))+k)*amp);x.globalAlpha=.5+k*.07;x.strokeStyle=line;x.lineWidth=2.4;x.stroke()}},
@@ -272,10 +272,10 @@ const SCENES={
   for(let j=0,y=-h/2;y<H+h;y+=h/2,j++)for(let i=0,px=(j%2)*w/2-w;px<W+w;px+=w,i++){x.globalAlpha=(i+j)%2?.1:.24;x.beginPath();x.moveTo(px,y-h/2);x.lineTo(px+w/2,y);x.lineTo(px,y+h/2);x.lineTo(px-w/2,y);x.closePath();x.fill()}
   V(d)},
 "r:blade-runner-2049":d=>{const{x,W,H,u,l:line}=d;
-  /* 모래 폭풍의 입자: 같은 간격의 점 격자(하프톤)가 아래쪽 짙은 주황 안개 속에서 커지고 위로 갈수록 작아져 사라짐. 포인트 주황 단색 */
-  {const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,line);x.globalAlpha=.3;x.fillStyle=g;x.fillRect(0,0,W,H)}
+  /* 모래 폭풍의 입자: 같은 간격의 점 격자(하프톤)가 화면 가운데 띠의 짙은 주황 안개 속에서 가장 크고, 위아래로 갈수록 작아져 사라짐. 포인트 주황 단색 */
+  {const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(.42,line);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.32;x.fillStyle=g;x.fillRect(0,0,W,H)}
   const st=u*.055;x.fillStyle=line;
-  for(let j=0,y=st/2;y<H;y+=st,j++)for(let px=st/2+(j%2)*st/2;px<W;px+=st){const t=Math.pow(y/H,1.3);x.globalAlpha=.25+t*.35;x.beginPath();x.arc(px,y,st*.45*t+st*.05,0,7);x.fill()}
+  for(let j=0,y=st/2;y<H;y+=st,j++)for(let px=st/2+(j%2)*st/2;px<W;px+=st){const t=Math.pow(Math.max(0,1-Math.abs(y/H-.42)/.5),1.2);x.globalAlpha=.25+t*.4;x.beginPath();x.arc(px,y,st*.45*t+st*.05,0,7);x.fill()}
   V(d)}
 };
 /* 같은 배너를 쓰는 작품: 원본 하나만 두고 가리킨다(원본을 고치면 함께 바뀜) */

@@ -107,6 +107,49 @@ def film(row, n):
     return out
 
 
+# ---------------- 공유용 작품 페이지 ----------------
+# 메신저·SNS 미리보기는 자바스크립트를 실행하지 않아 index.html#film/... 링크에는 작품 정보가 안 뜬다.
+# 그래서 작품마다 미리보기 정보(제목·한줄소개·포스터)만 담은 작은 페이지 s/<키>.html을 만들고, 열면 바로 그 작품 상세로 넘긴다.
+SITE = "https://kdw123487-arch.github.io/MYMOVIESTAR/"
+SHARE = ROOT / "s"
+
+
+def write_share_pages(films):
+    import html as H
+    SHARE.mkdir(exist_ok=True)
+    keep = set()
+    for f in films:
+        slug = f["key"].split(":", 1)[-1]
+        keep.add(slug + ".html")
+        title = f["ko"] + (f" ({f['en']})" if f.get("en") and f["en"] != f["ko"] else "")
+        desc = f.get("p") or "나만의 영화 시상식, My Movie Star"
+        poster = (f.get("tm") or {}).get("p")
+        img = f"https://image.tmdb.org/t/p/w780{poster}" if poster else SITE + "og.png"
+        target = "../#film/" + urllib.parse.quote(f["key"], safe="")
+        page = f"""<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<title>{H.escape(title)} · My Movie Star</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta property="og:type" content="video.movie">
+<meta property="og:site_name" content="My Movie Star">
+<meta property="og:title" content="{H.escape(title)}">
+<meta property="og:description" content="{H.escape(desc)}">
+<meta property="og:image" content="{H.escape(img)}">
+<meta property="og:url" content="{SITE}s/{slug}.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="{H.escape(desc)}">
+<meta http-equiv="refresh" content="0;url={target}">
+<link rel="canonical" href="{SITE}s/{slug}.html">
+</head><body style="background:#140a0d;color:#efe6dc;font-family:sans-serif">
+<script>location.replace({json.dumps(target)})</script>
+<p><a href="{target}" style="color:#d4b06a">{H.escape(title)} 보러 가기</a></p>
+</body></html>
+"""
+        (SHARE / (slug + ".html")).write_text(page, encoding="utf-8")
+    for old in SHARE.glob("*.html"):
+        if old.name not in keep:
+            old.unlink()
+
 # ---------------- TMDB ----------------
 KEY = os.environ.get("TMDB_KEY", "").strip()
 API = "https://api.themoviedb.org/3"
@@ -271,6 +314,7 @@ def main():
             for p in ((f.get("tm") or {}).get("w") or {}).get(kind) or []:
                 p.pop("l", None)
     OUT.write_text(json.dumps({"films": films, "retired": retired}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    write_share_pages(films)
     if KEY:
         lines = [f"# TMDB 확인 결과 ({date.today().isoformat()})", "",
                  f"- 전체 {len(films)}편 · 포스터 {sum(1 for f in films if (f.get('tm') or {}).get('p'))}편 · "
