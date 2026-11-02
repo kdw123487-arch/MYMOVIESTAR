@@ -249,11 +249,11 @@ const SCENES={
   /* 양옆 비네팅 */
   {const v=x.createLinearGradient(0,0,W,0);v.addColorStop(0,"rgba(0,0,0,.5)");v.addColorStop(.28,"rgba(0,0,0,0)");v.addColorStop(.72,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.5)");x.globalAlpha=1;x.fillStyle=v;x.fillRect(0,0,W,H)}
   x.globalAlpha=1},
-"r:dead-poets-society":d=>{const{x,W,H,u,l:line}=d;
-  /* 저택의 벽지(리전시 스트라이프): 넓은 띠와 가는 선 두 줄이 번갈아 반복되고, 포인트 금색 단색 */
+"r:dead-poets-society":d=>{const{x,W,H,u,a:line}=d;
+  /* 명문 기숙학교의 벽지(리전시 스트라이프): 넓은 띠와 가는 선 두 줄이 번갈아 반복. 포인트(빨강)와 따로 엑셀 배너색(밝은 금색)으로 그림 */
   const st=u*.34,bw=st*.36;x.fillStyle=line;
-  for(let px=st*.3;px<W+st;px+=st){x.globalAlpha=.16;x.fillRect(px,0,bw,H);
-    x.globalAlpha=.32;x.fillRect(px+bw+st*.12,0,Math.max(1.2,u*.005),H);x.fillRect(px+bw+st*.2,0,Math.max(1.2,u*.005),H);
+  for(let px=st*.3;px<W+st;px+=st){x.globalAlpha=.3;x.fillRect(px,0,bw,H);
+    x.globalAlpha=.55;x.fillRect(px+bw+st*.12,0,Math.max(1.2,u*.005),H);x.fillRect(px+bw+st*.2,0,Math.max(1.2,u*.005),H);
     x.fillRect(px-st*.2,0,Math.max(1.2,u*.005),H);x.fillRect(px-st*.12,0,Math.max(1.2,u*.005),H);
 }
   {const gr=x.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.65);gr.addColorStop(.3,"rgba(0,0,0,0)");gr.addColorStop(1,"rgba(0,0,0,.6)");x.globalAlpha=1;x.fillStyle=gr;x.fillRect(0,0,W,H)}

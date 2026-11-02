@@ -119,6 +119,7 @@ html.film .tab[aria-selected="true"]{color:var(--faint)}
 .card:hover .poster canvas,.card:hover img.pimg{filter:brightness(1.08)}
 .card.is-seen .poster{outline-color:var(--line-strong)}
 img.pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease;z-index:1}
+.instant img.pimg{transition:none}
 .has-img img.pimg{opacity:1}
 .has-img .ptitle{display:none}
 .poster.has-img::before{content:"";position:absolute;inset:0 0 auto;height:22%;background:linear-gradient(rgba(10,4,6,.45),transparent);z-index:2;pointer-events:none}
@@ -505,7 +506,10 @@ function decorate(box,key,size="w342",slot){
   const fallback=()=>{if(cv&&!cv.dataset.painted){cv.dataset.painted=1;paint(cv,f,480,720,bannerPal(f))}};
   if(!d.p){fallback();return}
   const img=document.createElement("img");img.className="pimg";img.alt="";img.decoding="async";img.loading="lazy";
+  if(size==="w500")img.loading="eager";
   img.onload=()=>box.classList.add("has-img");img.onerror=()=>{img.remove();fallback()};img.src=IMG+size+d.p;box.appendChild(img);
+  /* 이미 받아 둔 포스터(이전·다음 미리 받기 포함)는 늦게 서서히 나타나지 않고 본문과 함께 바로 보이게 */
+  if(img.complete&&img.naturalWidth)box.classList.add("has-img","instant");
 }
 /* streaming services: search links for the services we know, otherwise the TMDB/JustWatch page */
 const PLAT=[[/netflix/i,q=>"https://www.netflix.com/search?q="+q],[/watcha/i,q=>"https://watcha.com/search?query="+q],
@@ -676,6 +680,7 @@ function renderSheet(k){
       </main></div>`;
   paint(sheet.querySelector(".banner canvas"),f,1600,640,bannerPal(f));decorate(sheet.querySelector(".sposter"),k,"w500");
   requestAnimationFrame(fitBanner);
+  setTimeout(()=>{if(sheetKey===k)preloadNeighbours(k)},300);
   {const d=tmOf(k);
     const a=f.age||d.age,cell=$("ageCell");if(a&&cell){cell.hidden=false;cell.querySelector("dd").innerHTML=ageMark(a,1)+AGE[a][1]}
     const w=d.w,box=$("where");
@@ -696,6 +701,10 @@ function navBar(k){
   const list=navKeys(k),i=list.indexOf(k);if(i<0||list.length<2)return"";
   const btn=(st,lab,path,off)=>`<button class="home-btn" type="button" data-step="${st}" aria-label="${lab}" title="${lab}"${off?" disabled":""}>${ARROW(path)}</button>`;
   return`<div class="sheet-nav">${btn(-1,"이전 작품","M14.5 5.5 8 12l6.5 6.5",i===0)}<span class="pos" aria-live="polite">${i+1} / ${list.length}</span>${btn(1,"다음 작품","M9.5 5.5 16 12l-6.5 6.5",i===list.length-1)}</div>`}
+/* 이전·다음 작품 포스터를 미리 받아 두어, 넘겼을 때 포스터만 뒤늦게 나타나지 않게 */
+const preloaded=new Set();
+function preloadNeighbours(k){const list=navKeys(k),i=list.indexOf(k);
+  [list[i-1],list[i+1]].forEach(n=>{const p=n&&tmOf(n).p;if(p&&!preloaded.has(p)){preloaded.add(p);const im=new Image();im.decoding="async";im.src=IMG+"w500"+p}})}
 function goStep(st,refocus){
   if(!sheetKey)return;const list=navKeys(sheetKey),nk=list[list.indexOf(sheetKey)+st];if(!nk)return;
   stepDir=st;if(!REDUCED()){const root=document.documentElement;root.classList.add("stepping");clearTimeout(goStep.t);goStep.t=setTimeout(()=>root.classList.remove("stepping"),560)}history.replaceState(null,"","#film/"+encodeURIComponent(nk));route();
