@@ -182,9 +182,13 @@ const SCENES={
     if(i<n){const q=fr(i+1);x.save();x.beginPath();x.rect(...R);x.clip();x.filter="blur("+bw*.4+"px)";x.globalAlpha=.3;x.strokeStyle="#000";x.lineWidth=bw*.7;x.strokeRect(q[0]-bw*.25,q[1]-bw*.25,q[2]+bw*.5,q[3]+bw*.5);x.restore()}
     x.globalAlpha=.22;x.strokeStyle=l;x.lineWidth=1;x.strokeRect(R[0]+.5,R[1]+.5,R[2]-1,R[3]-1)}
   glow(cx,cy,u*.22,l,.2)},
-"r:leon-the-professional":d=>{const{cir,ln,W,H,u,a,l}=d;
-  cir(W*.9,H*.5,u*.9,a,.3);
-  ln(W*.22,0,W*.22,H,l,2,.55);cir(W*.22,H*.72,u*.06,l,.9)},
+"r:leon-the-professional":d=>{const{x,W,H,u,l:line}=d;
+  /* 닫힌 블라인드: 같은 두께·같은 간격의 가로 살이 화면 전체를 덮고, 오른쪽 창가에서 들어오는 빛이 살 사이로만 새어 나와 왼쪽으로 갈수록 어두워짐. 포인트 금빛 단색 */
+  const sl=u*.08,gap=sl*.22;
+  for(let y=0;y<H;y+=sl){const g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,line);
+    x.globalAlpha=.14;x.fillStyle=g;x.fillRect(0,y,W,sl-gap);x.globalAlpha=.55;x.fillRect(0,y+sl-gap,W,gap*.6)}
+  {const gr=x.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.65);gr.addColorStop(.3,"rgba(0,0,0,0)");gr.addColorStop(1,"rgba(0,0,0,.6)");x.globalAlpha=1;x.fillStyle=gr;x.fillRect(0,0,W,H)}
+  x.filter="none";x.globalAlpha=1},
 "r:chungking-express":d=>{const{x,rect,W,H,u,r,a,l}=d;
   x.save();x.filter="blur("+Math.max(3,u*.022)+"px)";
   let y=H*.04;while(y<H*.96){const hh=u*(.025+r()*.09);rect(-W*.1,y,W*1.2,hh,r()<.28?l:a,.3+r()*.6);y+=hh+u*(.02+r()*.07)}
