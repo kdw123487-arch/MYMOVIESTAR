@@ -497,7 +497,7 @@ function decorate(box,key,size="w342",slot){
   const fallback=()=>{if(cv&&!cv.dataset.painted){cv.dataset.painted=1;paint(cv,f,480,720,bannerPal(f))}};
   if(!d.p){fallback();return}
   const img=document.createElement("img");img.className="pimg";img.alt="";img.decoding="async";img.loading="lazy";
-  img.onload=()=>box.classList.add("has-img");img.onerror=()=>{img.remove();fallback()};img.src=d.p.startsWith("posters/")?d.p:IMG+size+d.p;/* 직접 고른 포스터는 저장소 posters/ 폴더에서 */box.appendChild(img);
+  img.onload=()=>box.classList.add("has-img");img.onerror=()=>{img.remove();fallback()};img.src=IMG+size+d.p;box.appendChild(img);
 }
 /* streaming services: search links for the services we know, otherwise the TMDB/JustWatch page */
 const PLAT=[[/netflix/i,q=>"https://www.netflix.com/search?q="+q],[/watcha/i,q=>"https://watcha.com/search?query="+q],
