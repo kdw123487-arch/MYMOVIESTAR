@@ -166,10 +166,9 @@ const SCENES={
   x.shadowBlur=0;x.globalAlpha=1},
 "r:the-shawshank-redemption":d=>{const{poly,W,H,u,a,l,r}=d,n=14;
   for(let i=0;i<n;i++){const x0=W*(i/n)+r()*u*.2,w=u*(.08+r()*.18),sk=H*.5;poly([[x0,0],[x0+w,0],[x0+w-sk,H],[x0-sk,H]],i%4?a:l,.05+r()*.12)}},
-"r:cinema-paradiso":d=>{const{x,poly,rect,W,H,u,a,l,r}=d,sy=H*.3,n=22;
-  x.save();x.filter="blur("+Math.max(2,u*.012)+"px)";
-  for(let i=0;i<n;i++){const x0=W*.12+W*.9*i/n,x1=x0+W*.9/n+1,t0=(x0-W*.12)/(W*.9),t1=(x1-W*.12)/(W*.9),sp=H*.55;
-    poly([[x0,sy-sp*t0*.5],[x1,sy-sp*t1*.5],[x1,sy+sp*t1*.5+H*.2*t1],[x0,sy+sp*t0*.5+H*.2*t0]],i%7===3?l:a,.05+r()*.17)}
+"r:cinema-paradiso":d=>{const{x,rect,W,H,u,r,a,l}=d;
+  x.save();x.filter="blur("+Math.max(3,u*.022)+"px)";
+  let y=H*.04;while(y<H*.96){const hh=u*(.025+r()*.09);rect(-W*.1,y,W*1.2,hh,r()<.28?l:a,.3+r()*.6);y+=hh+u*(.02+r()*.07)}
   x.restore()},
 "r:life-is-beautiful":d=>{const{x,W,H,u,l:line}=d;
   /* 멀리 닿는 노래: 수용소에 울려 퍼진 뱃노래처럼 화면 바깥 한 점에서 같은 간격으로 퍼져 나가는 동심원 물결. 멀어질수록 옅게. 포인트 하늘색 단색 */
