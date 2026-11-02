@@ -30,7 +30,8 @@ COLUMNS = {
 # 기본 문양. "전용 배너"는 banners.js에 그 작품 전용 배너가 있다는 표시라 JSON에 넣지 않는다.
 MOTIFS = {"waves", "peaks", "arcade", "grid", "dots"}
 OWN_BANNER = "전용 배너"
-FONTS = {"classic", "elegant", "noir", "epic", "typewriter", "mono", "bold", "scifi", "gothic", "western", "retro", "script", "hand", "comic", "light", "neon"}
+FONTS = {"classic", "elegant", "noir", "epic", "typewriter", "mono", "bold", "scifi", "gothic", "western", "retro", "script", "hand", "comic", "light", "neon",
+         "humanist", "didone", "sans", "round", "brush", "deco", "slab", "thin"}
 AGES = {"전체": "ALL", "ALL": "ALL", "12": "12", "15": "15", "18": "18", "19": "18", "청불": "18", "청소년관람불가": "18"}
 HEX = re.compile(r"#[0-9a-fA-F]{6}")
 
