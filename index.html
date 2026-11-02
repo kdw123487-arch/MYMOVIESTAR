@@ -62,7 +62,7 @@ img{max-width:100%}
 /* section index */
 /* bottom tab bar, fixed on every screen */
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;justify-content:center;gap:clamp(8px,8vw,96px);padding:6px max(12px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px));background:rgba(20,10,13,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line)}
-html.film .tabs{background:rgba(var(--bg),.94)}
+html.film .tabs{background:color-mix(in srgb,var(--bgc) 94%,transparent)}
 .tab{position:relative;flex:0 1 96px;background:none;border:0;color:var(--faint);cursor:pointer;padding:6px 4px 4px;display:grid;justify-items:center;gap:3px;border-radius:10px;transition:color .2s}
 .tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
 .tab .t{font-size:11.5px;letter-spacing:.04em}
@@ -237,14 +237,18 @@ a.open:hover{background-size:100% 1px}
 
 /* film page */
 :root{--bg:20,10,13}
-html.film,html.film body{background:rgb(var(--bg));transition:background-color .8s ease}
+/* 상세 페이지 배경색은 --bgc 하나로: 바탕·배너 가장자리 그라데이션·위아래 막대가 모두 같은 값을 같은 속도로 따라 바뀜 */
+@property --bgc{syntax:"<color>";inherits:true;initial-value:rgb(20,10,13)}
+html{--bgc:rgb(var(--bg))}
+html.film{transition:--bgc .8s ease}
+html.film,html.film body{background:var(--bgc)}
 /* each film brings its own point colour (포인트색 column); lines and dim labels are mixed from it */
-.sheet{--gold:rgb(var(--ac,212,176,106));--gold-soft:color-mix(in srgb,var(--gold) 70%,rgb(var(--bg)));--line:color-mix(in srgb,var(--gold) 22%,transparent);--line-strong:color-mix(in srgb,var(--gold) 50%,transparent);position:relative;min-height:100vh;background:rgb(var(--bg));transition:background-color .8s ease;animation:fadeIn .45s ease}
+.sheet{--gold:rgb(var(--ac,212,176,106));--gold-soft:color-mix(in srgb,var(--gold) 70%,rgb(var(--bg)));--line:color-mix(in srgb,var(--gold) 22%,transparent);--line-strong:color-mix(in srgb,var(--gold) 50%,transparent);position:relative;min-height:100vh;background:var(--bgc);animation:fadeIn .45s ease}
 .sheet.leaving{animation:fadeOut .38s ease forwards;pointer-events:none}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes fadeOut{from{opacity:1}to{opacity:0;transform:scale(.985)}}
-.sheet-bar{position:sticky;top:0;z-index:5;height:56px;display:flex;align-items:center;padding:0 max(14px,env(safe-area-inset-left,0px));background:linear-gradient(rgba(var(--bg),.7),rgba(var(--bg),0));transition:background-color .25s,box-shadow .25s}
-.sheet.scrolled .sheet-bar{background:rgba(var(--bg),.96);box-shadow:0 1px 0 var(--line)}
+.sheet-bar{position:sticky;top:0;z-index:5;height:56px;display:flex;align-items:center;padding:0 max(14px,env(safe-area-inset-left,0px));background:linear-gradient(color-mix(in srgb,var(--bgc) 70%,transparent),color-mix(in srgb,var(--bgc) 0%,transparent));transition:box-shadow .25s}
+.sheet.scrolled .sheet-bar{background:color-mix(in srgb,var(--bgc) 96%,transparent);box-shadow:0 1px 0 var(--line)}
 .home-btn{display:inline-grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:rgba(0,0,0,.22);color:var(--ivory);cursor:pointer;transition:background-color .2s}
 .home-btn:hover{background:rgba(0,0,0,.4)}
 /* 상세 페이지 이전·다음 작품: 들어온 탭의 정렬·검색 순서를 따른다 */
@@ -252,9 +256,9 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 .sheet-nav .home-btn:disabled{opacity:.3;cursor:default;background:rgba(0,0,0,.22)}
 .sheet-nav .pos{min-width:52px;text-align:center;font:500 12.5px/1 var(--f-sans);letter-spacing:.04em;color:var(--muted);font-variant-numeric:tabular-nums}
 .home-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
-.banner{position:relative;margin-top:-56px;width:100%;height:min(40vw,66vh);overflow:hidden;background:#000}
+.banner{position:relative;margin-top:-56px;width:100%;height:min(40vw,66vh);overflow:hidden;background:var(--bgc)}
 .banner canvas{display:block;width:100%;height:100%;object-fit:cover}
-.banner::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--bg),.35) 0,transparent 30%,transparent 45%,rgb(var(--bg)) 100%)}
+.banner::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bgc) 35%,transparent) 0,transparent 30%,transparent 45%,var(--bgc) 100%)}
 .cap{position:absolute;inset:auto 0 0;z-index:1;max-width:1120px;margin:0 auto;padding:0 calc(364px + max(16px,env(safe-area-inset-left,0px))) 40px max(16px,env(safe-area-inset-left,0px));display:grid;gap:8px}
 .cap h2:focus,.rf-head h3:focus{outline:none}
 .cap h2{margin:0;font-size:clamp(32px,5.4vw,60px);line-height:1.12;font-weight:700;letter-spacing:-.01em;text-wrap:balance;word-break:keep-all;overflow-wrap:break-word;text-shadow:0 2px 24px rgba(0,0,0,.5)}
@@ -324,7 +328,7 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
 
 @media (max-width:820px){
   .banner{height:75vw}
-  .banner::after{background:linear-gradient(180deg,rgba(var(--bg),.4) 0,rgba(var(--bg),.2) 22%,rgba(var(--bg),.75) 58%,rgb(var(--bg)) 100%)}
+  .banner::after{background:linear-gradient(180deg,color-mix(in srgb,var(--bgc) 40%,transparent) 0,color-mix(in srgb,var(--bgc) 20%,transparent) 22%,color-mix(in srgb,var(--bgc) 75%,transparent) 58%,var(--bgc) 100%)}
   .cap{padding:0 calc(36% + 16px) 24px max(16px,env(safe-area-inset-left,0px));gap:6px}
   .cap h2{font-size:clamp(21px,6.2vw,30px);line-height:1.2}
   .cap .en{font-size:clamp(12px,3.4vw,16px)}
@@ -346,7 +350,7 @@ html.film,html.film body{background:rgb(var(--bg));transition:background-color .
   .toolbar{flex-direction:column;align-items:stretch}.tools{justify-content:space-between;gap:14px}.search{flex:1}.search input{width:100%}
   .panel{padding:28px 20px 24px}
 }
-@media (prefers-reduced-motion:reduce){.sheet,.sheet.leaving,.panel{animation:none}html.film,html.film body,.sheet{transition:none}img.pimg{transition:none}}
+@media (prefers-reduced-motion:reduce){.sheet,.sheet.leaving,.panel{animation:none}html.film{transition:none}img.pimg{transition:none}}
 /* 첫 화면: 위쪽 여백을 줄여 첫 줄 카드의 제목·연도·연령 표시까지 보이게 */
 .wrap{padding-top:40px}
 .mast{padding-bottom:20px}
@@ -391,7 +395,7 @@ body[data-view="watch"] .mast-alt,body[data-view="hall"] .mast-alt{display:block
 /* 상세 페이지 이전·다음: 글과 포스터는 넘기는 방향에서 살짝 밀려 들어오고, 배너 그림은 부드럽게 나타남(배경색은 html.film 전환으로 서서히) */
 .step-fade{animation:fadeIn .5s cubic-bezier(.2,.8,.2,1)}
 .step-r{animation:viewInR .5s cubic-bezier(.2,.8,.2,1)}.step-l{animation:viewInL .5s cubic-bezier(.2,.8,.2,1)}
-html.film.stepping,html.film.stepping body,html.film.stepping .sheet{transition:background-color .5s cubic-bezier(.2,.8,.2,1)}
+html.film.stepping{transition:--bgc .5s cubic-bezier(.2,.8,.2,1)}
 .mast.view-in-r,.mast.view-in-l{animation-name:mastIn}
 @keyframes mastIn{from{opacity:0}to{opacity:1}}
 /* 평점 남김: 관심·평점 버튼이 흐려지며 사라지고, 별점이 왼쪽부터 차례로 서서히 나타남(투명도만) */
