@@ -266,7 +266,7 @@ html.film,html.film body{background:var(--bgc)}
 .cap h2{margin:0;font-size:clamp(32px,5.4vw,60px);line-height:1.12;font-weight:700;letter-spacing:-.01em;text-wrap:balance;word-break:keep-all;overflow-wrap:break-word;text-shadow:0 2px 24px rgba(0,0,0,.5)}
 .cap .en{font-size:clamp(18px,2.2vw,26px);color:var(--gold);line-height:1.25}
 /* 영문 로고(TMDB): 오른쪽 단 맨 아래, 볼 수 있는 곳 다음 */
-.end-logo{padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:center}.end-logo img{display:block;max-width:min(200px,60vw);max-height:80px;width:auto;height:auto;opacity:.9}.end-logo.white img{filter:brightness(0) invert(.94)}
+.end-logo{padding-top:4px;display:flex;justify-content:center}.end-logo img{display:block;max-width:min(200px,60vw);max-height:80px;width:auto;height:auto;opacity:.9}.end-logo.white img{filter:brightness(0) invert(.94)}
 .ef-elegant{font-family:"Cormorant Garamond",serif!important;font-style:italic;font-weight:500;font-size:clamp(22px,2.6vw,32px)!important}
 .ef-noir{font-family:"Playfair Display",serif!important;font-style:italic;font-weight:700}
 .ef-epic{font-family:"Cinzel",serif!important;font-style:normal!important;font-weight:600;letter-spacing:.08em}
@@ -696,7 +696,7 @@ function renderSheet(k){
     <div class="sbody">
       <aside class="side"><div class="sposter" aria-hidden="true"><canvas></canvas></div>
         ${f.aw?`<div class="honor"><h4>수상</h4>${esc(f.aw)}</div>`:""}
-        <div class="where" id="where"></div>${f.logo&&tmOf(k).logo?`<div class="end-logo${f.logo==="w"?" white":""}"><img src="${IMG}w500${tmOf(k).logo}" alt="${esc(f.en)} 로고" loading="lazy" onerror="this.parentNode.remove()"></div>`:""}</aside>
+        <div class="where" id="where"></div>${f.logo&&(f.lp||tmOf(k).logo)?`<div class="end-logo${f.logo==="w"?" white":""}"><img src="${IMG}w500${f.lp||tmOf(k).logo}" alt="${esc(f.en)} 로고" loading="lazy" onerror="this.parentNode.remove()"></div>`:""}</aside>
       <main><dl class="factsheet">${fx("감독",esc(f.dir))+fx("개봉",esc(f.y))+fx("러닝타임",f.rt?f.rt+"분":"")+fx("장르",esc(f.g))+fx("제작 국가",esc(f.n))+`<div id="ageCell" hidden><dt>관람등급</dt><dd></dd></div>`+fx("출연",esc(f.cast),1)}</dl>
         ${f.s?`<section class="sec"><h3>Synopsis</h3><p>${esc(f.s)}</p></section>`:""}
         ${f.w?`<section class="sec"><h3>Why it's nominated</h3><p>${esc(f.w)}</p></section>`:""}
