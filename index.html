@@ -265,8 +265,8 @@ html.film,html.film body{background:var(--bgc)}
 .cap h2:focus,.rf-head h3:focus{outline:none}
 .cap h2{margin:0;font-size:clamp(32px,5.4vw,60px);line-height:1.12;font-weight:700;letter-spacing:-.01em;text-wrap:balance;word-break:keep-all;overflow-wrap:break-word;text-shadow:0 2px 24px rgba(0,0,0,.5)}
 .cap .en{font-size:clamp(18px,2.2vw,26px);color:var(--gold);line-height:1.25}
-/* 영문 제목 로고(TMDB): 제목 아래 작게, 그림자로 배너 위에서도 또렷하게 */
-.cap .en.logo{margin-top:10px;line-height:0}.cap .en.logo.white img{filter:brightness(0) invert(.94) drop-shadow(0 2px 12px rgba(0,0,0,.5))}.cap .en.logo img{display:block;max-width:min(240px,50vw);max-height:56px;width:auto;height:auto;filter:drop-shadow(0 2px 12px rgba(0,0,0,.5))}
+/* 영문 로고(TMDB): 상세 페이지 맨 아래, 엔딩 크레딧처럼 가운데에 */
+.end-logo{grid-column:1/-1;grid-row:2;justify-self:center;margin-top:8px;padding-top:40px;border-top:1px solid var(--line);width:100%;display:flex;justify-content:center}.end-logo img{display:block;max-width:min(260px,60vw);max-height:90px;width:auto;height:auto;opacity:.9}.end-logo.white img{filter:brightness(0) invert(.94)}
 .ef-elegant{font-family:"Cormorant Garamond",serif!important;font-style:italic;font-weight:500;font-size:clamp(22px,2.6vw,32px)!important}
 .ef-noir{font-family:"Playfair Display",serif!important;font-style:italic;font-weight:700}
 .ef-epic{font-family:"Cinzel",serif!important;font-style:normal!important;font-weight:600;letter-spacing:.08em}
@@ -353,7 +353,7 @@ html.film,html.film body{background:var(--bgc)}
   .cap{padding:0 calc(36% + 16px) 24px max(16px,env(safe-area-inset-left,0px));gap:6px}
   .cap h2{font-size:clamp(21px,6.2vw,30px);line-height:1.2}
   .cap .en{font-size:clamp(12px,3.4vw,16px)}
-  .cap .en.logo img{max-height:36px;max-width:46vw}
+  .end-logo{grid-column:1;grid-row:auto}.end-logo img{max-height:64px}
   .sbody{grid-template-columns:1fr;gap:0;padding-top:20px}
   .sbody>main,.side{grid-column:auto;grid-row:auto}
   .side{order:-1;margin-top:-170px;gap:20px;margin-bottom:28px}
@@ -692,7 +692,7 @@ function renderSheet(k){
   const f=info(k),e=entry(k),seen=e?.status==="seen",want=e?.status==="want",listed=!!BY_KEY[k];
   const fx=(t,v,full)=>v?`<div${full?' class="full"':""}><dt>${t}</dt><dd>${v}</dd></div>`:"";
   sheet.innerHTML=`<div class="sheet-bar"><button class="home-btn" type="button" data-leave aria-label="홈으로" title="홈으로"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h4.5v-5.5h4V20h4.5V9.5"/></svg></button>${navBar(k)}<button class="home-btn share-btn" type="button" data-share="${k}" aria-label="공유하기" title="공유하기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3.5"/><path d="m7.5 8 4.5-4.5L16.5 8"/><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"/></svg></button></div>
-    <header class="banner"><canvas aria-hidden="true"></canvas><div class="cap"><h2 id="sTitle" tabindex="-1">${esc(f.ko)}</h2>${f.logo&&tmOf(k).logo?`<div class="en logo${f.logo==="w"?" white":""}" lang="en"><img src="${IMG}w500${tmOf(k).logo}" alt="${esc(f.en)}" onerror="this.parentNode.classList.remove('logo');this.parentNode.textContent=this.alt"></div>`:f.en&&f.en!==f.ko?`<div class="en${f.ef&&f.ef!=="classic"?" ef-"+f.ef:""}" lang="en">${esc(f.en)}</div>`:""}</div></header>
+    <header class="banner"><canvas aria-hidden="true"></canvas><div class="cap"><h2 id="sTitle" tabindex="-1">${esc(f.ko)}</h2>${f.en&&f.en!==f.ko?`<div class="en${f.ef&&f.ef!=="classic"?" ef-"+f.ef:""}" lang="en">${esc(f.en)}</div>`:""}</div></header>
     <div class="sbody">
       <aside class="side"><div class="sposter" aria-hidden="true"><canvas></canvas></div>
         ${f.aw?`<div class="honor"><h4>수상</h4>${esc(f.aw)}</div>`:""}
@@ -704,7 +704,7 @@ function renderSheet(k){
         <section class="sec"><h3>My rating</h3><div class="mybox">${seen
           ?`<div>${stars(e.rating)}</div>${e.review?`<blockquote>${esc(e.review)}</blockquote>`:""}<p class="rate-note">평점 수정은 평점 탭에서 할 수 있어요.</p>`
           :`<p style="color:var(--faint)">아직 평점을 남기지 않았어요.</p><div class="acts">${listed?heartBtn(k,want):""}<button class="txt gold" type="button" data-review="${k}">평점 남기기</button></div>`}</div></section>
-      </main></div>`;
+      </main>${f.logo&&tmOf(k).logo?`<div class="end-logo${f.logo==="w"?" white":""}"><img src="${IMG}w500${tmOf(k).logo}" alt="${esc(f.en)} 로고" loading="lazy" onerror="this.parentNode.remove()"></div>`:""}</div>`;
   paint(sheet.querySelector(".banner canvas"),f,1600,640,bannerPal(f));decorate(sheet.querySelector(".sposter"),k,"w500");
   requestAnimationFrame(fitBanner);
   setTimeout(()=>{if(sheetKey===k)preloadNeighbours(k)},300);
