@@ -77,10 +77,14 @@ def film(row, n):
     pts = [f[k] for k in ("pt1", "pt2", "pt3") if f.get(k)]
     if pts:
         out["pt"] = pts
-    if f.get("logo", "").upper() in ("O", "Y", "1", "TRUE", "예"):
+    lg = f.get("logo", "").strip()                   # 영문로고: 비우면 로고 원본, 흰색=흰색으로, X=표시 안 함
+    if lg.startswith("/"):                           # 직접 고른 TMDB 로고 경로(/abc.png)
         out["logo"] = 1
-    elif f.get("logo", "").strip() in ("흰색", "W", "w", "white"):   # 한 가지 색 로고를 흰색으로 바꿔 배경 위에서 또렷하게
+        out["lp"] = lg
+    elif lg in ("흰색", "W", "w", "white"):
         out["logo"] = "w"
+    elif lg.upper() not in ("X", "N", "NO", "아니오"):
+        out["logo"] = 1
     if f.get("nf", "").upper() in ("O", "Y", "1", "TRUE", "예"):
         out["nf"] = 1
     if f.get("age"):
