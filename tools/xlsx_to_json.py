@@ -79,6 +79,8 @@ def film(row, n):
         out["pt"] = pts
     if f.get("logo", "").upper() in ("O", "Y", "1", "TRUE", "예"):
         out["logo"] = 1
+    elif f.get("logo", "").strip() in ("흰색", "W", "w", "white"):   # 한 가지 색 로고를 흰색으로 바꿔 배경 위에서 또렷하게
+        out["logo"] = "w"
     if f.get("nf", "").upper() in ("O", "Y", "1", "TRUE", "예"):
         out["nf"] = 1
     if f.get("age"):

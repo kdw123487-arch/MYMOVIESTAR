@@ -266,7 +266,7 @@ html.film,html.film body{background:var(--bgc)}
 .cap h2{margin:0;font-size:clamp(32px,5.4vw,60px);line-height:1.12;font-weight:700;letter-spacing:-.01em;text-wrap:balance;word-break:keep-all;overflow-wrap:break-word;text-shadow:0 2px 24px rgba(0,0,0,.5)}
 .cap .en{font-size:clamp(18px,2.2vw,26px);color:var(--gold);line-height:1.25}
 /* 영문 제목 로고(TMDB): 제목 아래 작게, 그림자로 배너 위에서도 또렷하게 */
-.cap .en.logo{margin-top:10px;line-height:0}.cap .en.logo img{display:block;max-width:min(320px,60vw);max-height:72px;width:auto;height:auto;filter:drop-shadow(0 2px 12px rgba(0,0,0,.5))}
+.cap .en.logo{margin-top:10px;line-height:0}.cap .en.logo.white img{filter:brightness(0) invert(.94) drop-shadow(0 2px 12px rgba(0,0,0,.5))}.cap .en.logo img{display:block;max-width:min(320px,60vw);max-height:72px;width:auto;height:auto;filter:drop-shadow(0 2px 12px rgba(0,0,0,.5))}
 .ef-elegant{font-family:"Cormorant Garamond",serif!important;font-style:italic;font-weight:500;font-size:clamp(22px,2.6vw,32px)!important}
 .ef-noir{font-family:"Playfair Display",serif!important;font-style:italic;font-weight:700}
 .ef-epic{font-family:"Cinzel",serif!important;font-style:normal!important;font-weight:600;letter-spacing:.08em}
@@ -692,7 +692,7 @@ function renderSheet(k){
   const f=info(k),e=entry(k),seen=e?.status==="seen",want=e?.status==="want",listed=!!BY_KEY[k];
   const fx=(t,v,full)=>v?`<div${full?' class="full"':""}><dt>${t}</dt><dd>${v}</dd></div>`:"";
   sheet.innerHTML=`<div class="sheet-bar"><button class="home-btn" type="button" data-leave aria-label="홈으로" title="홈으로"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h4.5v-5.5h4V20h4.5V9.5"/></svg></button>${navBar(k)}<button class="home-btn share-btn" type="button" data-share="${k}" aria-label="공유하기" title="공유하기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3.5"/><path d="m7.5 8 4.5-4.5L16.5 8"/><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"/></svg></button></div>
-    <header class="banner"><canvas aria-hidden="true"></canvas><div class="cap"><h2 id="sTitle" tabindex="-1">${esc(f.ko)}</h2>${f.logo&&tmOf(k).logo?`<div class="en logo" lang="en"><img src="${IMG}w500${tmOf(k).logo}" alt="${esc(f.en)}" onerror="this.parentNode.classList.remove('logo');this.parentNode.textContent=this.alt"></div>`:f.en&&f.en!==f.ko?`<div class="en${f.ef&&f.ef!=="classic"?" ef-"+f.ef:""}" lang="en">${esc(f.en)}</div>`:""}</div></header>
+    <header class="banner"><canvas aria-hidden="true"></canvas><div class="cap"><h2 id="sTitle" tabindex="-1">${esc(f.ko)}</h2>${f.logo&&tmOf(k).logo?`<div class="en logo${f.logo==="w"?" white":""}" lang="en"><img src="${IMG}w500${tmOf(k).logo}" alt="${esc(f.en)}" onerror="this.parentNode.classList.remove('logo');this.parentNode.textContent=this.alt"></div>`:f.en&&f.en!==f.ko?`<div class="en${f.ef&&f.ef!=="classic"?" ef-"+f.ef:""}" lang="en">${esc(f.en)}</div>`:""}</div></header>
     <div class="sbody">
       <aside class="side"><div class="sposter" aria-hidden="true"><canvas></canvas></div>
         ${f.aw?`<div class="honor"><h4>수상</h4>${esc(f.aw)}</div>`:""}
