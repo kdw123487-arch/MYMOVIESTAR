@@ -25,7 +25,7 @@ COLUMNS = {
     "키": "key", "제목": "ko", "원제": "en", "연도": "y", "국가": "n", "장르": "g",
     "러닝타임": "rt", "감독": "dir", "출연": "cast", "수상": "aw", "한줄소개": "p",
     "줄거리": "s", "추천이유": "w", "관람포인트1": "pt1", "관람포인트2": "pt2", "관람포인트3": "pt3",
-    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef", "배경색": "bg", "포인트색": "ac", "배너색": "bc", "포스터": "poster",
+    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef", "배경색": "bg", "포인트색": "ac", "배너색": "bc", "포스터": "poster", "다른 이름": "al",
 }
 # 기본 문양. "전용 배너"는 banners.js에 그 작품 전용 배너가 있다는 표시라 JSON에 넣지 않는다.
 MOTIFS = {"waves", "peaks", "arcade", "grid", "dots"}
@@ -68,7 +68,7 @@ def film(row, n):
         if not f.get(need):
             fail(n, f"'{[k for k, v in COLUMNS.items() if v == need][0]}' 칸이 비어 있습니다.")
     out = {"key": f.get("key") or slug(f["en"]), "ko": f["ko"], "en": f["en"]}
-    for k in ("y", "n", "g", "dir", "cast", "aw", "p", "s", "w", "poster"):
+    for k in ("y", "n", "g", "dir", "cast", "aw", "p", "s", "w", "poster", "al"):
         if f.get(k):
             out[k] = f[k]
     for k in ("rt", "tmdb"):

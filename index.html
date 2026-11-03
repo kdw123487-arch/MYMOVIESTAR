@@ -162,6 +162,8 @@ a.open:hover{background-size:100% 1px}
 .age.a18{background:#a65556}
 .age.lg{min-width:24px;height:21px;border-radius:5px;font-size:11px}.age.lg.ALL{font-size:9px}
 .sub{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.hit{font-size:12px;color:var(--gold);opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nores .sg{padding:0;font-size:inherit}
 .empty{margin:72px auto;max-width:420px;text-align:center;display:grid;gap:14px;justify-items:center;color:var(--muted)}
 .empty .big{font-size:21px;font-weight:500;color:var(--gold)}
 .empty p{margin:0}
@@ -597,10 +599,11 @@ function buildGenres(){
 }
 function applyList(){
   curSort=nomSort.set(curSort);
-  const g=$("nomGrid"),sorted=[...FILMS].sort((a,b)=>cmpFilm(curSort,a,b));let n=0;
-  const q=curQ.trim().toLowerCase();
-  sorted.forEach(f=>{const el=cards[f.key],on=(curGenre==="전체"||tagsOf(f).has(curGenre))&&matchQ(f,q);el.hidden=!on;if(on)n++;g.appendChild(el)});
-  $("nomCount").textContent=`${n}편`;$("nomNone").hidden=n>0;
+  const g=$("nomGrid"),q=curQ,hits=new Map(FILMS.map(f=>[f.key,searchHit(f,q)]));let n=0;
+  const sorted=[...FILMS].sort((a,b)=>tokens(q).length&&(hits.get(b.key)?.score||0)-(hits.get(a.key)?.score||0)||cmpFilm(curSort,a,b));
+  sorted.forEach(f=>{const el=cards[f.key],h=hits.get(f.key),on=(curGenre==="전체"||tagsOf(f).has(curGenre))&&!!h;el.hidden=!on;if(on)n++;
+    let hn=el.querySelector(".hit");if(on&&h.note){if(!hn){hn=document.createElement("div");hn.className="hit";el.querySelector(".sub").after(hn)}hn.textContent=h.note}else hn?.remove();g.appendChild(el)});
+  $("nomCount").textContent=`${n}편`;$("nomNone").hidden=n>0;if(!n)noResult("nomNone","q",q,FILMS.filter(f=>curGenre==="전체"||tagsOf(f).has(curGenre)));
   $("genres").querySelectorAll(".genre").forEach(b=>b.setAttribute("aria-pressed",b.dataset.genre===curGenre));
   fitAwards($("nomGrid"));
 }
@@ -629,7 +632,47 @@ function makeSort(box,onPick){
 }
 const nomSort=makeSort($("sortBox"),v=>{curSort=v;saveSort();applyList()});
 function saveSort(){store.set("mymoviestar.sort",curSort)}
-const matchQ=(f,q)=>!q||[f.ko,f.en,f.dir,f.cast,f.g,f.y].join(" ").toLowerCase().includes(q);
+/* ---------- 검색 ----------
+   · 띄어쓰기·기호·악센트 무시(라라 랜드 = 라라랜드, Amélie = amelie)
+   · 초성 검색(ㅇㅅㅇ → 인셉션)
+   · 여러 단어는 모두 맞아야 함(놀란 SF)
+   · 다른 이름(엑셀 '다른 이름' 칸)도 찾음
+   · 결과는 제목이 맞는 작품부터, 카드에 어디서 맞았는지 표시
+   · 결과가 없으면 가장 비슷한 제목을 제안 */
+const CHO="ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
+const normS=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").normalize("NFC").toLowerCase().replace(/[^0-9a-zㄱ-ㆎ가-힣぀-ヿ一-鿿]/g,"");
+const choS=s=>[...normS(s)].map(c=>{const n=c.charCodeAt(0)-0xac00;return n>=0&&n<11172?CHO[Math.floor(n/588)]:c}).join("");
+const isCho=t=>/^[ㄱ-ㅎ]+$/.test(t);
+/* 한글을 자모로 풀기(놀란≈놀런, 디카프리오≈디캐프리오처럼 한 글자 표기 차이를 잡으려고) */
+const JUNG="ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ",JONG=" ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ";
+const jamo=s=>[...s].map(c=>{const n=c.charCodeAt(0)-0xac00;return n>=0&&n<11172?CHO[Math.floor(n/588)]+JUNG[Math.floor(n%588/28)]+(n%28?JONG[n%28]:""):c}).join("");
+const FIELDS=[["ko","",100],["en","",95],["al","다른 이름",90],["dir","감독",60],["cast","출연",50],["g","장르",30],["y","개봉",30]];
+const searchIndex=new WeakMap();
+function idx(f){let v=searchIndex.get(f);if(!v){v=FIELDS.map(([k,lab,w])=>{const raw=String(f[k]||"");
+  const parts=k==="cast"||k==="al"||k==="dir"?raw.split(/\s*[,·]\s*/):[raw];return{k,lab,w,parts:parts.map(p=>({p,n:normS(p),c:choS(p),j:String(p).split(/\s+/).map(x=>jamo(normS(x))).filter(Boolean)}))}});searchIndex.set(f,v)}return v}
+const tokens=q=>String(q||"").trim().split(/\s+/).filter(Boolean);
+/* 한 단어가 한 작품에서 맞는 가장 좋은 곳: {w(점수), lab, p(맞은 값)} 또는 null */
+function hitTok(f,t){const n=normS(t),cho=isCho(t);if(!n&&!cho)return{w:0};let best=null;
+  for(const fd of idx(f))for(const pt of fd.parts){const at=cho?pt.c.indexOf(t):pt.n.indexOf(n);if(at<0)continue;
+    const w=fd.w+(at===0?8:0)+((cho?pt.c:pt.n).length===(cho?t:n).length?12:0);if(!best||w>best.w)best={w,lab:fd.lab,p:pt.p}}
+  if(best||cho||n.length<2||/^\d+$/.test(n))return best;
+  /* 정확히 맞는 곳이 없으면 표기가 한 글자쯤 다른 낱말(자모 기준)을 찾음 */
+  const tj=jamo(n),lim=Math.max(1,Math.floor(tj.length/6));
+  for(const fd of idx(f))for(const pt of fd.parts)for(const wj of pt.j)if(Math.abs(wj.length-tj.length)<=lim&&lev(tj,wj)<=lim){const w=fd.w-20;if(!best||w>best.w)best={w,lab:fd.lab,p:pt.p}}
+  return best}
+function searchHit(f,q){const ts=tokens(q);if(!ts.length)return{score:0};let score=0,note=null;
+  for(const t of ts){const h=hitTok(f,t);if(!h)return null;score+=h.w;if((h.lab==="감독"||h.lab==="출연")&&!note)note=`${h.lab}: ${h.p}`}
+  return{score,note}}
+const matchQ=(f,q)=>!tokens(q).length||!!searchHit(f,q);
+/* 결과가 없을 때: 한두 글자 틀린 제목 찾기(편집 거리) */
+function lev(a,b){const m=a.length,n=b.length;if(!m||!n)return m||n;let prev=[...Array(n+1).keys()];
+  for(let i=1;i<=m;i++){const cur=[i];for(let j=1;j<=n;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur}return prev[n]}
+function suggest(q,pool){const n=normS(q);if(n.length<2)return null;let best=null;
+  for(const f of pool)for(const t of [f.ko,f.en,...String(f.al||"").split(/\s*,\s*/)]){const tn=normS(t);if(!tn)continue;
+    const d=Math.min(lev(n,tn),tn.length>n.length?lev(n,tn.slice(0,n.length)):99);if(d<=Math.max(1,Math.floor(n.length/3))&&(!best||d<best.d))best={d,f}}
+  return best?.f||null}
+function noResult(id,inputId,q,pool){const el=$(id),sg=suggest(q,pool);
+  el.innerHTML=sg?`검색 결과가 없어요. 혹시 <button type="button" class="txt gold sg" data-sg="${esc(sg.ko)}" data-for="${inputId}">〈${esc(sg.ko)}〉</button> 말인가요?`:"검색 결과가 없어요."}
 /* 같은 기준으로 영화 두 편 비교(방향 포함). 같으면 추천순 */
 const cmpFilm=(sort,a,b)=>(SORTS[sort]?SORTS[sort](a,b)*(DIR[sort]==="desc"?-1:1):0)||(a.i??999)-(b.i??999);
 $("q").oninput=e=>{curQ=e.target.value;applyList()};
@@ -658,13 +701,14 @@ function renderWatch(){
   wSort=watchSort.set(wSort);const q=wQ.trim().toLowerCase();
   const all=entries().filter(e=>e.status==="want");
   const shown=all.filter(e=>matchQ(info(e.key),q)).sort((a,b)=>wSort==="added"?(b.added||0)-(a.added||0):cmpFilm(wSort,info(a.key),info(b.key)));
-  fillList("watch",all,shown,"아직 비어 있어요","하트를 눌러 관심 있는 작품을 담아 보세요.");
+  fillList("watch",all,shown,"아직 비어 있어요","하트를 눌러 관심 있는 작품을 담아 보세요.");if(all.length&&!shown.length)noResult("watchNone","wq",q,all.map(e=>info(e.key)));
 }
 function renderHall(){
   const seen=entries().filter(e=>e.status==="seen").sort((a,b)=>b.rating-a.rating||(b.updated||0)-(a.updated||0));
   $("hallStats").textContent=seen.length?`평점 ${seen.length}편 · 평균 ${(seen.reduce((s,e)=>s+e.rating,0)/seen.length).toFixed(1)}`:"";
   const q=hQ.trim().toLowerCase();
-  fillList("hall",seen,seen.filter(e=>matchQ(info(e.key),q)),"아직 비어 있어요","본 영화에 별점을 남기면 이곳에 모여요.");
+  const shown=seen.filter(e=>matchQ(info(e.key),q));
+  fillList("hall",seen,shown,"아직 비어 있어요","본 영화에 별점을 남기면 이곳에 모여요.");if(seen.length&&!shown.length)noResult("hallNone","hq",q,seen.map(e=>info(e.key)));
 }
 function renderAll(){
   FILMS.forEach(f=>sync(cards[f.key],f.key));renderWatch();renderHall();fitAwards();
@@ -883,6 +927,7 @@ function removeEntry(k){
 document.addEventListener("click",ev=>{
   const b=ev.target.closest("button,a[data-close]");if(!b)return;const d=b.dataset;
   if(d.genre){curGenre=d.genre;applyList();return}
+  if(d.sg){const i=$(d.for);i.value=d.sg;i.dispatchEvent(new Event("input"));i.focus();return}
   if(d.toggleWant){toggleWant(d.toggleWant);const h=document.querySelector(`.card[data-key="${CSS.escape(d.toggleWant)}"] .heart-act, #sheet .heart`);h?.classList.add("pop")}
   if(d.askRemove){askRemove(d.askRemove);return}
   if(d.back){ballot(d.back);return}
