@@ -276,6 +276,22 @@ const SCENES={
   {const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(.42,line);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.32;x.fillStyle=g;x.fillRect(0,0,W,H)}
   const st=u*.055;x.fillStyle=line;
   for(let j=0,y=st/2;y<H;y+=st,j++)for(let px=st/2+(j%2)*st/2;px<W;px+=st){const t=Math.pow(Math.max(0,1-Math.abs(y/H-.42)/.5),1.2);x.globalAlpha=.25+t*.4;x.beginPath();x.arc(px,y,st*.45*t+st*.05,0,7);x.fill()}
+  V(d)},
+"r:green-book":d=>{const{x,W,H,u,l:line}=d;
+  /* 셜리 박사의 피아노: 건반 배열(흰건반 7칸마다 검은건반 2개·3개)이 화면 가득 같은 간격으로 반복. 흰건반은 가는 경계선, 검은건반은 위쪽 3/5 길이의 막대. 포인트 청록 단색 */
+  const kw=u*.11,bh=H*.6;x.fillStyle=line;x.strokeStyle=line;x.lineWidth=Math.max(1,u*.004);
+  for(let i=0,px=0;px<W+kw;px+=kw,i++){x.globalAlpha=.3;x.beginPath();x.moveTo(px,0);x.lineTo(px,H);x.stroke();
+    const n=i%7;if(n===0||n===1||n===3||n===4||n===5){x.globalAlpha=.22;x.fillRect(px+kw*.68,0,kw*.64,bh)}}
+  {const g=x.createLinearGradient(0,H*.45,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.45)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,H*.45,W,H*.55)}
+  V(d)},
+"r:the-greatest-showman":d=>{const{x,W,H,u,l:line}=d;
+  /* 서커스 천막의 천장: 화면 위 바깥 한 점에서 같은 각도로 퍼지는 줄무늬 천, 한 칸씩 진하기만 번갈아. 천막은 화면 가운데에서 둥근 자락으로 끝남. 포인트 금색 단색 */
+  const cx=W*.5,cy=-H*.35,n=28,L=Math.hypot(W,H)*1.6,sy=H*.46,sr=u*.16;x.fillStyle=line;
+  x.save();x.beginPath();x.moveTo(-10,-10);x.lineTo(W+10,-10);x.lineTo(W+10,sy);for(let px=W+sr*2;px>-sr*2;px-=sr*2)x.arc(px-sr,sy,sr,0,Math.PI);x.closePath();x.clip();
+  for(let k=0;k<n;k++){const a0=Math.PI*(.05+.9*k/n),a1=Math.PI*(.05+.9*(k+1)/n);x.globalAlpha=k%2?.08:.26;
+    x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+Math.cos(a0)*L,cy+Math.sin(a0)*L);x.lineTo(cx+Math.cos(a1)*L,cy+Math.sin(a1)*L);x.closePath();x.fill()}
+  x.restore();x.globalAlpha=.35;x.lineWidth=Math.max(1.5,u*.006);x.strokeStyle=line;x.beginPath();
+  for(let px=W+sr*2;px>-sr*2;px-=sr*2){x.moveTo(px,sy);x.arc(px-sr,sy,sr,0,Math.PI)}x.stroke();
   V(d)}
 };
 /* 같은 배너를 쓰는 작품: 원본 하나만 두고 가리킨다(원본을 고치면 함께 바뀜) */
