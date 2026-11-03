@@ -25,7 +25,7 @@ COLUMNS = {
     "키": "key", "제목": "ko", "원제": "en", "연도": "y", "국가": "n", "장르": "g",
     "러닝타임": "rt", "감독": "dir", "출연": "cast", "수상": "aw", "한줄소개": "p",
     "줄거리": "s", "추천이유": "w", "관람포인트1": "pt1", "관람포인트2": "pt2", "관람포인트3": "pt3",
-    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef", "배경색": "bg", "포인트색": "ac", "배너색": "bc", "포스터": "poster", "영문로고": "logo",
+    "넷플릭스오리지널": "nf", "TMDB_ID": "tmdb", "관람등급": "age", "색상": "pal", "문양": "m", "영문폰트": "ef", "배경색": "bg", "포인트색": "ac", "배너색": "bc", "포스터": "poster",
 }
 # 기본 문양. "전용 배너"는 banners.js에 그 작품 전용 배너가 있다는 표시라 JSON에 넣지 않는다.
 MOTIFS = {"waves", "peaks", "arcade", "grid", "dots"}
@@ -77,14 +77,6 @@ def film(row, n):
     pts = [f[k] for k in ("pt1", "pt2", "pt3") if f.get(k)]
     if pts:
         out["pt"] = pts
-    lg = f.get("logo", "").strip()                   # 영문로고: 비우면 로고 원본, 흰색=흰색으로, X=표시 안 함
-    if lg.startswith("/"):                           # 직접 고른 TMDB 로고 경로(/abc.png)
-        out["logo"] = 1
-        out["lp"] = lg
-    elif lg in ("흰색", "W", "w", "white"):
-        out["logo"] = "w"
-    elif lg.upper() not in ("X", "N", "NO", "아니오"):
-        out["logo"] = 1
     if f.get("nf", "").upper() in ("O", "Y", "1", "TRUE", "예"):
         out["nf"] = 1
     if f.get("age"):
@@ -264,13 +256,9 @@ def enrich(f):
                 seen.add(p["provider_id"])
                 out.append({"n": name})
         return out
-    logos = [p for p in (m.get("images") or {}).get("logos", []) if p.get("iso_639_1") == "en"]
-    logos.sort(key=lambda p: (p.get("vote_average", 0), p.get("vote_count", 0)), reverse=True)
     tm = {"id": m["id"], "p": poster, "age": korean_age(m),
           "w": {"link": kr.get("link", ""), "sub": plats("flatrate"), "rent": plats("rent", "buy")[:6]},
           "at": date.today().isoformat()}
-    if logos:                                        # 영문 제목 로고(영문로고 칸이 O인 작품만 사이트에 씀)
-        tm["logo"] = logos[0]["file_path"]
     if not poster:
         notes.append("포스터가 없습니다")
     if not tm["age"] and not f.get("age"):
