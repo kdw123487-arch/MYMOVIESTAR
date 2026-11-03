@@ -264,8 +264,12 @@ const SCENES={
   for(let px=st/2;px<W;px+=st){const head=r()*H*1.2,len=H*(.25+r()*.6);
     for(let y=head-len;y<head;y+=sh*1.3){if(y<0||r()<.15)continue;const t=1-(head-y)/len;x.globalAlpha=t>.97?.85:.06+t*.4;x.fillRect(px-st*.18,y,st*.36,sh)}}
   V(d)},
-"r:bohemian-rhapsody":d=>{const{rect,cx,u,W,H,a,l}=d,w=u*.2,st=u*.4,n=Math.ceil(W/st)+2;
-  for(let i=-n;i<=n;i++){const px=cx+i*st-w/2,f=Math.max(0,1-Math.abs(px+w/2-cx)/(W*.5)),al=Math.pow(f,1.3)*.85;if(al<.02)continue;rect(px,0,w,H,a,al*.75)}},
+"r:bohemian-rhapsody":d=>{const{x,W,H,u,l:line}=d;
+  /* 서커스 천막의 천장: 화면 위 바깥 한 점에서 같은 각도로 퍼지는 줄무늬 천이 화면 끝까지 이어짐, 한 칸씩 진하기만 번갈아. 포인트 금색 단색 */
+  const cx=W*.5,cy=-H*.35,n=28,L=Math.hypot(W,H)*1.6;x.fillStyle=line;
+  for(let k=0;k<n;k++){const a0=Math.PI*(.05+.9*k/n),a1=Math.PI*(.05+.9*(k+1)/n);x.globalAlpha=k%2?.08:.26;
+    x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+Math.cos(a0)*L,cy+Math.sin(a0)*L);x.lineTo(cx+Math.cos(a1)*L,cy+Math.sin(a1)*L);x.closePath();x.fill()}
+  V(d)},
 "r:the-grand-budapest-hotel":d=>{const{x,W,H,u,l:line}=d;
   /* 로비의 할리퀸 타일: 같은 크기의 마름모가 화면을 빈틈없이 채우고, 칸마다 진하기만 번갈아. 파스텔 호텔 로비 바닥. 포인트 분홍 단색 */
   const w=u*.22,h=u*.32;x.fillStyle=line;
@@ -276,6 +280,18 @@ const SCENES={
   {const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(.42,line);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.32;x.fillStyle=g;x.fillRect(0,0,W,H)}
   const st=u*.055;x.fillStyle=line;
   for(let j=0,y=st/2;y<H;y+=st,j++)for(let px=st/2+(j%2)*st/2;px<W;px+=st){const t=Math.pow(Math.max(0,1-Math.abs(y/H-.42)/.5),1.2);x.globalAlpha=.25+t*.4;x.beginPath();x.arc(px,y,st*.45*t+st*.05,0,7);x.fill()}
+  V(d)},
+"r:the-greatest-showman":d=>{const{x,W,H,u,l:line}=d;
+  /* 서커스 천막의 천장: 화면 위 바깥 한 점에서 같은 각도로 퍼지는 줄무늬 천이 화면 끝까지 이어짐, 한 칸씩 진하기만 번갈아. 포인트 금색 단색 */
+  const cx=W*.5,cy=-H*.35,n=28,L=Math.hypot(W,H)*1.6;x.fillStyle=line;
+  for(let k=0;k<n;k++){const a0=Math.PI*(.05+.9*k/n),a1=Math.PI*(.05+.9*(k+1)/n);x.globalAlpha=k%2?.08:.26;
+    x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+Math.cos(a0)*L,cy+Math.sin(a0)*L);x.lineTo(cx+Math.cos(a1)*L,cy+Math.sin(a1)*L);x.closePath();x.fill()}
+  V(d)},
+"r:green-book":d=>{const{x,W,H,u,l:line}=d;
+  /* 끝없이 달린 길: 수평선의 한 점으로 모여드는 같은 각도 간격의 선들(길), 지평선 아래만. 포인트 크림 단색 */
+  const vx=W*.62,vy=H*.38,n=28;x.strokeStyle=line;x.lineWidth=Math.max(1.2,u*.005);
+  for(let k=0;k<=n;k++){const a=Math.PI*(.04+.92*k/n);x.globalAlpha=.12+.28*Math.sin(Math.PI*k/n);x.beginPath();x.moveTo(vx,vy);x.lineTo(vx+Math.cos(a)*W*2,vy+Math.sin(a)*W*2);x.stroke()}
+  {const g=x.createLinearGradient(0,vy-u*.25,0,vy+u*.05);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,line);x.globalAlpha=.18;x.fillStyle=g;x.fillRect(0,vy-u*.25,W,u*.3)}
   V(d)}
 };
 /* 같은 배너를 쓰는 작품: 원본 하나만 두고 가리킨다(원본을 고치면 함께 바뀜) */
