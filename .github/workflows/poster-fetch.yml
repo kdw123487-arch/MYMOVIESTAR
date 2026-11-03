@@ -10,6 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python3 tools/poster_fetch.py
+        env:
+          TMDB_KEY: ${{ secrets.TMDB_KEY }}
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
