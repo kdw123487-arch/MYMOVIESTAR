@@ -285,13 +285,10 @@ const SCENES={
   {const g=x.createLinearGradient(0,H*.45,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.45)");x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,H*.45,W,H*.55)}
   V(d)},
 "r:the-greatest-showman":d=>{const{x,W,H,u,l:line}=d;
-  /* 서커스 천막의 천장: 화면 위 바깥 한 점에서 같은 각도로 퍼지는 줄무늬 천, 한 칸씩 진하기만 번갈아. 천막은 화면 가운데에서 둥근 자락으로 끝남. 포인트 금색 단색 */
-  const cx=W*.5,cy=-H*.35,n=28,L=Math.hypot(W,H)*1.6,sy=H*.46,sr=u*.16;x.fillStyle=line;
-  x.save();x.beginPath();x.moveTo(-10,-10);x.lineTo(W+10,-10);x.lineTo(W+10,sy);for(let px=W+sr*2;px>-sr*2;px-=sr*2)x.arc(px-sr,sy,sr,0,Math.PI);x.closePath();x.clip();
+  /* 서커스 천막의 천장: 화면 위 바깥 한 점에서 같은 각도로 퍼지는 줄무늬 천이 화면 끝까지 이어짐, 한 칸씩 진하기만 번갈아. 포인트 금색 단색 */
+  const cx=W*.5,cy=-H*.35,n=28,L=Math.hypot(W,H)*1.6;x.fillStyle=line;
   for(let k=0;k<n;k++){const a0=Math.PI*(.05+.9*k/n),a1=Math.PI*(.05+.9*(k+1)/n);x.globalAlpha=k%2?.08:.26;
     x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+Math.cos(a0)*L,cy+Math.sin(a0)*L);x.lineTo(cx+Math.cos(a1)*L,cy+Math.sin(a1)*L);x.closePath();x.fill()}
-  x.restore();x.globalAlpha=.35;x.lineWidth=Math.max(1.5,u*.006);x.strokeStyle=line;x.beginPath();
-  for(let px=W+sr*2;px>-sr*2;px-=sr*2){x.moveTo(px,sy);x.arc(px-sr,sy,sr,0,Math.PI)}x.stroke();
   V(d)}
 };
 /* 같은 배너를 쓰는 작품: 원본 하나만 두고 가리킨다(원본을 고치면 함께 바뀜) */
