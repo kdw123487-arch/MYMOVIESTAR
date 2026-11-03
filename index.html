@@ -265,8 +265,8 @@ html.film,html.film body{background:var(--bgc)}
 .cap h2:focus,.rf-head h3:focus{outline:none}
 .cap h2{margin:0;font-size:clamp(32px,5.4vw,60px);line-height:1.12;font-weight:700;letter-spacing:-.01em;text-wrap:balance;word-break:keep-all;overflow-wrap:break-word;text-shadow:0 2px 24px rgba(0,0,0,.5)}
 .cap .en{font-size:clamp(18px,2.2vw,26px);color:var(--gold);line-height:1.25}
-/* 영문 로고(TMDB): 상세 페이지 맨 아래, 엔딩 크레딧처럼 가운데에 */
-.end-logo{grid-column:1/-1;grid-row:2;justify-self:center;margin-top:8px;padding-top:40px;border-top:1px solid var(--line);width:100%;display:flex;justify-content:center}.end-logo img{display:block;max-width:min(260px,60vw);max-height:90px;width:auto;height:auto;opacity:.9}.end-logo.white img{filter:brightness(0) invert(.94)}
+/* 영문 로고(TMDB): 오른쪽 단 맨 아래, 볼 수 있는 곳 다음 */
+.end-logo{padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:center}.end-logo img{display:block;max-width:min(200px,60vw);max-height:80px;width:auto;height:auto;opacity:.9}.end-logo.white img{filter:brightness(0) invert(.94)}
 .ef-elegant{font-family:"Cormorant Garamond",serif!important;font-style:italic;font-weight:500;font-size:clamp(22px,2.6vw,32px)!important}
 .ef-noir{font-family:"Playfair Display",serif!important;font-style:italic;font-weight:700}
 .ef-epic{font-family:"Cinzel",serif!important;font-style:normal!important;font-weight:600;letter-spacing:.08em}
@@ -353,7 +353,7 @@ html.film,html.film body{background:var(--bgc)}
   .cap{padding:0 calc(36% + 16px) 24px max(16px,env(safe-area-inset-left,0px));gap:6px}
   .cap h2{font-size:clamp(21px,6.2vw,30px);line-height:1.2}
   .cap .en{font-size:clamp(12px,3.4vw,16px)}
-  .end-logo{grid-column:1;grid-row:auto}.end-logo img{max-height:64px}
+  .end-logo img{max-height:64px}
   .sbody{grid-template-columns:1fr;gap:0;padding-top:20px}
   .sbody>main,.side{grid-column:auto;grid-row:auto}
   .side{order:-1;margin-top:-170px;gap:20px;margin-bottom:28px}
@@ -696,7 +696,7 @@ function renderSheet(k){
     <div class="sbody">
       <aside class="side"><div class="sposter" aria-hidden="true"><canvas></canvas></div>
         ${f.aw?`<div class="honor"><h4>수상</h4>${esc(f.aw)}</div>`:""}
-        <div class="where" id="where"></div></aside>
+        <div class="where" id="where"></div>${f.logo&&tmOf(k).logo?`<div class="end-logo${f.logo==="w"?" white":""}"><img src="${IMG}w500${tmOf(k).logo}" alt="${esc(f.en)} 로고" loading="lazy" onerror="this.parentNode.remove()"></div>`:""}</aside>
       <main><dl class="factsheet">${fx("감독",esc(f.dir))+fx("개봉",esc(f.y))+fx("러닝타임",f.rt?f.rt+"분":"")+fx("장르",esc(f.g))+fx("제작 국가",esc(f.n))+`<div id="ageCell" hidden><dt>관람등급</dt><dd></dd></div>`+fx("출연",esc(f.cast),1)}</dl>
         ${f.s?`<section class="sec"><h3>Synopsis</h3><p>${esc(f.s)}</p></section>`:""}
         ${f.w?`<section class="sec"><h3>Why it's nominated</h3><p>${esc(f.w)}</p></section>`:""}
@@ -704,7 +704,7 @@ function renderSheet(k){
         <section class="sec"><h3>My rating</h3><div class="mybox">${seen
           ?`<div>${stars(e.rating)}</div>${e.review?`<blockquote>${esc(e.review)}</blockquote>`:""}<p class="rate-note">평점 수정은 평점 탭에서 할 수 있어요.</p>`
           :`<p style="color:var(--faint)">아직 평점을 남기지 않았어요.</p><div class="acts">${listed?heartBtn(k,want):""}<button class="txt gold" type="button" data-review="${k}">평점 남기기</button></div>`}</div></section>
-      </main>${f.logo&&tmOf(k).logo?`<div class="end-logo${f.logo==="w"?" white":""}"><img src="${IMG}w500${tmOf(k).logo}" alt="${esc(f.en)} 로고" loading="lazy" onerror="this.parentNode.remove()"></div>`:""}</div>`;
+      </main></div>`;
   paint(sheet.querySelector(".banner canvas"),f,1600,640,bannerPal(f));decorate(sheet.querySelector(".sposter"),k,"w500");
   requestAnimationFrame(fitBanner);
   setTimeout(()=>{if(sheetKey===k)preloadNeighbours(k)},300);
