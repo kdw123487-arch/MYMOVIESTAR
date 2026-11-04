@@ -341,6 +341,10 @@ html.film,html.film body{background:var(--bgc)}
 .side .honor{font-size:15px;line-height:1.6;padding-bottom:22px;border-bottom:1px solid var(--line)}
 .where{display:grid;gap:14px;padding-bottom:22px;border-bottom:1px solid var(--line)}
 .series{padding-bottom:22px;border-bottom:1px solid var(--line)}
+/* PC는 오른쪽 단(볼 수 있는 곳 아래), 모바일은 본문 맨 아래 */
+.series.mo{display:none}
+@media (max-width:820px){.series.pc{display:none}.series.mo{display:block;padding-top:8px;border-bottom:0}}
+.series h4{margin:0 0 10px;font-size:13px;font-weight:500;letter-spacing:.14em;color:var(--gold)}
 .series .cnt{color:var(--faint);letter-spacing:.04em;margin-left:4px}
 .series ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .series li>a,.series li.cur{display:flex;align-items:center;gap:12px;padding:6px;margin:0 -6px;border-radius:8px;color:var(--ivory);text-decoration:none;transition:background-color .2s}
@@ -757,7 +761,7 @@ function renderSheet(k){
         <section class="sec"><h3>My rating</h3><div class="mybox">${seen
           ?`<div>${stars(e.rating)}</div>${e.review?`<blockquote>${esc(e.review)}</blockquote>`:""}<p class="rate-note">평점 수정은 평점 탭에서 할 수 있어요.</p>`
           :`<p style="color:var(--faint)">아직 평점을 남기지 않았어요.</p><div class="acts">${listed?heartBtn(k,want):""}<button class="txt gold" type="button" data-review="${k}">평점 남기기</button></div>`}</div></section>
-      </main></div>`;
+      ${seriesBox(k,"mo")}</main></div>`;
   paint(sheet.querySelector(".banner canvas"),f,1600,640,bannerPal(f));decorate(sheet.querySelector(".sposter"),k,"w500");
   requestAnimationFrame(fitBanner);
   setTimeout(()=>{if(sheetKey===k)preloadNeighbours(k)},300);
@@ -800,7 +804,7 @@ function goStep(st,refocus){
   stepDir=st;if(!REDUCED()){const root=document.documentElement;root.classList.add("stepping");clearTimeout(goStep.t);goStep.t=setTimeout(()=>root.classList.remove("stepping"),560)}history.replaceState(null,"","#film/"+encodeURIComponent(nk));route();
   if(refocus){const b=sheet.querySelector(`[data-step="${st}"]`);(b&&!b.disabled?b:sheet.querySelector(`[data-step="${-st}"]`))?.focus({preventScroll:true})}}
 /* 시리즈(TMDB 컬렉션): 볼 수 있는 곳 아래, 개봉 순으로 세로 나열. 우리 목록에 있는 편은 그 상세 페이지로, 없는 편은 TMDB로 */
-function seriesBox(k){
+function seriesBox(k,where="pc"){
   const c=tmOf(k).col;if(!c||!c.parts||c.parts.length<2)return"";
   const me=tmOf(k).id,today=new Date().toISOString().slice(0,10),byId={};FILMS.forEach(f=>{const id=tmOf(f.key).id;if(id)byId[id]=f});
   const rows=c.parts.map(p=>{const own=byId[p.id],cur=p.id===me,soon=p.d>today;
@@ -810,7 +814,7 @@ function seriesBox(k){
     return cur?`<li class="cur" aria-current="true">${inner}</li>`
       :own?`<li><a href="#film/${encodeURIComponent(own.key)}">${inner}</a></li>`
       :`<li><a href="https://www.themoviedb.org/movie/${p.id}" target="_blank" rel="noopener">${inner}</a></li>`}).join("");
-  return`<div class="series"><h4>시리즈 <span class="cnt">${c.parts.length}편</span></h4><ol>${rows}</ol></div>`}
+  return`<div class="series ${where}"><h4>시리즈 <span class="cnt">${c.parts.length}편</span></h4><ol>${rows}</ol></div>`}
 /* per-film English title fonts, loaded only when a film page needs one */
 const EF={elegant:"Cormorant+Garamond:ital,wght@1,500;1,600",noir:"Playfair+Display:ital,wght@1,700",epic:"Cinzel:wght@600",typewriter:"Special+Elite",mono:"Courier+Prime:wght@400;700",
   bold:"Bebas+Neue",scifi:"Orbitron:wght@500",gothic:"UnifrakturMaguntia",western:"Rye",retro:"Abril+Fatface",script:"Great+Vibes",hand:"Caveat:wght@600;700",comic:"Bangers",light:"Josefin+Sans:wght@300;400",neon:"Monoton",
