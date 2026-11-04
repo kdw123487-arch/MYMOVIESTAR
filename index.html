@@ -347,8 +347,7 @@ html.film,html.film body{background:var(--bgc)}
 .series h4{margin:0 0 10px;font-size:13px;font-weight:500;letter-spacing:.14em;color:var(--gold)}
 .series .cnt{color:var(--faint);letter-spacing:.04em;margin-left:4px}
 .series ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}
-.series li>a,.series li.cur{display:flex;align-items:center;gap:12px;padding:6px;margin:0 -6px;border-radius:8px;color:var(--ivory);text-decoration:none;transition:background-color .2s}
-.series li>a:hover{background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.series li>a,.series li.cur{display:flex;align-items:center;gap:12px;padding:6px;margin:0 -6px;border-radius:8px;color:var(--ivory);text-decoration:none}
 .series li.cur{background:color-mix(in srgb,var(--gold) 12%,transparent);outline:1px solid color-mix(in srgb,var(--gold) 40%,transparent);outline-offset:-1px}
 .series img,.series .noimg{flex:none;width:46px;height:69px;border-radius:4px;object-fit:cover;background:rgba(0,0,0,.3)}
 .series .st{display:grid;gap:3px;min-width:0}
@@ -803,18 +802,19 @@ function goStep(st,refocus){
   if(!sheetKey)return;const list=navKeys(sheetKey),nk=list[list.indexOf(sheetKey)+st];if(!nk)return;
   stepDir=st;if(!REDUCED()){const root=document.documentElement;root.classList.add("stepping");clearTimeout(goStep.t);goStep.t=setTimeout(()=>root.classList.remove("stepping"),560)}history.replaceState(null,"","#film/"+encodeURIComponent(nk));route();
   if(refocus){const b=sheet.querySelector(`[data-step="${st}"]`);(b&&!b.disabled?b:sheet.querySelector(`[data-step="${-st}"]`))?.focus({preventScroll:true})}}
-/* 시리즈(TMDB 컬렉션): 볼 수 있는 곳 아래, 개봉 순으로 세로 나열. 우리 목록에 있는 편은 그 상세 페이지로, 없는 편은 TMDB로 */
+/* 시리즈(TMDB 컬렉션): 지금 작품을 뺀 다른 편을 개봉 순으로 세로 나열. 우리 목록에 있는 편은 그 상세 페이지로, 없는 편은 TMDB로 */
 function seriesBox(k,where="pc"){
   const c=tmOf(k).col;if(!c||!c.parts||c.parts.length<2)return"";
   const me=tmOf(k).id,today=new Date().toISOString().slice(0,10),byId={};FILMS.forEach(f=>{const id=tmOf(f.key).id;if(id)byId[id]=f});
-  const rows=c.parts.map(p=>{const own=byId[p.id],cur=p.id===me,soon=p.d>today;
+  const others=c.parts.filter(p=>p.id!==me);if(!others.length)return"";
+  const rows=others.map(p=>{const own=byId[p.id],cur=p.id===me,soon=p.d>today;
     const t=own?own.ko:p.t,meta=soon?`${p.d.slice(0,4)} 개봉 예정`:p.d.slice(0,4);
     const img=p.p?`<img src="${IMG}w92${p.p}" alt="" loading="lazy" width="46" height="69" onerror="this.outerHTML='<span class=noimg></span>'">`:`<span class="noimg"></span>`;
     const inner=`${img}<span class="st"><b>${esc(t)}</b><small>${meta}${cur?" · 지금 보는 작품":""}</small></span>`;
     return cur?`<li class="cur" aria-current="true">${inner}</li>`
       :own?`<li><a href="#film/${encodeURIComponent(own.key)}">${inner}</a></li>`
       :`<li><a href="https://www.themoviedb.org/movie/${p.id}" target="_blank" rel="noopener">${inner}</a></li>`}).join("");
-  return`<div class="series ${where}"><h4>시리즈 <span class="cnt">${c.parts.length}편</span></h4><ol>${rows}</ol></div>`}
+  return`<div class="series ${where}"><h4>시리즈 <span class="cnt">${others.length}편</span></h4><ol>${rows}</ol></div>`}
 /* per-film English title fonts, loaded only when a film page needs one */
 const EF={elegant:"Cormorant+Garamond:ital,wght@1,500;1,600",noir:"Playfair+Display:ital,wght@1,700",epic:"Cinzel:wght@600",typewriter:"Special+Elite",mono:"Courier+Prime:wght@400;700",
   bold:"Bebas+Neue",scifi:"Orbitron:wght@500",gothic:"UnifrakturMaguntia",western:"Rye",retro:"Abril+Fatface",script:"Great+Vibes",hand:"Caveat:wght@600;700",comic:"Bangers",light:"Josefin+Sans:wght@300;400",neon:"Monoton",
