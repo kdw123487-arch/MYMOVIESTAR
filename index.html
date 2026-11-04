@@ -350,6 +350,7 @@ html.film,html.film body{background:var(--bgc)}
 .series li>a,.series li.cur{display:flex;align-items:center;gap:12px;padding:6px;margin:0 -6px;border-radius:8px;color:var(--ivory);text-decoration:none}
 .series li.cur{background:color-mix(in srgb,var(--gold) 12%,transparent);outline:1px solid color-mix(in srgb,var(--gold) 40%,transparent);outline-offset:-1px}
 .series img,.series .noimg{flex:none;width:46px;height:69px;border-radius:4px;object-fit:cover;background:rgba(0,0,0,.3)}
+.series.pc img,.series.pc .noimg{width:64px;height:96px}
 .series .st{display:grid;gap:3px;min-width:0}
 .series b{font-weight:500;font-size:14.5px;line-height:1.35}
 .series small{font-size:12px;color:var(--faint)}
@@ -810,7 +811,7 @@ function seriesBox(k,where="pc"){
   const rows=others.map(p=>{const own=byId[p.id],cur=p.id===me,soon=p.d>today;
     const t=own?own.ko:p.t,meta=soon?`${p.d.slice(0,4)} 개봉 예정`:p.d.slice(0,4);
     const pp=own?tmOf(own.key).p||p.p:p.p;/* 우리 목록에 있는 편은 사이트에서 쓰는 포스터 그대로 */
-    const img=pp?`<img src="${IMG}w92${pp}" alt="" loading="lazy" width="46" height="69" onerror="this.outerHTML='<span class=noimg></span>'">`:`<span class="noimg"></span>`;
+    const img=pp?`<img src="${IMG}w154${pp}" alt="" loading="lazy" width="46" height="69" onerror="this.outerHTML='<span class=noimg></span>'">`:`<span class="noimg"></span>`;
     const inner=`${img}<span class="st"><b>${esc(t)}</b><small>${meta}${cur?" · 지금 보는 작품":""}</small></span>`;
     return cur?`<li class="cur" aria-current="true">${inner}</li>`
       :own?`<li><a href="#film/${encodeURIComponent(own.key)}">${inner}</a></li>`
