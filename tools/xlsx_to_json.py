@@ -265,9 +265,20 @@ def enrich(f):
         parts = [x for x in c.get("parts") or [] if x.get("release_date")]
         parts.sort(key=lambda x: x["release_date"])
         if len(parts) > 1:
+            # 다른 편 제목은 사이트 표기에 맞춤: TMDB가 이 작품을 다르게 적었으면(빽 투 더 퓨쳐) 그 앞부분을 사이트 제목(백 투 더 퓨처)으로 바꿈
+            mine = next((x.get("title", "") for x in parts if x["id"] == m["id"]), "")
+            def title(x):
+                t = x.get("title") or x.get("original_title", "")
+                return f["ko"] + t[len(mine):] if mine and mine != f["ko"] and t.startswith(mine) else t
+            # 다른 편 포스터는 이 사이트 포스터와 같은 결: 원어(영어) 극장 포스터 중 가장 평이 좋은 것
+            def poster_of(x):
+                if x["id"] == m["id"]:
+                    return poster
+                imgs = (api(f"/movie/{x['id']}/images", include_image_language="en,null") or {}).get("posters", [])
+                en = sorted([p for p in imgs if p.get("iso_639_1") == "en"], key=lambda p: (p.get("vote_average", 0), p.get("vote_count", 0)), reverse=True)
+                return en[0]["file_path"] if en else x.get("poster_path")
             tm["col"] = {"n": c.get("name") or col.get("name", ""),
-                         "parts": [{"id": x["id"], "t": x.get("title") or x.get("original_title", ""),
-                                    "d": x["release_date"], "p": x.get("poster_path")} for x in parts]}
+                         "parts": [{"id": x["id"], "t": title(x), "d": x["release_date"], "p": poster_of(x)} for x in parts]}
     if not poster:
         notes.append("포스터가 없습니다")
     if not tm["age"] and not f.get("age"):
