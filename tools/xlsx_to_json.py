@@ -259,6 +259,15 @@ def enrich(f):
     tm = {"id": m["id"], "p": poster, "age": korean_age(m),
           "w": {"link": kr.get("link", ""), "sub": plats("flatrate"), "rent": plats("rent", "buy")[:6]},
           "at": date.today().isoformat()}
+    col = m.get("belongs_to_collection")              # 같은 시리즈(TMDB 컬렉션)의 다른 편: 상세 페이지 '시리즈' 칸
+    if col and col.get("id"):
+        c = api(f"/collection/{col['id']}", language="ko-KR") or {}
+        parts = [x for x in c.get("parts") or [] if x.get("release_date")]
+        parts.sort(key=lambda x: x["release_date"])
+        if len(parts) > 1:
+            tm["col"] = {"n": c.get("name") or col.get("name", ""),
+                         "parts": [{"id": x["id"], "t": x.get("title") or x.get("original_title", ""),
+                                    "y": x["release_date"][:4], "p": x.get("poster_path")} for x in parts]}
     if not poster:
         notes.append("포스터가 없습니다")
     if not tm["age"] and not f.get("age"):
