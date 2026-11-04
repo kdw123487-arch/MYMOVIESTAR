@@ -267,7 +267,7 @@ def enrich(f):
         if len(parts) > 1:
             tm["col"] = {"n": c.get("name") or col.get("name", ""),
                          "parts": [{"id": x["id"], "t": x.get("title") or x.get("original_title", ""),
-                                    "y": x["release_date"][:4], "p": x.get("poster_path")} for x in parts]}
+                                    "d": x["release_date"], "p": x.get("poster_path")} for x in parts]}
     if not poster:
         notes.append("포스터가 없습니다")
     if not tm["age"] and not f.get("age"):
